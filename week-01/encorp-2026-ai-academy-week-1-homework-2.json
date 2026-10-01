@@ -1,0 +1,192 @@
+{
+  "name": "encorp-2026-ai-academy-week-1-homework-2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -176
+      ],
+      "id": "424d2cfd-819a-472a-a0de-2921cba7f1a9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 36
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a71ab61f-56b9-4364-be84-8fb32cae8b8d",
+      "name": "Every day at 8:36 am"
+    },
+    {
+      "parameters": {
+        "url": "https://catfact.ninja/fact",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        -96
+      ],
+      "id": "9a398011-f5ce-49d5-9353-6f4df5ed3bd2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "model": "perplexity/sonar",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        432,
+        128
+      ],
+      "id": "a0000551-4a75-4112-a054-186cc5b3733d",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Направи разширено проучване за да обогатиш и разшириш с още интересни факти и информация следният интересен факт свързан с котките: {{ $json.fact }}\n\n",
+        "options": {
+          "systemMessage": "Ти си полезен асистент, който прави разширено проучване за обогатяване и разширяване с още интересни факти и информация първоначално подаден текст на тема \"котките\".\n\n<interesting-cat-fact> съдържа кратката информация но на английски.\n<interesting-cat-fact-bg> съдържа кратката информация на български.\n<extended-fact> съдържа разширената информация.\n\nЦялото съдържание трябва да е на български език.\nЗа шаблон на отговора използвай <response-template>.\nСъдържанието трябва да е в HTML формат стилизиран със CSS за модерен email daily newsletter за да може да се рендира правилно в емейла.\nПремахвай външните линкове от разширения отговор, които не са се запазили и изглеждат по този начин: \"[1][4]\"\n\n<response-template>\nКратък факт за котките: <interesting-cat-fact-bg>\n\nА за по-любознателните, ето и малко повече по темата:\n<extended-fact></extended-fact>\n</response-template>\n\nЗа стилизиране на HTML съдържанието използвай този стил:\n\n<div style=\"margin:0;padding:0;background:#f5f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n  <div style=\"max-width:700px;margin:0 auto;padding:24px;\">\n    <div style=\"background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,0.08);\">\n      <div style=\"background:linear-gradient(135deg,#ff8a65,#ff6f91);padding:28px 32px;color:#ffffff;\">\n        <div style=\"font-size:13px;letter-spacing:1.2px;text-transform:uppercase;opacity:0.9;\">Daily Cat Fact</div>\n        <h1 style=\"margin:10px 0 0;font-size:28px;line-height:1.2;\">Интересен факт за котките</h1>\n      </div>\n\n      <div style=\"padding:30px 32px;\">\n        <p style=\"margin:0 0 18px;font-size:18px;line-height:1.7;\">\n          <strong>Кратък факт за котките:</strong> Most cats give birth to a litter of between one and nine kittens. The largest known litter ever produced was 19 kittens, of which 15 survived.\n        </p>\n\n        <div style=\"height:1px;background:#e5e7eb;margin:22px 0;\"></div>\n\n        <p style=\"margin:0 0 14px;font-size:16px;line-height:1.7;color:#374151;\">\n          А за по-любознателните, ето и малко повече по темата:\n        </p>\n\n        <div style=\"background:#f8fafc;border-left:5px solid #ff6f91;border-radius:12px;padding:18px 18px 18px 20px;\">\n          <div style=\"font-size:16px;line-height:1.75;color:#1f2937;\">\n            <p style=\"margin:0 0 12px;\">\n              При домашните котки средният размер на едно котило обикновено е около <strong>4 котета</strong>, като в практиката най-често се срещат котила от <strong>3 до 6</strong> малки.[1][2]\n            </p>\n            <p style=\"margin:0 0 12px;\">\n              Възможните стойности обаче са по-широки: първото раждане често води до по-малки котила, а при някои котки се срещат и само <strong>1–2 котета</strong>, докато при други броят може да надхвърли <strong>8–10</strong>.[2][3]\n            </p>\n            <p style=\"margin:0 0 12px;\">\n              Световният рекорд за най-голямо известно котило е от <strong>19 котета</strong>, родени през 1970 г. от бирмано-сийамска котка във Великобритания; <strong>15 от тях оцеляват</strong>, а 4 са мъртвородени.[1][3]\n            </p>\n            <p style=\"margin:0;\">\n              Интересно е и че броят на котетата не зависи пряко от броя чифтосвания по време на разгонване, а се влияе от фактори като възраст, порода и общо състояние на майката.[1]\n            </p>\n          </div>\n        </div>\n\n        <div style=\"margin-top:22px;padding:16px 18px;background:#fff7ed;border-radius:12px;border:1px solid #fed7aa;\">\n          <p style=\"margin:0;font-size:14px;line-height:1.7;color:#9a3412;\">\n            <strong>Любопитен детайл:</strong> В научни източници средният размер на котило е посочван като 4.0 котета, а рекордът от 19 остава изключение, което показва колко големи могат да бъдат индивидуалните различия при котките.[1][2]\n          </p>\n        </div>\n      </div>\n\n      <div style=\"padding:18px 32px 26px;background:#f9fafb;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;line-height:1.6;\">\n        <div>Източници: научен обзор за бременността при котките и Guinness World Records за най-голямото известно котило.[1][2][3]</div>\n      </div>\n    </div>\n  </div>\n</div>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        -96
+      ],
+      "id": "2d7091f5-1269-4036-b2f3-f93d7db48522",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "zdravko.gospodinov@gmail.com",
+        "subject": "Дневен интересен факт за котките",
+        "message": "=Интересен котекшки факт {{ $now.format('yyyy-MM-dd') }}\n\n{{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        -96
+      ],
+      "id": "8907dd52-92a9-461f-982b-e802775440bb",
+      "name": "Send a message",
+      "webhookId": "04a7e2cb-321d-4b82-9966-afac526cc224",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UvzcMA4I1VPbqMxI",
+          "name": "Gmail account zdravko.gospodinov"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every day at 8:36 am": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8a17f359-fc67-47f3-b9e0-088a19d201d0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "id": "N9NWp7rshSYNxrhs",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
