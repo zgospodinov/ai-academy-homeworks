@@ -1,0 +1,1348 @@
+{
+  "name": "encorp-2026-ai-academy-week-1-homework-3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -64
+      ],
+      "id": "98f7ce98-04d5-46ef-805f-30cf5bb6b415",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        192
+      ],
+      "id": "64577fb9-affa-4346-a04a-5e63b85add0b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://hn.algolia.com/api/v1/search?query=n8n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        80
+      ],
+      "id": "7067fbb4-83a0-4307-9bef-e79af8cfeee4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "hits",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        176,
+        80
+      ],
+      "id": "b5d88ced-6a68-4736-80b7-eed1f646de5f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e830ac8-e6ff-48a5-865e-564f4220fd84",
+              "name": "title",
+              "value": "={{ $json.title }}: {{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        80
+      ],
+      "id": "d5759571-da6a-4bec-854a-6f2ec1ccbbc1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "-5531928417",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        80
+      ],
+      "id": "f137fdf4-c173-4626-aeee-e56ce3a40345",
+      "name": "Send a text message",
+      "webhookId": "9763bdde-21db-46d2-9742-96f47348d526",
+      "credentials": {
+        "telegramApi": {
+          "id": "OLWNPTl0xDvqo4ek",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        512,
+        80
+      ],
+      "id": "7ab69ad0-3cba-429b-bbe3-0217ab45808a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "function formatTitles(data) {\n  return data\n    .flatMap(item => item || [])\n    .join('\\n');\n}\n\n\n\n\nreturn {\n  message: formatTitles($input.first().json.title)\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        80
+      ],
+      "id": "41d51010-c819-4534-af92-9266c36778a7",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "exhaustive": {
+            "nbHits": false,
+            "typo": false
+          },
+          "exhaustiveNbHits": false,
+          "exhaustiveTypo": false,
+          "hits": [
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "tablet"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em>.io – Workflow automation alternative to Zapier"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>.io/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_tablet",
+                "story_21191676"
+              ],
+              "author": "tablet",
+              "children": [
+                21192132,
+                21192220,
+                21192243,
+                21192277,
+                21192290,
+                21192300,
+                21192503,
+                21192514,
+                21192602,
+                21192971,
+                21193128,
+                21193210,
+                21193309,
+                21193349,
+                21193459,
+                21193744,
+                21193832,
+                21193888,
+                21193889,
+                21193898,
+                21193957,
+                21194037,
+                21194173,
+                21194307,
+                21194537,
+                21195064,
+                21195136,
+                21195153,
+                21195171,
+                21195247,
+                21196136,
+                21196174,
+                21196732,
+                21197157,
+                21197166,
+                21197647,
+                21198016,
+                21198660,
+                21199071,
+                21199136,
+                21201799
+              ],
+              "created_at": "2019-10-08T12:53:04Z",
+              "created_at_i": 1570539184,
+              "num_comments": 196,
+              "objectID": "21191676",
+              "points": 728,
+              "story_id": 21191676,
+              "title": "N8n.io – Workflow automation alternative to Zapier",
+              "updated_at": "2026-04-12T15:09:59Z",
+              "url": "https://n8n.io/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "waleedlatif1"
+                },
+                "story_text": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "Hey HN, Waleed here. We're building Sim (<a href=\"https://sim.ai/\">https://sim.ai/</a>), an open-source visual editor to build agentic workflows. Repo here: <a href=\"https://github.com/simstudioai/sim/\" rel=\"nofollow\">https://github.com/simstudioai/sim/</a>. Docs here: <a href=\"https://docs.sim.ai\">https://docs.sim.ai</a>.<p>You can run Sim locally using Docker, with no execution limits or other restrictions.<p>We started building Sim almost a year ago after repeatedly troubleshooting why our agents failed in production. Code-first frameworks felt hard to debug because of implicit control flow, and workflow platforms added more overhead than they removed. We wanted granular control and easy observability without piecing everything together ourselves.<p>We launched Sim [1][2] as a drag-and-drop canvas around 6 months ago. Since then, we've added:<p>- 138 blocks: Slack, GitHub, Linear, Notion, Supabase, SSH, TTS, SFTP, MongoDB, S3, Pinecone, ...<p>- Tool calling with granular control: forced, auto<p>- Agent memory: conversation memory with sliding window support (by last n messages or tokens)<p>- Trace spans: detailed logging and observability for nested workflows and tool calling<p>- Native RAG: upload documents, we chunk, embed with pgvector, and expose vector search to agents<p>- Workflow deployment versioning with rollbacks<p>- MCP support, Human-in-the-loop block<p>- Copilot to build workflows using natural language (just shipped a new version that also acts as a superagent and can call into any of your connected services directly, not just build workflows)<p>Under the hood, the workflow is a DAG with concurrent execution by default. Nodes run as soon as their dependencies (upstream blocks) are satisfied. Loops (for, forEach, while, do-while) and parallel fan-out/join are also first-class primitives.<p>Agent blocks are pass-through to the provider. You pick your model (OpenAI, Anthropic, Gemini, Ollama, vLLM), and and we pass through prompts, tools, and response format directly to the provider API. We normalize response shapes for block interoperability, but we're not adding layers that obscure what's happening.<p>We're currently working on our own MCP server and the ability to deploy workflows as MCP servers. Would love to hear your thoughts and where we should take it next :)<p>[1] <a href=\"https://news.ycombinator.com/item?id=43823096\">https://news.ycombinator.com/item?id=43823096</a><p>[2] <a href=\"https://news.ycombinator.com/item?id=44052766\">https://news.ycombinator.com/item?id=44052766</a>"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Show HN: Sim – Apache-2.0 <em>n8n</em> alternative"
+                },
+                "url": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "https://github.com/simstudioai/sim"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_waleedlatif1",
+                "story_46234186",
+                "show_hn"
+              ],
+              "author": "waleedlatif1",
+              "children": [
+                46235878,
+                46236104,
+                46236129,
+                46236422,
+                46237382,
+                46237417,
+                46238673,
+                46238813,
+                46239574,
+                46240560,
+                46241088,
+                46241089,
+                46241968,
+                46241970,
+                46244396,
+                46244712,
+                46245239,
+                46256736,
+                46321424
+              ],
+              "created_at": "2025-12-11T17:20:11Z",
+              "created_at_i": 1765473611,
+              "num_comments": 61,
+              "objectID": "46234186",
+              "points": 240,
+              "story_id": 46234186,
+              "story_text": "Hey HN, Waleed here. We&#x27;re building Sim (<a href=\"https:&#x2F;&#x2F;sim.ai&#x2F;\">https:&#x2F;&#x2F;sim.ai&#x2F;</a>), an open-source visual editor to build agentic workflows. Repo here: <a href=\"https:&#x2F;&#x2F;github.com&#x2F;simstudioai&#x2F;sim&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;github.com&#x2F;simstudioai&#x2F;sim&#x2F;</a>. Docs here: <a href=\"https:&#x2F;&#x2F;docs.sim.ai\">https:&#x2F;&#x2F;docs.sim.ai</a>.<p>You can run Sim locally using Docker, with no execution limits or other restrictions.<p>We started building Sim almost a year ago after repeatedly troubleshooting why our agents failed in production. Code-first frameworks felt hard to debug because of implicit control flow, and workflow platforms added more overhead than they removed. We wanted granular control and easy observability without piecing everything together ourselves.<p>We launched Sim [1][2] as a drag-and-drop canvas around 6 months ago. Since then, we&#x27;ve added:<p>- 138 blocks: Slack, GitHub, Linear, Notion, Supabase, SSH, TTS, SFTP, MongoDB, S3, Pinecone, ...<p>- Tool calling with granular control: forced, auto<p>- Agent memory: conversation memory with sliding window support (by last n messages or tokens)<p>- Trace spans: detailed logging and observability for nested workflows and tool calling<p>- Native RAG: upload documents, we chunk, embed with pgvector, and expose vector search to agents<p>- Workflow deployment versioning with rollbacks<p>- MCP support, Human-in-the-loop block<p>- Copilot to build workflows using natural language (just shipped a new version that also acts as a superagent and can call into any of your connected services directly, not just build workflows)<p>Under the hood, the workflow is a DAG with concurrent execution by default. Nodes run as soon as their dependencies (upstream blocks) are satisfied. Loops (for, forEach, while, do-while) and parallel fan-out&#x2F;join are also first-class primitives.<p>Agent blocks are pass-through to the provider. You pick your model (OpenAI, Anthropic, Gemini, Ollama, vLLM), and and we pass through prompts, tools, and response format directly to the provider API. We normalize response shapes for block interoperability, but we&#x27;re not adding layers that obscure what&#x27;s happening.<p>We&#x27;re currently working on our own MCP server and the ability to deploy workflows as MCP servers. Would love to hear your thoughts and where we should take it next :)<p>[1] <a href=\"https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=43823096\">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=43823096</a><p>[2] <a href=\"https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=44052766\">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=44052766</a>",
+              "title": "Show HN: Sim – Apache-2.0 n8n alternative",
+              "updated_at": "2026-07-06T17:17:53Z",
+              "url": "https://github.com/simstudioai/sim"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "sacrosanct"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>n8n</em>.io - A powerful workflow automation tool"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>.io"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_sacrosanct",
+                "story_37274052"
+              ],
+              "author": "sacrosanct",
+              "children": [
+                37274764,
+                37274803,
+                37274905,
+                37274957,
+                37275328,
+                37275333,
+                37275480,
+                37275508,
+                37275646,
+                37275685,
+                37275772,
+                37275879,
+                37275939,
+                37277104,
+                37277442,
+                37278254,
+                37279329,
+                37279621,
+                37281983,
+                37283527
+              ],
+              "created_at": "2023-08-26T16:06:42Z",
+              "created_at_i": 1693066002,
+              "num_comments": 99,
+              "objectID": "37274052",
+              "points": 237,
+              "story_id": 37274052,
+              "title": "n8n.io - A powerful workflow automation tool",
+              "updated_at": "2026-02-26T09:24:18Z",
+              "url": "https://n8n.io"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "doppp"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> raises $180M"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://blog.<em>n8n</em>.io/series-c/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_doppp",
+                "story_45525336"
+              ],
+              "author": "doppp",
+              "children": [
+                45525949,
+                45525970,
+                45525980,
+                45526087,
+                45526095,
+                45526148,
+                45526150,
+                45526154,
+                45527347,
+                45528674,
+                45528807,
+                45528828,
+                45529153,
+                45529273,
+                45529467,
+                45529850,
+                45529902,
+                45530320,
+                45530465,
+                45530626,
+                45532350,
+                45536767
+              ],
+              "created_at": "2025-10-09T09:19:18Z",
+              "created_at_i": 1760001558,
+              "num_comments": 184,
+              "objectID": "45525336",
+              "points": 235,
+              "story_id": 45525336,
+              "title": "N8n raises $180M",
+              "updated_at": "2026-09-14T10:46:35Z",
+              "url": "https://blog.n8n.io/series-c/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "XCSme"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> – Flexible AI workflow automation for technical teams"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>.io/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_XCSme",
+                "story_43879282"
+              ],
+              "author": "XCSme",
+              "children": [
+                43879390,
+                43879409,
+                43879419,
+                43879425,
+                43879427,
+                43879428,
+                43879492,
+                43879515,
+                43879570,
+                43879602,
+                43879610,
+                43879627,
+                43879636,
+                43879740,
+                43880320,
+                43880396,
+                43880844,
+                43881081,
+                43881124,
+                43881164,
+                43881437,
+                43881561,
+                43883116,
+                43883286,
+                43883844,
+                43885233
+              ],
+              "created_at": "2025-05-03T14:31:52Z",
+              "created_at_i": 1746282712,
+              "num_comments": 99,
+              "objectID": "43879282",
+              "points": 195,
+              "story_id": 43879282,
+              "title": "N8n – Flexible AI workflow automation for technical teams",
+              "updated_at": "2026-09-11T19:04:45Z",
+              "url": "https://n8n.io/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "XCSme"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> added native persistent storage with DataTables"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://community.<em>n8n</em>.io/t/data-tables-are-here/192256"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_XCSme",
+                "story_45450044"
+              ],
+              "author": "XCSme",
+              "children": [
+                45451288,
+                45451334,
+                45451461,
+                45451497,
+                45451560,
+                45451677,
+                45451760,
+                45451858,
+                45451940,
+                45452007,
+                45452059,
+                45452814,
+                45453309,
+                45454334,
+                45454375,
+                45455572,
+                45457522,
+                45457571,
+                45457763,
+                45457862,
+                45462453,
+                45472518,
+                45559870
+              ],
+              "created_at": "2025-10-02T14:26:23Z",
+              "created_at_i": 1759415183,
+              "num_comments": 106,
+              "objectID": "45450044",
+              "points": 174,
+              "story_id": 45450044,
+              "title": "N8n added native persistent storage with DataTables",
+              "updated_at": "2026-03-05T22:48:42Z",
+              "url": "https://community.n8n.io/t/data-tables-are-here/192256"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "lebaux"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Fair-Code Automation with <em>n8n</em>.io"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://tech.davidfield.co.uk/opensourced-ifttt-with-<em>n8n</em>-io/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_lebaux",
+                "story_25632892"
+              ],
+              "author": "lebaux",
+              "children": [
+                25633393,
+                25633809,
+                25635474,
+                25635503,
+                25635655,
+                25635864,
+                25635994,
+                25636731,
+                25637912,
+                25638967,
+                25639119
+              ],
+              "created_at": "2021-01-04T15:54:25Z",
+              "created_at_i": 1609775665,
+              "num_comments": 38,
+              "objectID": "25632892",
+              "points": 132,
+              "story_id": 25632892,
+              "title": "Fair-Code Automation with n8n.io",
+              "updated_at": "2024-09-20T07:38:17Z",
+              "url": "https://tech.davidfield.co.uk/opensourced-ifttt-with-n8n-io/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "crazytest"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Effortless AI: No-Code Automation Using <em>N8n</em> Cloud and OpenAI Vision API"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>-automation.com/2024/01/11/open-ai-vision-api/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_crazytest",
+                "story_38956857"
+              ],
+              "author": "crazytest",
+              "children": [
+                38957648,
+                38957905,
+                38958356,
+                38958521,
+                38959873,
+                38960085
+              ],
+              "created_at": "2024-01-11T18:50:34Z",
+              "created_at_i": 1704999034,
+              "num_comments": 15,
+              "objectID": "38956857",
+              "points": 50,
+              "story_id": 38956857,
+              "title": "Effortless AI: No-Code Automation Using N8n Cloud and OpenAI Vision API",
+              "updated_at": "2024-12-23T22:00:47Z",
+              "url": "https://n8n-automation.com/2024/01/11/open-ai-vision-api/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "cweagans"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>n8n</em>-Oidc"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://cweagans.net/2025/12/announcing-<em>n8n</em>-oidc/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_cweagans",
+                "story_46425716"
+              ],
+              "author": "cweagans",
+              "children": [
+                46425721,
+                46507024,
+                46507102,
+                46507595,
+                46508291
+              ],
+              "created_at": "2025-12-29T21:08:41Z",
+              "created_at_i": 1767042521,
+              "num_comments": 11,
+              "objectID": "46425716",
+              "points": 47,
+              "story_id": 46425716,
+              "title": "n8n-Oidc",
+              "updated_at": "2026-03-05T23:15:29Z",
+              "url": "https://cweagans.net/2025/12/announcing-n8n-oidc/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "theyogadev"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Open-Source <em>n8n</em> Alternative for Workflow Building (GUI and Docker Included)"
+                },
+                "url": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "https://github.com/empowerd-cms/nyno"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_theyogadev",
+                "story_46079605"
+              ],
+              "author": "theyogadev",
+              "children": [
+                46079606,
+                46079960,
+                46080950,
+                46082932,
+                46083197,
+                46097147
+              ],
+              "created_at": "2025-11-28T15:44:04Z",
+              "created_at_i": 1764344644,
+              "num_comments": 11,
+              "objectID": "46079605",
+              "points": 41,
+              "story_id": 46079605,
+              "title": "Open-Source n8n Alternative for Workflow Building (GUI and Docker Included)",
+              "updated_at": "2026-03-05T23:09:39Z",
+              "url": "https://github.com/empowerd-cms/nyno"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "gabigrin"
+                },
+                "story_text": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Hi HN!<p>I'm excited to share Flyde 1.0. A big update to the open-source visual programming tool I launched here in March of last year (<a href=\"https://news.ycombinator.com/item?id=39628285\">https://news.ycombinator.com/item?id=39628285</a>).<p>Since Flyde’s launch, there's been a huge rise in demand for visual builders, especially for AI-heavy workflows. Visual-programming shines with async and concurrency-heavy logic, which describes most LLM chains perfectly.<p>A few months ago, I tried to capitalize on this trend by launching a commercial version of Flyde called Flowcode (<a href=\"https://news.ycombinator.com/item?id=43830193\">https://news.ycombinator.com/item?id=43830193</a>). It didn't go well. I learned the hard way that Flyde’s strength wasn't just about flexibility or performance compared to tools like <em>n8n</em>. \nThe real value was always how Flyde fits inside your <i>existing codebase</i>. The launch also helped me understand that there's still a big gap: no tool really covers the full lifecycle, from rapid prototyping to deep integration, evaluation, and iteration inside your own projects.<p>So, over the last few months, I worked hard to polish Flyde:\n- Cleaned up and simplified the nodes API\n- Made it possible to fork any node for maximum flexibility\n- Launched a new online playground for quick experimenting and sharing (<a href=\"https://www.flyde.dev/playground\" rel=\"nofollow\">https://www.flyde.dev/playground</a>)\n- Created a new CLI tool to speed up development and setup\n- Fixed a ton of bugs\n- Simplified the UI/UX to make it smoother and less confusing<p>There’s still a lot of missing stuff. Better templates, docs, and nodes, but I think it’s finally stable and useful enough to give it another shot.<p>My plan is to first make sure that Flyde is usable and valuable as an OS project, and then try to provide additional value via “Flyde Studio” - a SaaS that will help non-engineers iterate on Flyde flows from a web-app. Changes become a PR in the host repo.<p>I'd really love some honest feedback and hear whether Flyde resonates with an existing pain/problem.<p>Check it out here:\nPlayground: <a href=\"https://www.flyde.dev/playground\" rel=\"nofollow\">https://www.flyde.dev/playground</a><p>GitHub: <a href=\"https://github.com/flydelabs/flyde\">https://github.com/flydelabs/flyde</a><p>Looking forward to hearing your thoughts!\n- Gabriel"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Show HN: Flyde 1.0 – Like <em>n8n</em>, but in your codebase"
+                },
+                "url": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "https://github.com/flydelabs/flyde"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_gabigrin",
+                "story_44703298",
+                "show_hn"
+              ],
+              "author": "gabigrin",
+              "children": [
+                44706673,
+                44706686,
+                44706980,
+                44707188,
+                44719589
+              ],
+              "created_at": "2025-07-27T18:16:01Z",
+              "created_at_i": 1753640161,
+              "num_comments": 6,
+              "objectID": "44703298",
+              "points": 39,
+              "story_id": 44703298,
+              "story_text": "Hi HN!<p>I&#x27;m excited to share Flyde 1.0. A big update to the open-source visual programming tool I launched here in March of last year (<a href=\"https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=39628285\">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=39628285</a>).<p>Since Flyde’s launch, there&#x27;s been a huge rise in demand for visual builders, especially for AI-heavy workflows. Visual-programming shines with async and concurrency-heavy logic, which describes most LLM chains perfectly.<p>A few months ago, I tried to capitalize on this trend by launching a commercial version of Flyde called Flowcode (<a href=\"https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=43830193\">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=43830193</a>). It didn&#x27;t go well. I learned the hard way that Flyde’s strength wasn&#x27;t just about flexibility or performance compared to tools like n8n. \nThe real value was always how Flyde fits inside your <i>existing codebase</i>. The launch also helped me understand that there&#x27;s still a big gap: no tool really covers the full lifecycle, from rapid prototyping to deep integration, evaluation, and iteration inside your own projects.<p>So, over the last few months, I worked hard to polish Flyde:\n- Cleaned up and simplified the nodes API\n- Made it possible to fork any node for maximum flexibility\n- Launched a new online playground for quick experimenting and sharing (<a href=\"https:&#x2F;&#x2F;www.flyde.dev&#x2F;playground\" rel=\"nofollow\">https:&#x2F;&#x2F;www.flyde.dev&#x2F;playground</a>)\n- Created a new CLI tool to speed up development and setup\n- Fixed a ton of bugs\n- Simplified the UI&#x2F;UX to make it smoother and less confusing<p>There’s still a lot of missing stuff. Better templates, docs, and nodes, but I think it’s finally stable and useful enough to give it another shot.<p>My plan is to first make sure that Flyde is usable and valuable as an OS project, and then try to provide additional value via “Flyde Studio” - a SaaS that will help non-engineers iterate on Flyde flows from a web-app. Changes become a PR in the host repo.<p>I&#x27;d really love some honest feedback and hear whether Flyde resonates with an existing pain&#x2F;problem.<p>Check it out here:\nPlayground: <a href=\"https:&#x2F;&#x2F;www.flyde.dev&#x2F;playground\" rel=\"nofollow\">https:&#x2F;&#x2F;www.flyde.dev&#x2F;playground</a><p>GitHub: <a href=\"https:&#x2F;&#x2F;github.com&#x2F;flydelabs&#x2F;flyde\">https:&#x2F;&#x2F;github.com&#x2F;flydelabs&#x2F;flyde</a><p>Looking forward to hearing your thoughts!\n- Gabriel",
+              "title": "Show HN: Flyde 1.0 – Like n8n, but in your codebase",
+              "updated_at": "2025-08-03T21:31:57Z",
+              "url": "https://github.com/flydelabs/flyde"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "wilsonfiifi"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> is not open source and your project is gaslighting its users"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://github.com/<em>n8n</em>-io/<em>n8n</em>/issues/40"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_wilsonfiifi",
+                "story_32797853"
+              ],
+              "author": "wilsonfiifi",
+              "children": [
+                32798700,
+                32798735,
+                32798759,
+                32798971,
+                32799193
+              ],
+              "created_at": "2022-09-11T08:32:28Z",
+              "created_at_i": 1662885148,
+              "num_comments": 13,
+              "objectID": "32797853",
+              "points": 34,
+              "story_id": 32797853,
+              "title": "N8n is not open source and your project is gaslighting its users",
+              "updated_at": "2026-04-04T20:46:58Z",
+              "url": "https://github.com/n8n-io/n8n/issues/40"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "daniel-payne"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> vs. node-red"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://daniel-payne-keldan-systems.medium.com/<em>n8n</em>-vs-node-red-485e8382b971"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_daniel-payne",
+                "story_44592006"
+              ],
+              "author": "daniel-payne",
+              "children": [
+                44592224,
+                44592619,
+                44592881,
+                44592902,
+                44592940,
+                44592947,
+                44592980,
+                44593058,
+                44593092,
+                44593272,
+                44593289,
+                44593292,
+                44593622,
+                44595102,
+                44602158
+              ],
+              "created_at": "2025-07-17T11:19:53Z",
+              "created_at_i": 1752751193,
+              "num_comments": 68,
+              "objectID": "44592006",
+              "points": 33,
+              "story_id": 44592006,
+              "title": "N8n vs. node-red",
+              "updated_at": "2026-04-06T14:09:49Z",
+              "url": "https://daniel-payne-keldan-systems.medium.com/n8n-vs-node-red-485e8382b971"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "arcbjorn"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> vs. Windmill vs. Temporal"
+                },
+                "url": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "https://blog.arcbjorn.com/workflow-automation"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_arcbjorn",
+                "story_45534012"
+              ],
+              "author": "arcbjorn",
+              "children": [
+                45534779,
+                45534794,
+                45534873,
+                45534984,
+                45542636,
+                45547011
+              ],
+              "created_at": "2025-10-09T23:16:18Z",
+              "created_at_i": 1760051778,
+              "num_comments": 13,
+              "objectID": "45534012",
+              "points": 33,
+              "story_id": 45534012,
+              "title": "N8n vs. Windmill vs. Temporal",
+              "updated_at": "2026-03-05T22:49:12Z",
+              "url": "https://blog.arcbjorn.com/workflow-automation"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "memorable"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em>: Automate Without Limits"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>.io/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_memorable",
+                "story_31590197"
+              ],
+              "author": "memorable",
+              "children": [
+                31594490,
+                31604136
+              ],
+              "created_at": "2022-06-02T01:16:28Z",
+              "created_at_i": 1654132588,
+              "num_comments": 2,
+              "objectID": "31590197",
+              "points": 21,
+              "story_id": 31590197,
+              "title": "N8n: Automate Without Limits",
+              "updated_at": "2024-09-20T11:19:24Z",
+              "url": "https://n8n.io/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "bearsyankees"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "CVE-2026-59208: Cross-Issuer Account Takeover in <em>n8n</em>"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://www.strix.ai/blog/<em>n8n</em>-cross-issuer-account-takeover"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_bearsyankees",
+                "story_48921422"
+              ],
+              "author": "bearsyankees",
+              "children": [
+                48922612,
+                48924118,
+                48926811
+              ],
+              "created_at": "2026-07-15T14:30:07Z",
+              "created_at_i": 1784125807,
+              "num_comments": 10,
+              "objectID": "48921422",
+              "points": 20,
+              "story_id": 48921422,
+              "title": "CVE-2026-59208: Cross-Issuer Account Takeover in n8n",
+              "updated_at": "2026-07-18T12:19:31Z",
+              "url": "https://www.strix.ai/blog/n8n-cross-issuer-account-takeover"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "sirdavidoff"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "<em>N8n</em> raises $12m to build out fair-code workflow automation"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://<em>n8n</em>.io/blog/series-a-announcement/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_sirdavidoff",
+                "story_26945153"
+              ],
+              "author": "sirdavidoff",
+              "created_at": "2021-04-26T17:18:24Z",
+              "created_at_i": 1619457504,
+              "num_comments": 0,
+              "objectID": "26945153",
+              "points": 20,
+              "story_id": 26945153,
+              "title": "N8n raises $12m to build out fair-code workflow automation",
+              "updated_at": "2024-09-20T08:26:15Z",
+              "url": "https://n8n.io/blog/series-a-announcement/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "methreeves"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Show HN: Data Leak Prevention inside the <em>n8n</em> execution graph."
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://npmjs.com/package/<em>n8n</em>-nodes-privent"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_methreeves",
+                "story_48358251",
+                "show_hn"
+              ],
+              "author": "methreeves",
+              "children": [
+                48358252,
+                48358381
+              ],
+              "created_at": "2026-06-01T15:34:59Z",
+              "created_at_i": 1780328099,
+              "num_comments": 1,
+              "objectID": "48358251",
+              "points": 18,
+              "story_id": 48358251,
+              "title": "Show HN: Data Leak Prevention inside the n8n execution graph.",
+              "updated_at": "2026-06-01T22:44:37Z",
+              "url": "https://npmjs.com/package/n8n-nodes-privent"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "gkarthi2800"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Bringing Observability to Your <em>N8n</em> Workflows: OpenTelemetry in Action"
+                },
+                "url": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "https://signoz.io/blog/<em>n8n</em>-monitoring-with-opentelemetry/"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_gkarthi2800",
+                "story_47743174"
+              ],
+              "author": "gkarthi2800",
+              "children": [
+                47743427
+              ],
+              "created_at": "2026-04-12T19:04:03Z",
+              "created_at_i": 1776020643,
+              "num_comments": 2,
+              "objectID": "47743174",
+              "points": 17,
+              "story_id": 47743174,
+              "title": "Bringing Observability to Your N8n Workflows: OpenTelemetry in Action",
+              "updated_at": "2026-05-21T10:47:21Z",
+              "url": "https://signoz.io/blog/n8n-monitoring-with-opentelemetry/"
+            },
+            {
+              "_highlightResult": {
+                "author": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "sankalpdomore"
+                },
+                "story_text": {
+                  "matchLevel": "none",
+                  "matchedWords": [],
+                  "value": "Wonder what happened to all their hype and agentic connector workflow?<p>Did Claude/GPT ate that market for good?"
+                },
+                "title": {
+                  "fullyHighlighted": false,
+                  "matchLevel": "full",
+                  "matchedWords": [
+                    "n8n"
+                  ],
+                  "value": "Ask HN: Remember <em>N8n</em>? Anyone?"
+                }
+              },
+              "_tags": [
+                "story",
+                "author_sankalpdomore",
+                "story_49763466",
+                "ask_hn"
+              ],
+              "author": "sankalpdomore",
+              "children": [
+                49763744,
+                49763988,
+                49764075,
+                49764394,
+                49764442,
+                49770235,
+                49772411,
+                49773391,
+                49779798,
+                49794349
+              ],
+              "created_at": "2026-09-19T05:03:30Z",
+              "created_at_i": 1789794210,
+              "num_comments": 10,
+              "objectID": "49763466",
+              "points": 15,
+              "story_id": 49763466,
+              "story_text": "Wonder what happened to all their hype and agentic connector workflow?<p>Did Claude&#x2F;GPT ate that market for good?",
+              "title": "Ask HN: Remember N8n? Anyone?",
+              "updated_at": "2026-09-25T12:44:25Z"
+            }
+          ],
+          "hitsPerPage": 20,
+          "nbHits": 1317121,
+          "nbPages": 50,
+          "page": 0,
+          "params": "query=n8n&advancedSyntax=true&analyticsTags=backend",
+          "processingTimeMS": 33,
+          "processingTimingsMS": {
+            "_request": {
+              "queue": 1,
+              "roundTrip": 20
+            },
+            "fetch": {
+              "query": 1,
+              "scanning": 30,
+              "total": 32
+            },
+            "total": 33
+          },
+          "query": "n8n",
+          "serverTimeMS": 35
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e622329f-3096-4b22-b711-10bab8967c8c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "id": "WpXqYuBosiAk3znK",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
