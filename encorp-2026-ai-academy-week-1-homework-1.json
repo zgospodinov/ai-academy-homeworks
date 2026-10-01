@@ -1,0 +1,340 @@
+{
+  "name": "encorp-2026-ai-academy-week-1-homework-1",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -128
+      ],
+      "id": "2a90ced5-462c-4f24-9c07-7bc93ca92c6a",
+      "name": "start workflow"
+    },
+    {
+      "parameters": {
+        "cityName": "={{ $json.city }}",
+        "language": "en"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "e36bb217-897b-4597-a323-27f86743115a",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "jvy5OByYPwsc0wX9",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { city: \"Tokyo\", temperature: 12, population: 14000000, windspeed: 15.2, relative_humidity: 65 } },\n  { json: { city: \"New York\", temperature: 8, population: 8300000, windspeed: 18.5, relative_humidity: 70 } },\n  { json: { city: \"London\", temperature: 11, population: 9000000, windspeed: 12.0, relative_humidity: 80 } },\n  { json: { city: \"Reykjavik\", temperature: 4, population: 135000, windspeed: 25.4, relative_humidity: 88 } },\n  { json: { city: \"Paris\", temperature: 14, population: 2100000, windspeed: 10.1, relative_humidity: 75 } },\n  { json: { city: \"Cairo\", temperature: 28, population: 10000000, windspeed: 8.5, relative_humidity: 45 } },\n  { json: { city: \"Sydney\", temperature: 22, population: 5300000, windspeed: 14.0, relative_humidity: 60 } },\n  { json: { city: \"Oslo\", temperature: -2, population: 700000, windspeed: 9.3, relative_humidity: 82 } },\n  { json: { city: \"Zurich\", temperature: 9, population: 430000, windspeed: 7.2, relative_humidity: 78 } },\n  { json: { city: \"Bangkok\", temperature: 32, population: 10500000, windspeed: 6.0, relative_humidity: 70 } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        -304
+      ],
+      "id": "34d55028-01ff-4b89-9c4c-95259940d3ea",
+      "name": "seed data hardcoded with temperatures (AI generated)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0a0c5b3-411a-46f8-ba01-3c6de511a7f8",
+              "leftValue": "={{ $json.temperature }}",
+              "rightValue": 15,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        -304
+      ],
+      "id": "602b930b-4462-4afc-8470-997c3940bc2c",
+      "name": "get cities with temp < 15"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    \"city\": \"Tokyo\",\n    \"country\": \"Japan\",\n    \"population\": 37400068,\n    \"coordinates\": {\n      \"lat\": 35.6895,\n      \"lng\": 139.6917\n    }\n  },\n  {\n    \"city\": \"Cairo\",\n    \"country\": \"Egypt\",\n    \"population\": 10230350,\n    \"coordinates\": {\n      \"lat\": 30.0444,\n      \"lng\": 31.2357\n    }\n  },\n  {\n    \"city\": \"Ottawa\",\n    \"country\": \"Canada\",\n    \"population\": 1076000,\n    \"coordinates\": {\n      \"lat\": 45.4215,\n      \"lng\": -75.6972\n    }\n  },\n  {\n    \"city\": \"Canberra\",\n    \"country\": \"Australia\",\n    \"population\": 472000,\n    \"coordinates\": {\n      \"lat\": -35.2809,\n      \"lng\": 149.13\n    }\n  },\n  {\n    \"city\": \"Nairobi\",\n    \"country\": \"Kenya\",\n    \"population\": 5545000,\n    \"coordinates\": {\n      \"lat\": -1.2921,\n      \"lng\": 36.8219\n    }\n  },\n  {\n    \"city\": \"Buenos Aires\",\n    \"country\": \"Argentina\",\n    \"population\": 3075646,\n    \"coordinates\": {\n      \"lat\": -34.6037,\n      \"lng\": -58.3816\n    }\n  },\n  {\n    \"city\": \"Berlin\",\n    \"country\": \"Germany\",\n    \"population\": 3645000,\n    \"coordinates\": {\n      \"lat\": 52.52,\n      \"lng\": 13.405\n    }\n  },\n  {\n    \"city\": \"Pretoria\",\n    \"country\": \"South Africa\",\n    \"population\": 741651,\n    \"coordinates\": {\n      \"lat\": -25.7479,\n      \"lng\": 28.2293\n    }\n  },\n  {\n    \"city\": \"Cape Town\",\n    \"country\": \"South Africa\",\n    \"population\": 4337000,\n    \"coordinates\": {\n      \"lat\": -33.9249,\n      \"lng\": 18.4241\n    }\n  },\n  {\n    \"city\": \"Sofia\",\n    \"country\": \"Bulgaria\",\n    \"population\": 1241675,\n    \"coordinates\": {\n      \"lat\": 42.6977,\n      \"lng\": 23.3219\n    }\n  }\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        48
+      ],
+      "id": "14471d12-38d3-48ba-9ce5-bc77e393a3b5",
+      "name": "seed data from lesson 1"
+    },
+    {
+      "parameters": {
+        "content": "## Static weather forecast data Workflow",
+        "height": 256,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -368
+      ],
+      "id": "f8bf741c-a4aa-4899-b2ee-08200dfef2a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const population = 5000000;\nconst filteredCities = $input.all();\n\nconst processedData = filteredCities.map(item => {\n  const data = item.json;\n  \n  if (data.population > population) {\n    return {\n      city: data.city,\n      windspeed: data.windspeed\n    };\n  } else {\n    return {\n      city: data.city,\n      relative_humidity: data.relative_humidity\n    };\n  }\n});\n\n// Returns a single array item containing all processed city data\nreturn [\n  {\n    json: {\n      result_count: processedData.length,\n      cities: processedData\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -304
+      ],
+      "id": "3e4484df-0f67-4bd9-bbb7-ecaa3d91d399",
+      "name": "return humidity or windspeed based on city population"
+    },
+    {
+      "parameters": {
+        "keys": {
+          "key": [
+            {
+              "currentKey": "city",
+              "newKey": "name"
+            }
+          ]
+        },
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-base.renameKeys",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -16
+      ],
+      "id": "79f44648-9826-4217-a944-153f42ba1676",
+      "name": "Rename merge key"
+    },
+    {
+      "parameters": {
+        "jsCode": "const population = 5000000;\nconst filteredCities = $input.all();\n\nconst processedData = filteredCities.map(item => {\n  const data = item.json;\n  \n  if (data.population > population) {\n    return {\n      city: data.name,\n      windspeed: data.wind.speed\n    };\n  } else {\n    return {\n      city: data.name,\n      relative_humidity: data.main.humidity\n    };\n  }\n});\n\n// Returns a single array item containing all processed city data\nreturn {\n    json: {\n      cities: processedData\n    }\n  };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        48
+      ],
+      "id": "bb40b117-7e1d-4be7-9689-770512a2442a",
+      "name": "return humidity or windspeed based on city population2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0a0c5b3-411a-46f8-ba01-3c6de511a7f8",
+              "leftValue": "={{ $json.main.temp }}",
+              "rightValue": 15,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        48
+      ],
+      "id": "9b06524e-cba6-4594-a829-128cd2497fd6",
+      "name": "get cities with temp < "
+    },
+    {
+      "parameters": {
+        "content": "## Dynamic weather forecast data Workflow",
+        "height": 352,
+        "width": 1056
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -64
+      ],
+      "id": "733eee87-0c6b-4987-936b-fcdc06035143",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        32,
+        48
+      ],
+      "id": "b48035f6-ff9a-456c-b92b-54c84bfa9da1",
+      "name": "Merge by city name"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "start workflow": {
+      "main": [
+        [
+          {
+            "node": "seed data hardcoded with temperatures (AI generated)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "seed data from lesson 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "seed data hardcoded with temperatures (AI generated)": {
+      "main": [
+        [
+          {
+            "node": "get cities with temp < 15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get cities with temp < 15": {
+      "main": [
+        [
+          {
+            "node": "return humidity or windspeed based on city population",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "seed data from lesson 1": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Rename merge key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "Merge by city name",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rename merge key": {
+      "main": [
+        [
+          {
+            "node": "Merge by city name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get cities with temp < ": {
+      "main": [
+        [
+          {
+            "node": "return humidity or windspeed based on city population2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge by city name": {
+      "main": [
+        [
+          {
+            "node": "get cities with temp < ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1e6d45f4-7685-4661-a20c-48b7d5b0a9d0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "id": "2fjhyFZ7InOtz84l",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
