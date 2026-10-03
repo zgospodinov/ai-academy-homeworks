@@ -1,0 +1,420 @@
+{
+  "name": "encorp-2026-ai-academy-week-1-homework-7",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.theverge.com/rss/tech/index.xml"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        144
+      ],
+      "id": "de232e5c-37ad-4876-9fa4-25a7e7aaba69",
+      "name": "RSS Feed Trigger",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        176,
+        352
+      ],
+      "id": "b20cf18d-b038-4a23-93fe-742579ae9f03",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"score\": 3,\n    \"reason\": \"short justification\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        352
+      ],
+      "id": "a5835b57-8bfa-433a-9ac9-6558bce5ea8b",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Rate the importance of this tech news from 1 (trivial) to 10 (industry-changing).\n  Title: {{ $json.title }}\n  Summary: {{ $json.contentSnippet }}\n  Link: {{ $json.link }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a tech news editor. Judge impact on the industry, novelty and reach. Be strict: 8+ is rare.\n\nMark at least one above 7 while testing"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        144
+      ],
+      "id": "02831152-7fc3-405c-8a23-5e773537a74d",
+      "name": "AI Agent - tech news scorer"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f7c778be-e39c-4180-9afa-68007917b82b",
+              "leftValue": "={{ $json.output.score }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        144
+      ],
+      "id": "fc528724-d9d9-4fd1-8efe-170f4a25e604",
+      "name": "If score > 7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Verify this story using at least 2 independent sources other than The Verge by searching in the web. \n  Story: {{ $json.$input.item.item.json.title }}\n  Link: {{ $json.$input.item.json.link }}\n  Summary: {{ $json.$input.item.json.contentSnippet }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        720,
+        128
+      ],
+      "id": "7f97207f-d407-46b4-b617-f26f23d3c923",
+      "name": "AI Agent - Article verifier"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "  {\n    \"verified\": true,\n    \"sources\": [\n      { \n        \"name\": \"TechCrunch\",\n        \"url\": \"https://...\", \"keyFacts\": \"...\" \n      },\n      { \n        \"name\": \"Ars Technica\",\n        \"url\": \"https://...\", \"keyFacts\": \"...\" \n      }\n    ]\n  }"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        896,
+        336
+      ],
+      "id": "7097ca00-9099-482d-8260-17a64ffff5ee",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        720,
+        336
+      ],
+      "id": "962ebb23-ceb3-463e-b93a-d88dbd577d15",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search?engine=google",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "serpApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('RSS Feed Trigger').item.json.title }}"
+            },
+            {
+              "name": "location",
+              "value": "Germany"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        816,
+        496
+      ],
+      "id": "eb6e4e73-dce7-4239-9a43-61b8cb6af36d",
+      "name": "HTTP Request",
+      "credentials": {
+        "serpApi": {
+          "id": "oMBk0YjhyeErb2KM",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        352
+      ],
+      "id": "569477cf-bf97-4edf-849b-36a6e6a1b10d",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n  \"subject\": \"...\",\n  \"bodyHtml\": \"...\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        336
+      ],
+      "id": "3965845c-ae3b-4538-b5af-e0df46e5b4f9",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=  Write a news article (about 400 words) with a headline, based ONLY on the facts below.\n  Output HTML.\n  Original: {{ $('RSS Feed Trigger').item.json.title }} - {{ $('RSS Feed Trigger').item.json.link }}\n  Verification: {{ JSON.stringify($json.output) }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1040,
+        128
+      ],
+      "id": "d2a128b0-b13c-4dbc-aa53-c8371b03efb3",
+      "name": "AI Agent - email content writer"
+    },
+    {
+      "parameters": {
+        "sendTo": "zdravko.gospodinov@gmail.com",
+        "subject": "={{ $json.output.subject }}",
+        "message": "={{ $json.output.bodyHtml }}\n\n<b>Tech news was verified as</b>: {{ $('AI Agent - Article verifier').item.json.output.verified }}\n\n</br></br>\n<b>Reason</b>:\n\n{{ $('AI Agent - Article verifier').item.json.output.sources[0].keyFacts }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        128
+      ],
+      "id": "d6941353-ed70-4fd9-91d1-923849440141",
+      "name": "Send a message",
+      "webhookId": "be47bdd0-97cc-4e86-89c3-24be98c14ad0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UvzcMA4I1VPbqMxI",
+          "name": "Gmail account zdravko.gospodinov"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - tech news scorer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - tech news scorer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - tech news scorer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - tech news scorer": {
+      "main": [
+        [
+          {
+            "node": "If score > 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If score > 7": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Article verifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - Article verifier",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Article verifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent - Article verifier",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Article verifier": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - email content writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - email content writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - email content writer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - email content writer": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c360af10-2b1b-4e73-a288-f3d5dd12bb9d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "nodeGroups": [],
+  "id": "Dxrk5q4fr5zcxukg",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
