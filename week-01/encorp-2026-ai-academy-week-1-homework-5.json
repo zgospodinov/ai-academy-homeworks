@@ -1,0 +1,690 @@
+{
+  "name": "Flow B - Form submission with IP geolocation",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "user-form",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        16
+      ],
+      "id": "d32abeb2-aca1-4bba-ab86-b0a9fb238e79",
+      "name": "Webhook",
+      "webhookId": "0c0b1558-26e7-400c-8d19-e87b73a44771"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>Registration</title>\n<style>\n  body{font-family:sans-serif;max-width:420px;margin:40px auto}\n  label{display:block;margin-top:12px} input,select,button{width:100%;padding:8px;margin-top:4px}\n</style></head>\n<body>\n<h2>Registration</h2>\n<form method=\"POST\" action=\"\">\n  <label>Name <input name=\"name\" required></label>\n  <label>Gender\n    <select name=\"gender\" required>\n      <option>Male</option><option>Female</option>\n      <option>Other</option><option>Prefer not to say</option>\n    </select>\n  </label>\n  <label>Age <input name=\"age\" type=\"number\" min=\"1\" max=\"120\" required></label>\n  <label>Country of residence\n    <select name=\"country\" required>\n      <option>Bulgaria</option><option>Germany</option><option>France</option>\n      <option>United Kingdom</option><option>United States</option>\n      <!-- add more; spelling must match ipwho.is country names -->\n    </select>\n  </label>\n  <input type=\"hidden\" name=\"clientIp\" id=\"clientIp\">\n  <button type=\"submit\">Submit</button>\n</form>\n<script>\n  // Fallback for localhost, where the server can't see your public IP\n  fetch('https://api.ipify.org?format=json')\n    .then(r => r.json()).then(d => document.getElementById('clientIp').value = d.ip)\n    .catch(() => {});\n</script>\n</body></html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -256,
+        16
+      ],
+      "id": "dcc3422d-5910-4496-b12a-c8bb6732d1d8",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Flow B: process the submission\n\nReceives the POST from the HTML form (Flow A serves the form on the same path with a GET webhook).\n",
+        "height": 200,
+        "width": 460
+      },
+      "id": "3dbf9b02-22ed-46a9-b728-bd1ea852287c",
+      "name": "Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "user-form",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8ac80b7b-c042-4c3e-bd02-12e3ca560400",
+      "name": "Webhook (POST)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        320
+      ],
+      "webhookId": "7c1f0a52-3d4e-4b6a-9a10-5e2f8b9c0d11"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a-ip",
+              "name": "ip",
+              "value": "={{ (($json.headers?.['x-forwarded-for'] || $json.headers?.['x-real-ip'] || '').split(',')[0].trim()) || $json.body?.clientIp || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a-name",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "a-gender",
+              "name": "gender",
+              "value": "={{ $json.body.gender }}",
+              "type": "string"
+            },
+            {
+              "id": "a-age",
+              "name": "age",
+              "value": "={{ Number($json.body.age) }}",
+              "type": "number"
+            },
+            {
+              "id": "a-country",
+              "name": "residenceCountry",
+              "value": "={{ $json.body.country }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "654f3185-0e10-48da-bbec-9bc0171d3fb0",
+      "name": "Edit Fields (IP)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://ipwho.is/' + (/^(10\\.|192\\.168\\.|172\\.(1[6-9]|2\\d|3[01])\\.|127\\.|::1|::ffff:127\\.)/.test($json.ip) ? '' : $json.ip) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "db0f6f4b-ab7d-4d67-a74d-f7331a2775e6",
+      "name": "HTTP Request (ipwho.is)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "71a009fc-3cb1-43e1-9753-4a7d2892b7f0",
+      "name": "IF lookup ok",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f-status",
+              "name": "status",
+              "value": "lookup failed",
+              "type": "string"
+            },
+            {
+              "id": "f-error",
+              "name": "error",
+              "value": "={{ $json.message || 'ipwho.is lookup failed' }}",
+              "type": "string"
+            },
+            {
+              "id": "f-ip",
+              "name": "ip",
+              "value": "={{ $('Edit Fields (IP)').first().json.ip }}",
+              "type": "string"
+            },
+            {
+              "id": "f-name",
+              "name": "name",
+              "value": "={{ $('Edit Fields (IP)').first().json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "00a461d7-4e56-4896-af49-f5bae56c0545",
+      "name": "Log lookup failure",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "n-name",
+              "name": "name",
+              "value": "={{ $('Edit Fields (IP)').first().json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "n-gender",
+              "name": "gender",
+              "value": "={{ $('Edit Fields (IP)').first().json.gender }}",
+              "type": "string"
+            },
+            {
+              "id": "n-age",
+              "name": "age",
+              "value": "={{ $('Edit Fields (IP)').first().json.age }}",
+              "type": "number"
+            },
+            {
+              "id": "n-residence",
+              "name": "residenceCountry",
+              "value": "={{ $('Edit Fields (IP)').first().json.residenceCountry }}",
+              "type": "string"
+            },
+            {
+              "id": "n-ip",
+              "name": "ip",
+              "value": "={{ $json.ip }}",
+              "type": "string"
+            },
+            {
+              "id": "n-city",
+              "name": "ipCity",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "n-ipcountry",
+              "name": "ipCountry",
+              "value": "={{ $json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "n-isp",
+              "name": "isp",
+              "value": "={{ $json.connection?.isp || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "n-iseu",
+              "name": "isEu",
+              "value": "={{ $json.is_eu === true }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n-mismatch",
+              "name": "countryMismatch",
+              "value": "={{ String($json.country).trim().toLowerCase() !== String($('Edit Fields (IP)').first().json.residenceCountry).trim().toLowerCase() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n-submitted",
+              "name": "submittedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "de262b83-8475-4aa0-8cc6-da162e68b2a3",
+      "name": "Edit Fields (normalize)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "40d19be5-08ef-436e-850a-522352199f4d",
+      "name": "Log submission",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-iseu",
+              "leftValue": "={{ $json.isEu }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7632c006-5807-4d87-86c0-a3a7a005b475",
+      "name": "IF is_eu",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eu-region",
+              "name": "region",
+              "value": "EU",
+              "type": "string"
+            },
+            {
+              "id": "eu-notice",
+              "name": "notice",
+              "value": "GDPR notice shown",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "5b87d473-fb97-4f49-8ea5-f124605afbe2",
+      "name": "EU branch",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "non-region",
+              "name": "region",
+              "value": "Non-EU",
+              "type": "string"
+            },
+            {
+              "id": "non-notice",
+              "name": "notice",
+              "value": "Standard processing",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "8091017b-054b-4c2a-9fcc-017aea82d9de",
+      "name": "Non-EU branch",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-mismatch",
+              "leftValue": "={{ $json.countryMismatch }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eaac0c6d-3f33-4c86-9f12-e344c66b984d",
+      "name": "IF mismatch",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m-alert",
+              "name": "alertMessage",
+              "value": "={{ 'Residence ' + $json.residenceCountry + ' differs from IP country ' + $json.ipCountry + ' (user: ' + $json.name + ', IP: ' + $json.ip + ')' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a0a2a922-e482-47aa-b7a1-04240cdfb014",
+      "name": "Flag + notify",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2192,
+        208
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "676a3c75-e70c-41ce-929f-5441fb7e9840",
+      "name": "No action",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!doctype html><html><head><meta charset=\"utf-8\"><title>Thanks</title></head><body style=\"font-family:sans-serif;max-width:420px;margin:40px auto\"><h3>Thanks, your submission was received.</h3></body></html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c427790d-4a5e-40da-b923-f180c8c6267c",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Flow A: Serve the web form\n\nWorkaround for this task given n8n is hosted on local machine",
+        "height": 296,
+        "width": 476
+      },
+      "id": "48d5255c-6c20-45ac-a4c8-dc8c3efe19be",
+      "name": "Notes1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -80
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (POST)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields (IP)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (ipwho.is)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (ipwho.is)": {
+      "main": [
+        [
+          {
+            "node": "IF lookup ok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF lookup ok": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields (normalize)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log lookup failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields (normalize)": {
+      "main": [
+        [
+          {
+            "node": "Log submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log submission": {
+      "main": [
+        [
+          {
+            "node": "IF is_eu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF is_eu": {
+      "main": [
+        [
+          {
+            "node": "EU branch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Non-EU branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EU branch": {
+      "main": [
+        [
+          {
+            "node": "IF mismatch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Non-EU branch": {
+      "main": [
+        [
+          {
+            "node": "IF mismatch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF mismatch": {
+      "main": [
+        [
+          {
+            "node": "Flag + notify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields (IP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "89f3df25-3882-466c-b64e-d5dc5961dcc7",
+  "meta": {
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "nodeGroups": [],
+  "id": "0ObTEQhlsmMCfiJO",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
