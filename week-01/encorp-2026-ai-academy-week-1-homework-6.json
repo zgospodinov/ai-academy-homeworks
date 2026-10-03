@@ -1,0 +1,441 @@
+{
+  "name": "encorp-2026-ai-academy-week-1-homework-6",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d6aa94d4-0776-4055-8f99-ae914a55be5a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        224
+      ],
+      "id": "6b74c19d-7fa1-45eb-8343-93060f46c8a5",
+      "name": "Every morning at 6 am"
+    },
+    {
+      "parameters": {
+        "resource": "repository",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/n8n-io/n8n/issues",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "https://github.com/n8n-io/n8n/issues",
+          "mode": "url"
+        },
+        "limit": 30,
+        "getRepositoryIssuesFilters": {
+          "state": "open",
+          "sort": "created"
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        96
+      ],
+      "id": "6d3e6c93-71e9-4980-af1c-2d1a979e2130",
+      "name": "Get issues of a repository",
+      "webhookId": "45d0cee1-e491-4853-830c-3bd88b71178b",
+      "credentials": {
+        "githubApi": {
+          "id": "VDWOmg9cwTiHjqqf",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "683b60e0-d0ac-4067-9589-8d7cfbdd5de8",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "5acfcde9-6535-465b-941b-2a0386782ed2",
+              "name": "number",
+              "value": "={{ $json.number }}",
+              "type": "number"
+            },
+            {
+              "id": "59f00378-1b46-40f4-af66-0cd5876ca110",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b5b4cef4-2f2c-452a-bcf9-d2976fcbca93",
+              "name": "body",
+              "value": "={{ $json.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        400,
+        96
+      ],
+      "id": "405aaa46-b0ee-4b94-a5d7-b293f29d45a5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n    \"issueUrl\": \"https://something.com\",\n\t\"issueTitle\": \"California\",\n\t\"issueSummary\": [\"bullet summary 1\", \"bullet summary 2\"],\n    \"isSecurity\": \"true\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        304
+      ],
+      "id": "a80aeb0e-64bd-4a69-b43d-83fa03c4d734",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        576,
+        304
+      ],
+      "id": "587f6ddd-5009-4c36-ba42-163336f9b843",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zdravko.gospodinov@gmail.com",
+        "subject": "Daily Digest of n8n Issues",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        96
+      ],
+      "id": "cf914014-0925-460c-8543-2cb8c056453f",
+      "name": "Send a message",
+      "webhookId": "edbed8a7-1938-4923-b3cd-80833bbb4fe1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UvzcMA4I1VPbqMxI",
+          "name": "Gmail account zdravko.gospodinov"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Make summary of the issue that is provided:\n<issue-url>{{$json.url}}</issue-url>\n<issue-title>{{$json.title}}</issue-title>\n<issue-body>{{$json.body}}</issue-body>",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a helpful assistant. You are an assistant analyzing GitHub issues for the n8n repository.\n\nUrl of the issue can be found at: <issue-url></issue-url>\nTitle of the issue can be found at: <issue-title></issue-title>\nBody/Descriptio of the issue can be found at: <issue-body></issue-body>\n\nTasks:\n1. Provide a concise 1-2 bullet point summary of the issue.\n2. Categorize whether the issue is concerns security and if it mark it as security: true in the structured response\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        96
+      ],
+      "id": "4877c307-50eb-4a9a-acae-06685e11c39e",
+      "name": "AI Agent - Summarize issues"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        304
+      ],
+      "id": "2be16c7d-fc98-4423-9aaf-c1be84bca670",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "8aLmu7h04BYWmFE6",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the issue digest: {{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant. You are an assistant that takes an array of summarized github issues and outputs/returns content (html) that can be used as an Email body.\nUse the issue's url links so that the ussue title when being clicked to open the link of the issue\n\nThe html template can be found at <email-html-template>:\n\nOutput Format Instructions:\n1. Return ONLY pure HTML with INLINED CSS styles on every element (no external <style> tags or CSS classes).\n2. For every security-related issue (`is_security == true`), render the card container with a red left border:\n   `border-left: 4px solid #f85149;`\n   and include the badge:\n   `<td style=\"background-color: rgba(248, 81, 73, 0.15); border: 1px solid rgba(248, 81, 73, 0.4); border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #ff7b72; text-transform: uppercase;\">🚨 Security</td>`\n3. Wrap each issue in an individual `<tr><td>...</td></tr>` block with 12px vertical spacing.\n4. Render 1–2 bullet points for each issue using `<ul style=\"...\">` and `<li style=\"...\">`.\n\n<email-html-template>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>GitHub Daily Issues Digest</title>\n</head>\n<body style=\"margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;\">\n\n  <!-- Outer Container Table -->\n  <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color: #0d1117; table-layout: fixed;\">\n    <tr>\n      <td align=\"center\" style=\"padding: 24px 12px;\">\n        \n        <!-- Main Content Wrapper (600px max width) -->\n        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width: 600px; width: 100%;\">\n          \n          <!-- Header Card -->\n          <tr>\n            <td style=\"background-color: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 24px; text-align: left;\">\n              <h1 style=\"margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1.3;\">\n                🐙 GitHub Issues Digest\n              </h1>\n              <p style=\"margin: 0 0 16px 0; font-size: 14px; color: #8b949e; line-height: 1.4;\">\n                Daily automated summary for repository <strong>n8n-io/n8n</strong>\n              </p>\n              \n              <!-- Badges Table -->\n              <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr>\n                  <td style=\"background-color: #21262d; border: 1px solid #30363d; border-radius: 16px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #58a6ff; white-space: nowrap;\">\n                    📅 {{ DATE }}\n                  </td>\n                  <td width=\"8\"></td>\n                  <td style=\"background-color: #21262d; border: 1px solid #30363d; border-radius: 16px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #58a6ff; white-space: nowrap;\">\n                    📌 {{ TOTAL_ISSUES }} New Issues\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- Spacer -->\n          <tr><td height=\"16\" style=\"font-size: 16px; line-height: 16px;\">&nbsp;</td></tr>\n\n          <!-- ==================== LOOP ITEM START ==================== -->\n          \n          <!-- SECURITY ISSUE ITEM -->\n          <tr>\n            <td style=\"background-color: #161b22; border-top: 1px solid #30363d; border-right: 1px solid #30363d; border-bottom: 1px solid #30363d; border-left: 4px solid #f85149; border-radius: 8px; padding: 20px;\">\n              <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n                <tr>\n                  <td>\n                    <!-- Issue Title & Link -->\n                    <a href=\"{{ ISSUE_URL }}\" target=\"_blank\" style=\"font-size: 16px; font-weight: 600; color: #58a6ff; text-decoration: none; line-height: 1.4; display: inline-block;\">\n                      {{ ISSUE_TITLE }}\n                    </a>\n                    <span style=\"font-size: 14px; color: #8b949e; font-weight: 400;\">#{{ ISSUE_NUMBER }}</span>\n                  </td>\n                </tr>\n                <tr>\n                  <td style=\"padding-top: 6px; padding-bottom: 12px;\">\n                    <!-- Tag Badges -->\n                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n                      <tr>\n                        <td style=\"background-color: rgba(248, 81, 73, 0.15); border: 1px solid rgba(248, 81, 73, 0.4); border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #ff7b72; text-transform: uppercase;\">\n                          🚨 Security\n                        </td>\n                        <td width=\"6\"></td>\n                        <td style=\"background-color: #21262d; border: 1px solid #30363d; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #8b949e;\">\n                          Auth\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n                <tr>\n                  <td>\n                    <!-- Bullet Points -->\n                    <ul style=\"margin: 0; padding-left: 18px; color: #c9d1d9; font-size: 14px; line-height: 1.5;\">\n                      <li style=\"margin-bottom: 4px;\">{{ BULLET_POINT_1 }}</li>\n                      <li style=\"margin-bottom: 0;\">{{ BULLET_POINT_2 }}</li>\n                    </ul>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- Spacer between issues -->\n          <tr><td height=\"12\" style=\"font-size: 12px; line-height: 12px;\">&nbsp;</td></tr>\n\n          <!-- STANDARD ISSUE ITEM -->\n          <tr>\n            <td style=\"background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px;\">\n              <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n                <tr>\n                  <td>\n                    <a href=\"{{ ISSUE_URL }}\" target=\"_blank\" style=\"font-size: 16px; font-weight: 600; color: #58a6ff; text-decoration: none; line-height: 1.4; display: inline-block;\">\n                      {{ ISSUE_TITLE }}\n                    </a>\n                    <span style=\"font-size: 14px; color: #8b949e; font-weight: 400;\">#{{ ISSUE_NUMBER }}</span>\n                  </td>\n                </tr>\n                <tr>\n                  <td style=\"padding-top: 6px; padding-bottom: 12px;\">\n                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n                      <tr>\n                        <td style=\"background-color: #21262d; border: 1px solid #30363d; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #8b949e;\">\n                          Bug\n                        </td>\n                        <td width=\"6\"></td>\n                        <td style=\"background-color: #21262d; border: 1px solid #30363d; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #8b949e;\">\n                          Node: Postgres\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n                <tr>\n                  <td>\n                    <ul style=\"margin: 0; padding-left: 18px; color: #c9d1d9; font-size: 14px; line-height: 1.5;\">\n                      <li style=\"margin-bottom: 4px;\">{{ BULLET_POINT_1 }}</li>\n                      <li style=\"margin-bottom: 0;\">{{ BULLET_POINT_2 }}</li>\n                    </ul>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- ==================== LOOP ITEM END ==================== -->\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"padding-top: 28px; text-align: center; border-top: 1px solid #21262d; margin-top: 24px;\">\n              <p style=\"margin: 0; font-size: 12px; color: #484f58; line-height: 1.5;\">\n                Generated automatically via n8n AI Workflow | \n                <a href=\"https://github.com/n8n-io/n8n/issues\" target=\"_blank\" style=\"color: #58a6ff; text-decoration: none;\">View repository issues</a>\n              </p>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n\n</body>\n</html>\n</email-html-template>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1056,
+        96
+      ],
+      "id": "eb478ca1-9bfe-4a11-a121-ad52d026bbad",
+      "name": "AI Agent - Email message composer"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.all()\n  .map(({ json }) => {\n    const { issueUrl, issueTitle, issueSummary } = json.output;\n    return `## ${issueTitle} - ${issueUrl}\\n` + issueSummary.map(s => `- ${s}`).join('\\n');\n  })\n  .join('\\n\\n');\n\nreturn [{ json: { text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        96
+      ],
+      "id": "ed12ef90-e071-4606-89e3-580bcf8ebadf",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "sendRichMessage",
+        "chatId": "-5531928417",
+        "richFormat": "markdown",
+        "richMessageText": "=## Security Alert\n### {{ $json.output.issueTitle }}\n{{ $json.output.issueUrl }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        -192
+      ],
+      "id": "54851fb4-d2e7-4577-a513-8e1d7dcc1557",
+      "name": "Send a rich message",
+      "webhookId": "4c0c7d83-390c-493d-af8a-8abc71462265",
+      "credentials": {
+        "telegramApi": {
+          "id": "OLWNPTl0xDvqo4ek",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a12a5f00-2111-49b2-bdf8-affbb38322d3",
+              "leftValue": "={{ $json.output.isSecurity }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        -96
+      ],
+      "id": "2d23036b-802e-47ec-866e-352719b1af00",
+      "name": "If security issue detected"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every morning at 6 am": {
+      "main": [
+        [
+          {
+            "node": "Get issues of a repository",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get issues of a repository",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get issues of a repository": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Summarize issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - Summarize issues",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Summarize issues",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Summarize issues": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If security issue detected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Email message composer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Email message composer": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Email message composer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If security issue detected": {
+      "main": [
+        [
+          {
+            "node": "Send a rich message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "805b5085-94dc-420e-bc27-a33d8665e6ca",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "36e722f8793a4050d4b8199cbd62ed90f1fa8413e335d99233fb88547ebe1721"
+  },
+  "nodeGroups": [],
+  "id": "KhW6X9Sh2rph4Q0P",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
