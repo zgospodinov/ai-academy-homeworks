@@ -1,0 +1,7 @@
+# Changelog
+
+## 2026-10-06 - миграция към новата структура
+- Промяна: домашни 01-07 от `week-01/` преместени в `n8n-workflows/NN-slug.json` и `homeworks/NN-slug/` (с `git mv`, историята е запазена); добавени README, CHANGELOG, DECISIONS, `knowledge/node-versions.md`, `tools/validate_workflow.py`.
+- Причина: единна структура, описана в skill-а `n8n-academy-homeworks`.
+- Санитизиране: заменени имейли с `you@example.com` и махнати лични имена от имената на credentials (домашни 02, 04, 06, 07). Credential `id` и `instanceId` са оставени (не са тайни).
+- Бележка: git историята преди миграцията съдържа неочистените версии.
