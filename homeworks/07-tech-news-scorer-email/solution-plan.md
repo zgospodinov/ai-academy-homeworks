@@ -1,6 +1,6 @@
 # 07-tech-news-scorer-email - Оценка и верификация на tech новини
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/07-tech-news-scorer-email.json` (n8n 2.41.6)
 

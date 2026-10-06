@@ -1,6 +1,6 @@
 # 01-weather-data-filter-merge - Прогноза за времето: филтриране и обединяване
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/01-weather-data-filter-merge.json` (n8n 2.41.6)
 

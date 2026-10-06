@@ -1,6 +1,6 @@
 # 03-hn-n8n-telegram-digest - Hacker News дайджест в Telegram
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/03-hn-n8n-telegram-digest.json` (n8n 2.41.6)
 

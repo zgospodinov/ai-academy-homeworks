@@ -1,6 +1,6 @@
 # 05-form-ip-geolocation - Форма с IP геолокация
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/05-form-ip-geolocation.json` (n8n 2.41.6)
 

@@ -1,6 +1,6 @@
 # 02-cat-fact-daily-email - Ежедневен факт за котки по имейл (AI)
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/02-cat-fact-daily-email.json` (n8n 2.41.6)
 

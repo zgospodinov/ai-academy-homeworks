@@ -1,6 +1,6 @@
 # 04-service-uptime-monitor - Мониторинг на достъпност на услуги
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/04-service-uptime-monitor.json` (n8n 2.41.6)
 

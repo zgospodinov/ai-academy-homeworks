@@ -1,6 +1,6 @@
 # 06-github-issues-summary - Резюме на GitHub issues с AI
 
-- Статус: `json-delivered`
+- Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/06-github-issues-summary.json` (n8n 2.41.6)
 
