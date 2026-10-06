@@ -141,7 +141,7 @@
     },
     {
       "parameters": {
-        "sendTo": "zdravko.gospodinov@gmail.com",
+        "sendTo": "you@example.com",
         "subject": "Daily Digest of n8n Issues",
         "message": "={{ $json.output }}",
         "options": {}
@@ -158,7 +158,7 @@
       "credentials": {
         "gmailOAuth2": {
           "id": "UvzcMA4I1VPbqMxI",
-          "name": "Gmail account zdravko.gospodinov"
+          "name": "Gmail account"
         }
       }
     },
