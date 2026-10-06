@@ -85,7 +85,7 @@
     },
     {
       "parameters": {
-        "sendTo": "zdravko.gospodinov@gmail.com",
+        "sendTo": "you@example.com",
         "subject": "Дневен интересен факт за котките",
         "message": "=Интересен котекшки факт {{ $now.format('yyyy-MM-dd') }}\n\n{{ $json.output }}",
         "options": {}
@@ -102,7 +102,7 @@
       "credentials": {
         "gmailOAuth2": {
           "id": "UvzcMA4I1VPbqMxI",
-          "name": "Gmail account zdravko.gospodinov"
+          "name": "Gmail account"
         }
       }
     }
