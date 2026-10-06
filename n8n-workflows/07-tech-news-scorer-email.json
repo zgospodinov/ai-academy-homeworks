@@ -240,7 +240,7 @@
     },
     {
       "parameters": {
-        "sendTo": "zdravko.gospodinov@gmail.com",
+        "sendTo": "you@example.com",
         "subject": "={{ $json.output.subject }}",
         "message": "={{ $json.output.bodyHtml }}\n\n<b>Tech news was verified as</b>: {{ $('AI Agent - Article verifier').item.json.output.verified }}\n\n</br></br>\n<b>Reason</b>:\n\n{{ $('AI Agent - Article verifier').item.json.output.sources[0].keyFacts }}",
         "options": {}
@@ -257,7 +257,7 @@
       "credentials": {
         "gmailOAuth2": {
           "id": "UvzcMA4I1VPbqMxI",
-          "name": "Gmail account zdravko.gospodinov"
+          "name": "Gmail account"
         }
       }
     }
