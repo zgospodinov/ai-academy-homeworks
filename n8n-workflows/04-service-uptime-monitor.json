@@ -68,7 +68,7 @@
     },
     {
       "parameters": {
-        "sendTo": "zdravko.gospodinov@gmail.com",
+        "sendTo": "you@example.com",
         "subject": "=[Alert] Service Downtime Detected: {{ $('Seed list of services to monitor').item.json.title }}",
         "message": "=Service \"{{ $('Seed list of services to monitor').item.json.title }}\" returned status code {{ $json.statusCode }} instead of 200.",
         "options": {}
@@ -85,7 +85,7 @@
       "credentials": {
         "gmailOAuth2": {
           "id": "UvzcMA4I1VPbqMxI",
-          "name": "Gmail account zdravko.gospodinov"
+          "name": "Gmail account"
         }
       }
     },
