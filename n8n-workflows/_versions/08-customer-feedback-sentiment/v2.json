@@ -1,0 +1,378 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 01 | Customer Feedback Sentiment",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        96,
+        304
+      ],
+      "id": "623f0fcc-2505-47a2-8b5a-33cf21739882",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// R1: sample customer feedback. Each item = one feedback text.\nconst feedbacks = [\n  { id: 'fb-001', customer: 'Anna',   feedback: 'Absolutely love the new dashboard! Setup took five minutes and everything just works.' },\n  { id: 'fb-002', customer: 'Boris',  feedback: 'The package arrived on time. It contains what I ordered.' },\n  { id: 'fb-003', customer: 'Clara',  feedback: 'THIS IS UNACCEPTABLE. Third time my order arrives broken and nobody answers my emails. I want a full refund NOW!' },\n  { id: 'fb-004', customer: 'Daniel', feedback: 'Delivery was slower than promised and the packaging was a bit damaged.' },\n  { id: 'fb-005', customer: 'Elena',  feedback: 'Support was fantastic, they solved my problem in minutes. Thank you!' },\n  { id: 'fb-006', customer: 'Filip',  feedback: 'I was charged twice and support keeps ignoring me. Worst experience ever, I am cancelling my subscription.' },\n  { id: 'fb-007', customer: 'Gergana', feedback: 'The app works. Nothing special, nothing broken.' },\n  { id: 'fb-008', customer: 'Hristo', feedback: 'Great quality for the price, will definitely order again.' },\n  { id: 'fb-009', customer: 'Ivan',   feedback: '   ' }  // edge case: empty text, dropped by the guard below\n];\n\n// Guard: Sentiment Analysis fails on empty text, so drop empty feedbacks.\nreturn feedbacks\n  .filter(f => f.feedback && f.feedback.trim() !== '')\n  .map(f => ({ json: f }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        304
+      ],
+      "id": "915e05b0-d6b2-4fc8-a6ed-fbf6326b9965",
+      "name": "Customer Feedback Samples"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.feedback }}",
+        "options": {
+          "categories": "Positive, Neutral, Negative",
+          "includeDetailedResults": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        288
+      ],
+      "id": "7da29b7b-ed38-4906-9451-a620e22ea191",
+      "name": "Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        464,
+        496
+      ],
+      "id": "3f7485cd-1981-47b5-ba80-9918b9c84c04",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        736,
+        288
+      ],
+      "id": "97638a99-8e8b-4a08-a3c0-709a2aeccb73",
+      "name": "Merge Results"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a5d930a2-9878-4b60-b9f1-74d42307ab78",
+              "name": "analyzedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "d0743383-fc27-4921-8dc9-802a9343f98b",
+              "name": "sentiment",
+              "value": "={{ $json.sentimentAnalysis.category }}",
+              "type": "string"
+            },
+            {
+              "id": "8fb37ff1-0ae2-42ca-a26f-e917fc6a95e2",
+              "name": "strength",
+              "value": "={{ $json.sentimentAnalysis.strength }}",
+              "type": "number"
+            },
+            {
+              "id": "009f6ffb-ff63-4006-b8c3-0ed6f2917d01",
+              "name": "confidence",
+              "value": "={{ $json.sentimentAnalysis.confidence }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        304
+      ],
+      "id": "b5f9e37f-019b-4fa6-aa74-541ae7434adf",
+      "name": "Enrich Feedback"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "82aaab24-d625-4fca-b860-90678523beaa",
+              "leftValue": "={{ $json.sentiment }}",
+              "rightValue": "Negative",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1088,
+        304
+      ],
+      "id": "6cb32a18-d479-47f1-8064-f8de3a3e2bcf",
+      "name": "Filter Negative"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        208
+      ],
+      "id": "0bafda02-24fc-4947-b069-a29f91949f30",
+      "name": "Negative Feedback Output"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dc96ba56-7caa-431c-9036-22e9f138d9b4",
+              "name": "isUrgent",
+              "value": "={{ $json.strength >= 0.7 && $json.confidence >= 0.7 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1296,
+        416
+      ],
+      "id": "0d483a31-1989-4110-aed9-371704c03d57",
+      "name": "Flag Urgent Cases"
+    },
+    {
+      "parameters": {
+        "jsCode": "// R6 + R7: build ONE email from all negative feedback items (urgent cases first).\nconst items = $input.all().map(i => i.json);\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst num = v => (Number.isFinite(Number(v)) && v !== null && v !== '') ? Number(v).toFixed(2) : 'n/a';\n\n// Urgent first, then by strength (strongest negative sentiment on top).\nitems.sort((a, b) => Number(b.isUrgent) - Number(a.isUrgent) || Number(b.strength) - Number(a.strength));\n\nconst urgentCount = items.filter(i => i.isUrgent).length;\n\nconst rows = items.map(i => `\n  <tr style=\"${i.isUrgent ? 'background:#fdecea;' : ''}\">\n    <td style=\"padding:6px;border:1px solid #ddd;\">${i.isUrgent ? 'URGENT' : ''}</td>\n    <td style=\"padding:6px;border:1px solid #ddd;\">${esc(i.customer)}</td>\n    <td style=\"padding:6px;border:1px solid #ddd;\">${esc(i.feedback)}</td>\n    <td style=\"padding:6px;border:1px solid #ddd;\">${num(i.strength)}</td>\n    <td style=\"padding:6px;border:1px solid #ddd;\">${num(i.confidence)}</td>\n    <td style=\"padding:6px;border:1px solid #ddd;\">${esc(i.analyzedAt)}</td>\n  </tr>`).join('');\n\nconst subject = `${urgentCount > 0 ? '[URGENT] ' : ''}${items.length} negative customer feedback(s)` +\n  (urgentCount > 0 ? `, ${urgentCount} urgent` : '');\n\nconst html = `\n  <p>${items.length} negative feedback(s) found, ${urgentCount} marked as urgent.</p>\n  <table style=\"border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px;\">\n    <tr style=\"background:#f2f2f2;\">\n      <th style=\"padding:6px;border:1px solid #ddd;\">Priority</th>\n      <th style=\"padding:6px;border:1px solid #ddd;\">Customer</th>\n      <th style=\"padding:6px;border:1px solid #ddd;\">Feedback</th>\n      <th style=\"padding:6px;border:1px solid #ddd;\">Strength</th>\n      <th style=\"padding:6px;border:1px solid #ddd;\">Confidence</th>\n      <th style=\"padding:6px;border:1px solid #ddd;\">Analyzed at</th>\n    </tr>${rows}\n  </table>`;\n\nreturn [{ json: { subject, html } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        416
+      ],
+      "id": "c3691fa4-928a-4c0c-a527-9de9fa5156cb",
+      "name": "Build Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "you@example.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        416
+      ],
+      "id": "9a0c2190-7e2d-440d-9868-b790a950ca8f",
+      "name": "Send Email",
+      "webhookId": "4fceb412-5b1e-432a-bfbd-8a5f2d56c78d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HSDc1PIlgu4WcjO7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Customer Feedback Sentiment (Week 03 / HW 01)\nManual Trigger -> sample feedback -> Sentiment Analysis -> enrich -> filter negative -> output + email.\n\n**Coverage**\n- R1 Manual Trigger + Customer Feedback Samples\n- R2 Sentiment Analysis (+ OpenRouter Chat Model, temperature 0)\n- R3 Merge Results + Enrich Feedback (analyzedAt, sentiment, strength, confidence)\n- R4 Filter Negative\n- R5 Negative Feedback Output\n- R6 Build Email + Send Email (bonus)\n- R7 Flag Urgent Cases: urgent = strength >= 0.7 AND confidence >= 0.7 (bonus)\n\nSetup: connect OpenRouter + Gmail credentials, set the recipient in Send Email.",
+        "height": 330,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -112
+      ],
+      "id": "53161f76-e240-4d83-a60f-dceb29f2f79c",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Customer Feedback Samples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Feedback Samples": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Enrich Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Feedback": {
+      "main": [
+        [
+          {
+            "node": "Filter Negative",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Negative": {
+      "main": [
+        [
+          {
+            "node": "Negative Feedback Output",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Flag Urgent Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag Urgent Cases": {
+      "main": [
+        [
+          {
+            "node": "Build Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0622d698412b7b679a3406c0f48be0963bac8a07030b3e75c3bdfff567709558"
+  }
+}

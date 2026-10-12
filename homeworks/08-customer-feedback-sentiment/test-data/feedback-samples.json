@@ -1,0 +1,11 @@
+[
+  { "id": "fb-001", "customer": "Anna",    "feedback": "Absolutely love the new dashboard! Setup took five minutes and everything just works.", "expected": "Positive" },
+  { "id": "fb-002", "customer": "Boris",   "feedback": "The package arrived on time. It contains what I ordered.", "expected": "Neutral" },
+  { "id": "fb-003", "customer": "Clara",   "feedback": "THIS IS UNACCEPTABLE. Third time my order arrives broken and nobody answers my emails. I want a full refund NOW!", "expected": "Negative (urgent)" },
+  { "id": "fb-004", "customer": "Daniel",  "feedback": "Delivery was slower than promised and the packaging was a bit damaged.", "expected": "Negative (not urgent)" },
+  { "id": "fb-005", "customer": "Elena",   "feedback": "Support was fantastic, they solved my problem in minutes. Thank you!", "expected": "Positive" },
+  { "id": "fb-006", "customer": "Filip",   "feedback": "I was charged twice and support keeps ignoring me. Worst experience ever, I am cancelling my subscription.", "expected": "Negative (urgent)" },
+  { "id": "fb-007", "customer": "Gergana", "feedback": "The app works. Nothing special, nothing broken.", "expected": "Neutral" },
+  { "id": "fb-008", "customer": "Hristo",  "feedback": "Great quality for the price, will definitely order again.", "expected": "Positive" },
+  { "id": "fb-009", "customer": "Ivan",    "feedback": "   ", "expected": "dropped by the empty-text guard" }
+]
