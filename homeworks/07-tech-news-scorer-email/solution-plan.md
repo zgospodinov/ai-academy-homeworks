@@ -3,6 +3,8 @@
 - Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/07-tech-news-scorer-email.json` (n8n 2.41.6)
+- Име в n8n: `Encorp | Homework | Week 01 | HW 07 | Tech News Scorer Email`
+- Таг: `encorp-homework`
 
 > Този документ е изграден при миграцията от реалния workflow. Обосновката на избора на нодове, допусканията, тестовият план и покритието R -> нод не са запазени - допълни ги.
 

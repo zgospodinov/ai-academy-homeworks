@@ -1,5 +1,10 @@
 # Changelog - 01-weather-data-filter-merge
 
+## 2026-10-12 - 01-weather-data-filter-merge v1 (метаданни)
+- Промяна: име на workflow-а -> `Encorp | Homework | Week 01 | HW 01 | Weather Data Filter Merge` (преди: `encorp-2026-ai-academy-week-1-homework-1`). Версията не се променя.
+- Причина: конвенция за име и таг (виж DECISIONS.md, D-003).
+- Засегнати нодове: няма.
+
 ## 2026-10-06 - 01-weather-data-filter-merge v1
 - Промяна: миграция към новата структура на репото; санитизиране (имейли, лични имена в имената на credentials, pinData).
 - Причина: нова структура на репото (виж DECISIONS.md, D-001).

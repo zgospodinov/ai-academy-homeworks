@@ -1,5 +1,10 @@
 # Changelog - 02-cat-fact-daily-email
 
+## 2026-10-12 - 02-cat-fact-daily-email v1 (метаданни)
+- Промяна: име на workflow-а -> `Encorp | Homework | Week 01 | HW 02 | Cat Fact Daily Email` (преди: `encorp-2026-ai-academy-week-1-homework-2`). Версията не се променя.
+- Причина: конвенция за име и таг (виж DECISIONS.md, D-003).
+- Засегнати нодове: няма.
+
 ## 2026-10-06 - 02-cat-fact-daily-email v1
 - Промяна: миграция към новата структура на репото; санитизиране (имейли, лични имена в имената на credentials, pinData).
 - Причина: нова структура на репото (виж DECISIONS.md, D-001).

@@ -3,6 +3,8 @@
 - Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/01-weather-data-filter-merge.json` (n8n 2.41.6)
+- Име в n8n: `Encorp | Homework | Week 01 | HW 01 | Weather Data Filter Merge`
+- Таг: `encorp-homework`
 
 > Този документ е изграден при миграцията от реалния workflow. Обосновката на избора на нодове, допусканията, тестовият план и покритието R -> нод не са запазени - допълни ги.
 

@@ -2,15 +2,22 @@
   python tools/validate_workflow.py FILE...            # check only
   python tools/validate_workflow.py --sanitize FILE... # check, clean in place, check again
   Add --strict to also clear credential ids and meta.instanceId (generic exports; not a security need).
+Checks the naming convention: 'Encorp | Homework | Week WW | HW MM | Short Description' and tag 'encorp-homework'.
 """
 import json, re, sys
 
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
 SECRET = re.compile(r"sk-[A-Za-z0-9_-]{16,}|AIza[0-9A-Za-z_-]{20,}|Bearer\s+[A-Za-z0-9._-]{20,}|ghp_[A-Za-z0-9]{20,}|xox[bap]-[A-Za-z0-9-]{10,}|\d{8,10}:[A-Za-z0-9_-]{30,}")
 PLACEHOLDER_EMAIL = "you@example.com"
+NAME_RE = re.compile(r"^Encorp \| Homework \| Week \d{2} \| HW \d{2} \| \S.*$")
+TAG = "encorp-homework"
 
 def check(d):
     err, warn = [], []
+    if not NAME_RE.match(d.get("name", "")):
+        err.append("workflow name must match 'Encorp | Homework | Week WW | HW MM | Short Description'")
+    if TAG not in [t.get("name") for t in (d.get("tags") or []) if isinstance(t, dict)]:
+        err.append(f"missing tag '{TAG}'")
     nodes = d.get("nodes", [])
     names = [n.get("name") for n in nodes]
     if len(set(names)) != len(names): err.append("duplicate node names")

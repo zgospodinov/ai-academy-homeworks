@@ -3,6 +3,8 @@
 - Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/05-form-ip-geolocation.json` (n8n 2.41.6)
+- Име в n8n: `Encorp | Homework | Week 01 | HW 05 | Form IP Geolocation`
+- Таг: `encorp-homework`
 
 > Този документ е изграден при миграцията от реалния workflow. Обосновката на избора на нодове, допусканията, тестовият план и покритието R -> нод не са запазени - допълни ги.
 

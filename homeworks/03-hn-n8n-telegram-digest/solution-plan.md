@@ -3,6 +3,8 @@
 - Статус: `submitted`
 - Версия: v1
 - Файл: `n8n-workflows/03-hn-n8n-telegram-digest.json` (n8n 2.41.6)
+- Име в n8n: `Encorp | Homework | Week 01 | HW 03 | HN n8n Telegram Digest`
+- Таг: `encorp-homework`
 
 > Този документ е изграден при миграцията от реалния workflow. Обосновката на избора на нодове, допусканията, тестовият план и покритието R -> нод не са запазени - допълни ги.
 
