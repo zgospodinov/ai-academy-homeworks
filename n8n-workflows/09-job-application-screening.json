@@ -1,0 +1,924 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 02 | Job Application Screening",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Job Application - .NET Web Developer",
+        "formDescription": "Apply for a position at our team. Paste your resume and tell us about your experience.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full name",
+              "placeholder": "Ivan Petrov",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "you@example.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone",
+              "placeholder": "+359 888 123 456",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Position",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": ".NET Web Developer"
+                  },
+                  {
+                    "option": "Blazor Frontend Developer"
+                  },
+                  {
+                    "option": "Backend / API Developer"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Work arrangement",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "On-site"
+                  },
+                  {
+                    "option": "Hybrid"
+                  },
+                  {
+                    "option": "Remote"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Available from",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Expected salary (EUR)",
+              "fieldType": "number",
+              "placeholder": "3000",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Willing to relocate",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Resume text",
+              "fieldType": "textarea",
+              "placeholder": "Paste your resume: work history with dates, technologies and skills",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "CV file",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank you! Your application was received."
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        912
+      ],
+      "id": "78635f6c-a34a-4409-89d2-2d2e156d7931",
+      "name": "Form Trigger",
+      "webhookId": "ec9c2159-512f-4ff6-b478-03d3d1248a1f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d96d1085-a937-4d7e-abb1-0a22b037e7a1",
+              "name": "minYears",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "2f60b0f0-70af-49a5-8568-2786b3689eb2",
+              "name": "minSkillCategories",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "79e78ca9-cb4d-43d9-aeeb-ca12905acebb",
+              "name": "skillCategories",
+              "value": "{\n  \"Backend\": [\n    \"c#\",\n    \".net\",\n    \"asp.net\",\n    \"web api\",\n    \"rest\",\n    \"ef core\",\n    \"entity framework\",\n    \"microservice\"\n  ],\n  \"Frontend\": [\n    \"blazor\",\n    \"razor\",\n    \"javascript\",\n    \"typescript\",\n    \"html\",\n    \"css\",\n    \"react\",\n    \"angular\"\n  ],\n  \"Data\": [\n    \"sql\",\n    \"postgres\",\n    \"mongodb\",\n    \"redis\",\n    \"dapper\"\n  ],\n  \"Cloud/DevOps\": [\n    \"azure\",\n    \"docker\",\n    \"kubernetes\",\n    \"ci/cd\",\n    \"github actions\",\n    \"aws\"\n  ]\n}",
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        128,
+        912
+      ],
+      "id": "57154327-e2bb-4a1d-b6f0-a009190b9806",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1257834c-f326-4f61-9796-bfe3cf905a26",
+              "name": "resumeText",
+              "value": "=Today's date: {{ $now.toFormat('yyyy-MM-dd') }}\nName: {{ $json['Full name'] }}\nEmail: {{ $json['Email'] }}\nPhone: {{ $json['Phone'] }}\nPosition applied for: {{ $json['Position'] }}\n\nResume:\n{{ $json['Resume text'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        352,
+        912
+      ],
+      "id": "cec7c13b-2883-4274-ae64-c2a1169b884d",
+      "name": "Compose Resume Text"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.resumeText }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"name\": {\n      \"type\": \"string\",\n      \"description\": \"Full name of the candidate\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"description\": \"Email address of the candidate\"\n    },\n    \"phone\": {\n      \"type\": \"string\",\n      \"description\": \"Phone number of the candidate\"\n    },\n    \"yearsOfExperience\": {\n      \"type\": \"number\",\n      \"description\": \"Total years of professional work experience, as a number. If the resume gives date ranges, sum them using today's date for ongoing jobs and do not count overlaps twice. Use 0 if there is no work experience.\"\n    },\n    \"skills\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"Technical skills, technologies and tools mentioned in the resume, one per item\"\n    }\n  },\n  \"required\": [\n    \"name\",\n    \"email\",\n    \"phone\",\n    \"yearsOfExperience\",\n    \"skills\"\n  ]\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        912
+      ],
+      "id": "b447feb7-a523-4aaf-be0f-5c17ab9439dc",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        576,
+        1136
+      ],
+      "id": "566c55ec-1ff6-494b-ba2a-f71b5eb3b378",
+      "name": "OpenRouter Chat Model Extractor",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Maps the extracted skills to the employer's skill categories (Config) and checks the minimum requirements.\nconst cfg = $('Config').first().json;\nlet cats = cfg.skillCategories;\nif (typeof cats === 'string') cats = JSON.parse(cats);\nconst form = $('Compose Resume Text').first().json;\nconst ex = $json.output || {};\n\nconst years = Number(ex.yearsOfExperience) || 0;\nconst skills = (Array.isArray(ex.skills) ? ex.skills : []).map(s => String(s).trim()).filter(Boolean);\nconst lower = skills.map(s => s.toLowerCase());\n\nconst matchedCategories = [];\nconst matchedSkills = new Set();\nfor (const [category, keywords] of Object.entries(cats)) {\n  const hits = skills.filter((s, i) => keywords.some(k => lower[i].includes(String(k).toLowerCase())));\n  if (hits.length > 0) {\n    matchedCategories.push(category);\n    hits.forEach(h => matchedSkills.add(h));\n  }\n}\n\nconst meetsExperience = years >= cfg.minYears;\nconst meetsSkills = matchedCategories.length >= cfg.minSkillCategories;\nconst reasons = [];\nif (!meetsExperience) reasons.push(`Experience ${years} y < ${cfg.minYears} y`);\nif (!meetsSkills) reasons.push(`Skill categories ${matchedCategories.length} < ${cfg.minSkillCategories}`);\n\nconst relocate = form['Willing to relocate'];\n\nreturn {\n  json: {\n    submittedAt: $now.toISO(),\n    name: ex.name || '',\n    email: ex.email || '',\n    phone: ex.phone || '',\n    position: form['Position'],\n    workArrangement: form['Work arrangement'],\n    availableFrom: form['Available from'],\n    expectedSalaryEur: form['Expected salary (EUR)'],\n    willingToRelocate: (Array.isArray(relocate) ? relocate.length > 0 : Boolean(relocate)) ? 'Yes' : 'No',\n    yearsOfExperience: years,\n    skills,\n    matchedSkills: [...matchedSkills],\n    matchedCategories,\n    meetsExperience,\n    meetsSkills,\n    qualified: meetsExperience && meetsSkills,\n    rejectionReason: reasons.join('; ')\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        912
+      ],
+      "id": "624e5c3d-4430-4c79-a56f-e46e44666d92",
+      "name": "Evaluate Candidate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d0a702cc-b0a0-4c86-b7be-005b8dd3fcad",
+              "leftValue": "={{ $json.qualified }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1008,
+        912
+      ],
+      "id": "a427e702-dc2b-4115-9702-0942f1798d25",
+      "name": "Is Qualified?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Candidate: {{ $json.name }}\nPosition: {{ $json.position }}\nYears of experience: {{ $json.yearsOfExperience }}\nSkills: {{ $json.skills.join(', ') }}\nMatched skill categories: {{ $json.matchedCategories.join(', ') }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a technical recruiter scoring a candidate for a .NET web developer role. Scoring rubric (be consistent):\n- experienceScore 0-50: 3 years = 20, 5 years = 35, 8 or more years = 50, interpolate in between.\n- skillScore 0-50: reward the number of relevant skills and the breadth across categories (Backend, Frontend, Data, Cloud/DevOps). Every matched category is worth about 10 points; add up to 10 more for depth in modern .NET (C#, ASP.NET Core, Blazor, EF Core, Azure). Cap at 50.\n- summary: one short sentence justifying the scores.\nReturn only the structured result."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1232,
+        752
+      ],
+      "id": "fb3289a4-2d7a-482c-af63-b5c7a6fe5b13",
+      "name": "Score Candidate"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        976
+      ],
+      "id": "fb35d2d6-607c-42e7-8af1-1614b3838b93",
+      "name": "OpenRouter Chat Model Scoring",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"experienceScore\": 35,\n  \"skillScore\": 40,\n  \"summary\": \"short justification\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        976
+      ],
+      "id": "64602062-7c4e-4859-9d65-f9e1b97a6c44",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b52ffdfa-9e6c-48ae-8075-00daacb069bf",
+              "name": "submittedAt",
+              "value": "={{ $('Evaluate Candidate').first().json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "08098e1b-eb6b-44b4-bc05-d4086b768415",
+              "name": "name",
+              "value": "={{ $('Evaluate Candidate').first().json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "5167a92c-d288-48f4-b2b1-cc82bccda6da",
+              "name": "email",
+              "value": "={{ $('Evaluate Candidate').first().json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "1ec6a721-b124-4de9-9d38-13e4a5de1cce",
+              "name": "phone",
+              "value": "={{ $('Evaluate Candidate').first().json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "2e25bbfb-7053-4fe1-baa7-41b736203958",
+              "name": "position",
+              "value": "={{ $('Evaluate Candidate').first().json.position }}",
+              "type": "string"
+            },
+            {
+              "id": "9ec4ba89-f908-4c48-be58-04d175540f2a",
+              "name": "expectedSalaryEur",
+              "value": "={{ $('Evaluate Candidate').first().json.expectedSalaryEur }}",
+              "type": "number"
+            },
+            {
+              "id": "4053b61d-453a-4a06-ab28-d7dd49e53aae",
+              "name": "willingToRelocate",
+              "value": "={{ $('Evaluate Candidate').first().json.willingToRelocate }}",
+              "type": "string"
+            },
+            {
+              "id": "73ffcfb5-bce9-4dfa-968b-bfc06c3eacda",
+              "name": "yearsOfExperience",
+              "value": "={{ $('Evaluate Candidate').first().json.yearsOfExperience }}",
+              "type": "number"
+            },
+            {
+              "id": "add8b460-dc3d-4891-ad4e-19041c824216",
+              "name": "skills",
+              "value": "={{ $('Evaluate Candidate').first().json.skills.join(', ') }}",
+              "type": "string"
+            },
+            {
+              "id": "dde2a477-68e7-4e3f-9b80-0e1236eadd19",
+              "name": "matchedCategories",
+              "value": "={{ $('Evaluate Candidate').first().json.matchedCategories.join(', ') }}",
+              "type": "string"
+            },
+            {
+              "id": "4df6e3af-5a83-4672-9c66-05879a4e33ec",
+              "name": "experienceScore",
+              "value": "={{ $json.output.experienceScore }}",
+              "type": "number"
+            },
+            {
+              "id": "d37f9ac0-67e8-4a17-8b0b-f0d0ef0d4b4c",
+              "name": "skillScore",
+              "value": "={{ $json.output.skillScore }}",
+              "type": "number"
+            },
+            {
+              "id": "f0636e0a-e0f2-48f1-82a8-c097ec356ecc",
+              "name": "totalScore",
+              "value": "={{ Math.min(100, $json.output.experienceScore + $json.output.skillScore) }}",
+              "type": "number"
+            },
+            {
+              "id": "c8fa3606-88e3-4a82-863a-571630666d7f",
+              "name": "tier",
+              "value": "={{ Math.min(100, $json.output.experienceScore + $json.output.skillScore) >= 80 ? 'A' : (Math.min(100, $json.output.experienceScore + $json.output.skillScore) >= 60 ? 'B' : 'C') }}",
+              "type": "string"
+            },
+            {
+              "id": "999dc4e2-9798-4d0e-9a8f-bd98b77bb6b6",
+              "name": "summary",
+              "value": "={{ $json.output.summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1504,
+        752
+      ],
+      "id": "9e508927-3cdc-4af4-8819-da1382888db5",
+      "name": "Prepare Sheet Row"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "expectedSalaryEur",
+              "displayName": "expectedSalaryEur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "willingToRelocate",
+              "displayName": "willingToRelocate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "yearsOfExperience",
+              "displayName": "yearsOfExperience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "skills",
+              "displayName": "skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "matchedCategories",
+              "displayName": "matchedCategories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experienceScore",
+              "displayName": "experienceScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "skillScore",
+              "displayName": "skillScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "totalScore",
+              "displayName": "totalScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tier",
+              "displayName": "tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        752
+      ],
+      "id": "888af69f-a96e-466d-9287-1da117b136f0",
+      "name": "Append to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zJy85a5GrnnEpBYj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        752
+      ],
+      "id": "bccdc31c-b530-4fa2-80b8-126e2aae8782",
+      "name": "Qualified Candidates Output"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        1184
+      ],
+      "id": "c4d06782-d898-4768-8946-f60e3f880414",
+      "name": "Unqualified Candidates"
+    },
+    {
+      "parameters": {
+        "content": "## Job Application Screening (Week 03 / HW 02)\nForm Trigger -> Config -> Compose Resume Text -> Information Extractor -> Evaluate Candidate -> Is Qualified?\ntrue: Score Candidate (Basic LLM Chain) -> Prepare Sheet Row -> Append to Google Sheet -> Qualified Candidates Output\nfalse: Unqualified Candidates\n\n**Coverage**\n- R1 Form Trigger (text, email, dropdown, radio, date, number, checkbox, textarea, file)\n- R2 Information Extractor (+ OpenRouter Chat Model Extractor): name, email, phone, yearsOfExperience, skills\n- R3 Config (minYears, minSkillCategories, skillCategories) + Evaluate Candidate\n- R4 Is Qualified? (IF) + Unqualified Candidates\n- R5 Qualified Candidates Output\n- R6 Append to Google Sheet (bonus)\n- R7 Score Candidate: Basic LLM Chain + Structured Output Parser (bonus)\n\nSetup: connect OpenRouter and Google Sheets credentials; pick the spreadsheet in Append to Google Sheet (header row = columns of Prepare Sheet Row). Test: open the Form Trigger test URL.",
+        "height": 440,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        448
+      ],
+      "id": "915105b7-e790-4a13-ab19-5cce1e5184dc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        1360
+      ],
+      "id": "6ce7f434-5d33-492b-ae48-b87671709e96",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Fake candidates for manual test runs. Field names match the Form Trigger labels.\n// Expected results are in the testCase label. Qualified test candidates are appended to the Google Sheet.\nconst mail = n => n + '@example.com';\nconst candidates = [\n  {\n    testCase: '1 - expected: QUALIFIED (5 y, 4 categories)',\n    'Full name': 'Test Candidate One', 'Email': mail('candidate1'), 'Phone': '+359 888 000 001',\n    'Position': '.NET Web Developer', 'Work arrangement': 'Remote', 'Available from': '2026-11-01',\n    'Expected salary (EUR)': 3500, 'Willing to relocate': ['Yes'],\n    'Resume text': 'Senior .NET developer, 5 years of experience.\\n2021-2026 Acme Ltd: C#, ASP.NET Core Web API, Blazor, EF Core, SQL Server, Docker, Azure DevOps CI/CD.\\n2019-2021 Beta Ltd: C# and .NET desktop apps.'\n  },\n  {\n    testCase: '2 - expected: NOT qualified (1 y experience)',\n    'Full name': 'Test Candidate Two', 'Email': mail('candidate2'), 'Phone': '+359 888 000 002',\n    'Position': 'Blazor Frontend Developer', 'Work arrangement': 'Hybrid', 'Available from': '2026-12-01',\n    'Expected salary (EUR)': 1800, 'Willing to relocate': [],\n    'Resume text': 'Junior developer, 1 year of experience with C#, .NET and SQL.'\n  },\n  {\n    testCase: '3 - expected: NOT qualified (0 matching skill categories)',\n    'Full name': 'Test Candidate Three', 'Email': mail('candidate3'), 'Phone': '+359 888 000 003',\n    'Position': 'Backend / API Developer', 'Work arrangement': 'On-site', 'Available from': '2026-11-15',\n    'Expected salary (EUR)': 4000, 'Willing to relocate': ['Yes'],\n    'Resume text': '6 years as a Java backend developer: Java, Spring Boot, Kafka, Oracle.'\n  },\n  {\n    testCase: '4 - expected: QUALIFIED (experience only as date ranges, about 6-7 y)',\n    'Full name': 'Test Candidate Four', 'Email': mail('candidate4'), 'Phone': '+359 888 000 004',\n    'Position': '.NET Web Developer', 'Work arrangement': 'Remote', 'Available from': '2026-11-01',\n    'Expected salary (EUR)': 3000, 'Willing to relocate': [],\n    'Resume text': 'Software developer. 2022-present: C# developer with ASP.NET Core and Azure. 2020-2022: SQL developer.'\n  },\n  {\n    testCase: '5 - expected: NOT qualified (no usable data)',\n    'Full name': 'Test Candidate Five', 'Email': mail('candidate5'), 'Phone': '+359 888 000 005',\n    'Position': '.NET Web Developer', 'Work arrangement': 'Hybrid', 'Available from': '2027-01-10',\n    'Expected salary (EUR)': 2500, 'Willing to relocate': [],\n    'Resume text': 'I love coding.'\n  }\n];\nreturn candidates.map(c => ({ json: c }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        1360
+      ],
+      "id": "df3f110f-9198-4fea-81b6-b1771b71ec20",
+      "name": "Test Candidates"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        1360
+      ],
+      "id": "86c31c4a-ed3a-4112-890f-dbad632b3052",
+      "name": "Run Candidate Through Flow"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        1136
+      ],
+      "id": "69041198-fc1c-45da-a58b-89880a76121d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Test path (v3)\nManual Trigger -> Test Candidates (5 fake candidates) -> Run Candidate Through Flow (runs THIS workflow once per candidate) -> When Executed by Another Workflow -> Config -> the unchanged flow.\nSave the workflow before testing: the sub-run uses the saved version. Each candidate is a separate sub-execution in the Executions list.\n\n**Expected results**\n1. Test Candidate One: QUALIFIED - 5 y, 4 skill categories (Backend, Frontend, Data, Cloud/DevOps)\n2. Test Candidate Two: NOT qualified - 1 y (`Experience 1 y < 3 y`)\n3. Test Candidate Three: NOT qualified - Java stack, 0 categories (`Skill categories 0 < 2`)\n4. Test Candidate Four: QUALIFIED - experience only as date ranges, about 6-7 y; 3 categories (Backend, Cloud/DevOps, Data)\n5. Test Candidate Five: NOT qualified - no data (`Experience 0 y < 3 y; Skill categories 0 < 2`)\n\nGoogle Sheet: only candidates 1 and 4 are appended (delete these rows after the test). Scores come from the LLM; totalScore and tier are calculated.",
+        "height": 480,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        1448
+      ],
+      "id": "19c3034c-2a0d-4c39-bc57-8a065379829f",
+      "name": "Sticky Note Test Path"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Compose Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model Extractor": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Candidate": {
+      "main": [
+        [
+          {
+            "node": "Is Qualified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Qualified?": {
+      "main": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unqualified Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model Scoring": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Candidate": {
+      "main": [
+        [
+          {
+            "node": "Prepare Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Qualified Candidates Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Candidates": {
+      "main": [
+        [
+          {
+            "node": "Run Candidate Through Flow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ad2a0282-fff5-4c29-a6ba-4f98e3867df6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0622d698412b7b679a3406c0f48be0963bac8a07030b3e75c3bdfff567709558"
+  },
+  "nodeGroups": [],
+  "id": "MCAxJHiUqed6rJ15",
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}

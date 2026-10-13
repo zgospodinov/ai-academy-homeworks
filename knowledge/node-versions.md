@@ -35,3 +35,9 @@
 | `n8n-nodes-base.telegram` | 1.2 | 03, 06 |
 | `n8n-nodes-base.webhook` | 2 | 05 |
 | `n8n-nodes-base.webhook` | 2.1 | 05 |
+| `n8n-nodes-base.formTrigger` | 2.3 | 09 (импортирано и изпълнено) |
+| `@n8n/n8n-nodes-langchain.informationExtractor` | 1.2 | 09 (импортирано и изпълнено) |
+| `@n8n/n8n-nodes-langchain.chainLlm` | 1.9 | 09 (импортирано и изпълнено) |
+| `n8n-nodes-base.googleSheets` | 4.7 | 09 (импортирано и изпълнено) |
+| `n8n-nodes-base.executeWorkflow` | 1.2 | 09 v3 (потвърдено с изпълнение) |
+| `n8n-nodes-base.executeWorkflowTrigger` | 1.1 | 09 v3 (потвърдено с изпълнение) |

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-10-13 - 09-job-application-screening v3 (потвърдена)
+- Промяна: няма; Здравко потвърди успешен тест. Статус -> tested.
+- Причина: потвърждение от теста в неговия n8n.
+- Засегнати нодове: няма.
+
+## 2026-10-13 - 09-job-application-screening v3
+- Промяна: ръчен тригер с 5 тестови кандидата през Execute Workflow към същия workflow; нодовете от Config нататък са непроменени спрямо v2 (тестваният експорт е в _versions/).
+- Причина: автоматично тестване без ръчно попълване на формата.
+- Засегнати нодове: само нови нодове преди Config.
+
+## 2026-10-13 - 09-job-application-screening v2
+- Промяна: Cell Format = Let n8n format в Append to Google Sheet; v1 е в _versions/.
+- Причина: телефон с водещ `+` се записваше като формула (`#ERROR!`).
+- Засегнати нодове: Append to Google Sheet.
+
+## 2026-10-13 - 09-job-application-screening v1
+- Промяна: първа доставка (Form Trigger, Information Extractor, Code проверка, IF, Basic LLM Chain скоринг, Google Sheets).
+- Причина: ново домашно (седмица 3, задача 2).
+- Засегнати нодове: всички.
+
 ## 2026-10-13 - 08-customer-feedback-sentiment v3
 - Промяна: Config с прагове и получател, Retry, error клон с имейл за неуспели отзиви, без Merge + Aggregate преди имейла, custom System Prompt (виж homeworks/08-customer-feedback-sentiment/CHANGELOG.md); v2 е в _versions/.
 - Причина: подобрения, одобрени от Здравко.
