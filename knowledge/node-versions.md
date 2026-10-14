@@ -41,3 +41,11 @@
 | `n8n-nodes-base.googleSheets` | 4.7 | 09 (импортирано и изпълнено) |
 | `n8n-nodes-base.executeWorkflow` | 1.2 | 09 v3 (потвърдено с изпълнение) |
 | `n8n-nodes-base.executeWorkflowTrigger` | 1.1 | 09 v3 (потвърдено с изпълнение) |
+| `@n8n/n8n-nodes-langchain.textClassifier` | 1.1 | 10 (импортирано и изпълнено) |
+| `n8n-nodes-base.dataTable` | 1.1 | 10 (импортирано и изпълнено) |
+| `n8n-nodes-base.stopAndError` | 1 | 10 (изпълнено в sub-workflow) |
+| `n8n-nodes-base.errorTrigger` | 1 | 10 (изпълнено, Telegram известие) |
+| `n8n-nodes-base.respondToWebhook` | 1.5 | 10 (202 и 400 отговори) |
+| `n8n-nodes-base.webhook` | 2.1 | 10 |
+| `n8n-nodes-base.executeWorkflow` | 1.2 | 10 (fire-and-forget към друг workflow) |
+| `n8n-nodes-base.merge` | 3.2 | 10 (5 входа, потвърдено с валидни статии) |

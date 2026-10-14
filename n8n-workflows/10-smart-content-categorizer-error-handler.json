@@ -1,0 +1,113 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 03 | Smart Content Categorizer Error Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Error Handler (bonus R7, R8)\nError Trigger -> Format Alert -> Telegram. Receives failures of the *Reject Article* workflow (and, if selected there, of the main workflow). The rejected article's title and text are inside `execution.error.message`, because the Error Trigger does not carry item data.\n\nSetup: connect the Telegram credential, set the chat id, then select this workflow as Error workflow in Settings of the other two. Error workflows run only for production (non-manual) executions.",
+        "height": 260,
+        "width": 620
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -300
+      ],
+      "id": "02fa9950-b9f1-4feb-a5a1-d623d16b31d3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ef104d6b-e7d7-4111-9b58-93a49f8b848b",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d75b452-a83d-42f2-878d-a67ce19f09e4",
+              "name": "message",
+              "type": "string",
+              "value": "={{ 'Workflow failed: ' + $json.workflow.name + '\\nNode: ' + $json.execution.lastNodeExecuted + '\\n\\n' + $json.execution.error.message + '\\n\\n' + ($json.execution.url || '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        0
+      ],
+      "id": "80235d5b-d373-4dd6-bc84-2945e93e1b9d",
+      "name": "Format Alert"
+    },
+    {
+      "parameters": {
+        "chatId": "-5531928417",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "4cbfc0e1-e58e-4ec4-81a0-b6fced9e2cf9",
+      "name": "Send Telegram Alert",
+      "webhookId": "94644861-95ca-41d6-b9fe-b4c06eb5b329",
+      "credentials": {
+        "telegramApi": {
+          "id": "OLWNPTl0xDvqo4ek",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alert": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {}
+}

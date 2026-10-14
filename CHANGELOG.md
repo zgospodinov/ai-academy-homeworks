@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-10-14 - 10-smart-content-categorizer v3 (потвърдена)
+- Промяна: няма; Здравко потвърди, че всички сценарии (mixed, valid, spam_only, invalid) работят правилно. Статус -> tested.
+- Причина: потвърждение от теста в неговия n8n.
+- Засегнати нодове: няма.
+
+## 2026-10-14 - 10-smart-content-categorizer v3
+- Промяна: Text Classifier получава собствен System Prompt (Options -> System Prompt Template) и по-строги описания на категориите ("Genuine news article about ...").
+- Причина: тест на Здравко с v2 - спамът не се засичаше (в `mixed` всичките 8 са станали статии; при повторно пускане засечен 1 от 2; в `spam_only` всички минават като статии). Стандартният промпт не обяснява кога да се избере fallback.
+- Засегнати нодове: Text Classifier, Sticky Note. Останалото е непроменено спрямо v2 (v2 е в `_versions/`).
+
+## 2026-10-14 - 10-smart-content-categorizer v2
+- Промяна: в Data Table се записва един ред със статистиката (`batchId`, `generatedAt`, `articleCount`, `statistic` като JSON низ), а не ред за всяка статия. Редът на нодовете: Merge -> Select Title And Text -> Aggregate Articles -> Save To Data Table. Таблицата е `smart_content_statistics`.
+- Причина: корекция от Здравко веднага след v1 (v1 не е тествана).
+- Засегнати нодове: Save To Data Table (нови колони), Aggregate Articles и Select Title And Text (преди записа), Sticky Note. Reject Article и Error Handler са непроменени.
+
+## 2026-10-14 - 10-smart-content-categorizer v1
+- Промяна: нов домашен - основен workflow, под-workflow Reject Article и Error Handler (3 файла). Асинхронен webhook (202), Stop and Error в изолиран под-workflow, запис в Data Table.
+- Причина: ново домашно (седмица 3, задача 3); промени по искане на Здравко при одобрението на плана.
+- Засегнати нодове: всички (нов).
+
 ## 2026-10-13 - 09-job-application-screening v3 (потвърдена)
 - Промяна: няма; Здравко потвърди успешен тест. Статус -> tested.
 - Причина: потвърждение от теста в неговия n8n.

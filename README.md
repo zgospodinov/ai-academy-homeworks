@@ -15,6 +15,7 @@
 | 07 | 1 | Оценка и верификация на tech новини | submitted | v1 | `n8n-workflows/07-tech-news-scorer-email.json` | agent, gmail, httpRequestTool, if, lmChatOpenRouter, outputParserStructured, rssFeedReadTrigger | 2026-10-06 |
 | 08 | 3 | Анализ на настроенията в обратна връзка от клиенти | tested | v3 | `n8n-workflows/08-customer-feedback-sentiment.json` | sentimentAnalysis, lmChatOpenRouter, aggregate, set, filter, code, gmail | 2026-10-13 |
 | 09 | 3 | Скрининг на кандидати за работа (Form + Information Extractor) | tested | v3 | `n8n-workflows/09-job-application-screening.json` | formTrigger, informationExtractor, code, if, chainLlm, outputParserStructured, googleSheets | 2026-10-13 |
+| 10 | 3 | Smart Content Categorizer (Webhook + Text Classifier + Data Table) | tested | v3 | `n8n-workflows/10-smart-content-categorizer.json` (+ `-reject-article`, `-error-handler`) | webhook, respondToWebhook, splitOut, textClassifier, set, merge, dataTable, aggregate, executeWorkflow, stopAndError, errorTrigger, telegram | 2026-10-14 |
 
 Статуси: `received` -> `plan-proposed` -> `plan-approved` -> `json-delivered` -> `tested` -> `submitted` -> `graded`.
 

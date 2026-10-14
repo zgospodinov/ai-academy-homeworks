@@ -1,0 +1,73 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 03 | Smart Content Categorizer Reject Article",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Reject Article (sub-workflow)\nCalled by *Send To Reject Article* in the main workflow for every article from the Text Classifier **Other** branch (spam / not an article). Stop and Error fails only THIS small execution, so the main run keeps processing the valid articles. The error message carries the title and text; the Error Handler workflow sends it to Telegram.\n\nSetup: Settings -> Error workflow = the Error Handler workflow. Save this workflow before testing, then select it in the main workflow.",
+        "height": 260,
+        "width": 620
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -300
+      ],
+      "id": "b7afc8ff-059c-439f-bc3c-2e18c048bc38",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f0d71189-983e-4258-8615-324a6c1372bd",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "={{ 'Rejected (cannot be categorised) | title: ' + ($json.title || '-') + ' | text: ' + String($json.text || '-').slice(0, 500) }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ],
+      "id": "9f57ab5f-ca35-4ec7-a465-9d1be4950b17",
+      "name": "Reject As Not An Article"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Reject As Not An Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {}
+}

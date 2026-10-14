@@ -17,3 +17,6 @@ Information Extractor връща само `output`, не пренася вход
 
 ## Тест на workflow с много входни примера без промяна на потока (потвърдено, домашно 09 v3)
 Manual Trigger -> Code с N примера -> Execute Workflow (същият workflow, Run once for each item) -> Execute Workflow Trigger (Accept all data) -> първият нод на реалния поток. Пример: домашно 09 v3.
+
+## Асинхронен webhook с изолиран Stop and Error (домашно 10, потвърдено)
+Webhook (Respond to Webhook node) -> IF валидация -> Respond 202 / 400 -> обработка. Елементи, които трябва да "паднат" (напр. спам), се пращат към отделен под-workflow (Execute Workflow, each, без изчакване) със Stop and Error; Error Workflow го съобщава. Основният run не се прекъсва. Потвърдено от Здравко (домашно 10, v3, 2026-10-14): извикване на под-workflow, Telegram известие, 400 при невалиден вход, всички сценарии (mixed, valid, spam_only, invalid). За спам в Text Classifier вж. gotchas (собствен System Prompt).
