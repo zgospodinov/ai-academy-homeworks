@@ -49,3 +49,8 @@
 | `n8n-nodes-base.webhook` | 2.1 | 10 |
 | `n8n-nodes-base.executeWorkflow` | 1.2 | 10 (fire-and-forget към друг workflow) |
 | `n8n-nodes-base.merge` | 3.2 | 10 (5 входа, потвърдено с валидни статии) |
+| `@n8n/n8n-nodes-langchain.chainSummarization` | 2 | 11 (изпълнено: stuff, refine, map_reduce в бонус клона; map_reduce в главния поток, Здравко 2026-10-15) |
+| `n8n-nodes-base.if` | 2.3 | 11 (изпълнено) |
+| `n8n-nodes-base.merge` | 3.2 | 11 (3 входа, изпълнено) |
+| `n8n-nodes-base.dateTime` | 2 | 11 (Format a Date: `operation: formatDate`, `format: custom`, `customFormat`, `outputFieldName`, `options.includeInputFields`, `options.useWorkflowTimezone` - главният поток работи по думите на Здравко) |
+| `n8n-nodes-base.scheduleTrigger` | 1.4 | 11 (ръчно пускане с Execute workflow; `timestamp` се чете от Date & Time) |

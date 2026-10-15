@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-10-15 - 11-meeting-notes-summariser v2 (tested)
+- Промяна: няма промяна във файла; потвърдено от Здравко, че главният поток работи (Date & Time, Attach Date). Статус -> tested.
+- Причина: потвърждение от теста в неговия n8n.
+- Засегнати нодове: няма.
+
+## 2026-10-14 - 11-meeting-notes-summariser v2
+- Промяна: поправено четене на изхода на Summarization Chain (обект `{text}` / `{output_text}`) в 3 нода; добавен `comparison.md` с резултата от бонуса.
+- Причина: реален изход от бонус клона на Здравко.
+- Засегнати нодове: Build Comparison, Label Department Summaries, Attach Date To Summary.
+
+## 2026-10-14 - 11-meeting-notes-summariser v1
+- Промяна: нов домашен - workflow с 20 нода (Summarization Chain Map Reduce в два етапа, Date & Time, бонус сравнение на методите).
+- Причина: ново домашно (седмица 3, задача 4).
+- Засегнати нодове: всички (нов).
+
 ## 2026-10-14 - 10-smart-content-categorizer v3 (потвърдена)
 - Промяна: няма; Здравко потвърди, че всички сценарии (mixed, valid, spam_only, invalid) работят правилно. Статус -> tested.
 - Причина: потвърждение от теста в неговия n8n.

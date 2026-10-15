@@ -1,0 +1,687 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 04 | Meeting Notes Summariser",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9a7b9def-56f5-4ad2-a162-9a735773df14",
+      "name": "Morning Schedule"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "285f481d-f7a1-4733-b09c-174b1f4081e4",
+              "name": "runComparison",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        220,
+        0
+      ],
+      "id": "902aaf8f-fdfa-474f-b864-d9e534065cb6",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "// R1/R3: morning meeting notes from 4 departments (generated with Claude).\n// Each item = one meeting, so the chain below summarises every meeting separately.\nconst meetings = [\n  {\n    department: 'Engineering',\n    notes: `Attendees: Maria (Engineering Manager), Ivan (Backend Lead), Petya (QA Lead), Georgi (DevOps).\n- Release 4.2 slips from Thursday to next Tuesday. The payment-service migration to the new database failed 2 of 38 regression tests (currency rounding on refunds). Ivan owns the fix, ETA Friday; Petya reruns the full regression on Monday.\n- Yesterday's staging outage (14:10-15:05) was caused by an expired TLS certificate on the internal gateway. Georgi will add certificate-expiry alerts (30/14/7 days) by end of the week.\n- Decision: feature freeze for 4.2 starts today. The bulk-export API moves from 4.2 to 4.3 and is not expected before mid-November.\n- Risk: only Ivan knows the legacy billing module. Maria asked HR for a senior backend hire and will schedule a knowledge-transfer session next week.\n- Open question: keep supporting API v1 after December? Maria collects usage numbers from Georgi's dashboards by Wednesday.\n- Security: the quarterly penetration test found 3 medium findings in the public API (missing rate limiting on two endpoints, verbose error messages). Georgi opens tickets today; fixes must ship with 4.2 or the release needs a documented exception from the CTO.\n- Tech debt: the CI pipeline takes 41 minutes, up from 25. Petya and Georgi will profile it and propose parallelisation options at next week's sync; target is under 30 minutes.`\n  },\n  {\n    department: 'Sales',\n    notes: `Attendees: Dimitar (Head of Sales), Elena (Enterprise AE), Nikolay (SMB Lead), Rositsa (Sales Ops).\n- Q4 pipeline is at 2.1M EUR against a 2.6M target. Enterprise is on track; SMB is 18% behind because the autumn webinar series produced fewer leads than planned.\n- Elena promised Northwind Logistics (deal worth 340k EUR) the bulk-export API before the end of October. Dimitar notes this depends on the Engineering release; he will ask Engineering for a firm date and warn the customer if it slips past November 5.\n- Nikolay proposes a 10% discount for annual SMB contracts signed before Nov 15. It needs Finance approval; Dimitar sends the request today.\n- Rositsa will clean up about 250 duplicate CRM accounts by Friday so that forecasts are reliable.\n- Two enterprise renewals (Contoso, Fabrikam) are at risk: both asked for SSO improvements. Elena schedules customer calls this week.\n- Competitor update: a rival launched a free tier last week. Nikolay saw 3 SMB prospects mention it in calls; Dimitar asks Marketing for a battlecard by Thursday.\n- Forecast hygiene: deals without a next step older than 30 days are moved to \"stalled\" automatically from Monday. Reps must update their opportunities before then.`\n  },\n  {\n    department: 'HR',\n    notes: `Attendees: Svetla (HR Director), Boris (Recruiter), Anna (Learning & Development), Tihomir (HR Business Partner).\n- Open positions: 6 (2 backend, 1 QA, 2 sales, 1 finance analyst). Average time-to-hire is 52 days against a target of 40. Boris proposes dropping the second technical interview round for junior roles; Svetla must approve by Thursday.\n- Engineering requested a senior backend engineer. The budget is not approved yet, so the role stays pending until Finance confirms headcount.\n- Employee survey: engagement score 7.4 (down from 7.9). Main complaint: unclear career paths. Anna launches career-framework workshops starting Nov 3 and needs a room booking plus manager sign-off.\n- Two engineers (one backend, one QA) gave notice last week. Tihomir runs exit interviews by next Wednesday and reports the themes.\n- Reminder: annual compliance training deadline is Oct 31; 64% completed.\n- Onboarding: 5 new hires start on Nov 3. Boris coordinates laptops with IT; Anna prepares the buddy programme and asks managers to name a buddy by Friday.\n- Policy: the hybrid-work policy review is due in November. Tihomir collects feedback from managers and will present the options at the leadership meeting.`\n  },\n  {\n    department: 'Finance',\n    notes: `Attendees: Katerina (CFO), Plamen (FP&A), Veselin (Accounts Payable), Nadia (Controller).\n- September close finished 2 days late because of unreconciled intercompany invoices. Nadia introduces a mid-month reconciliation checkpoint starting in October.\n- Q3 revenue was 7.8M EUR, 3% below forecast, mostly because two enterprise deals slipped to Q4. Plamen updates the Q4 forecast and shares it on Friday; the forecast assumes the Northwind deal closes in October.\n- Katerina will decide on the additional senior backend headcount only after seeing the updated forecast; no decision before next Monday.\n- Sales proposes a 10% discount for annual SMB contracts. Katerina wants a margin-impact analysis first; Plamen delivers it by Wednesday.\n- Veselin flagged 14 vendor invoices overdue by more than 30 days (96k EUR total); two vendors threatened to suspend services. Payment run is scheduled for Thursday.\n- Risk: the cash buffer drops below the 3-month policy minimum if the Q4 slippage continues.\n- Audit: the external auditors arrive Nov 17. Nadia needs the fixed-asset register and the updated revenue-recognition memo from Plamen by Nov 7.\n- Tooling: the expense-approval tool renewal costs 18% more. Veselin gets a competing quote from two vendors and reports back next Tuesday.`\n  }\n];\n\n// Guard: drop meetings without notes.\nreturn meetings\n  .filter(m => m.notes && m.notes.trim() !== '')\n  .map(m => ({ json: m }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "f69782db-c3d2-4048-a66d-fecac5bb0549",
+      "name": "Collect Meeting Notes"
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputJson",
+        "chunkingMode": "simple",
+        "chunkSize": 1000,
+        "chunkOverlap": 200,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "map_reduce",
+              "combineMapPrompt": "Summarize this part of a company meeting's notes. Keep: decisions made, action items with the person responsible and the deadline, risks or blockers, and dependencies on other departments. Do not invent facts.\n\n\"{text}\"\n\nPARTIAL SUMMARY:",
+              "prompt": "Combine the partial summaries below into ONE summary of the whole meeting. Write at most 5 short bullet points. Keep decisions, action items (owner + deadline), risks and dependencies on other departments. Remove duplicates.\n\n\"{text}\"\n\nMEETING SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "26ee984e-1166-4d52-b334-00701c567f9e",
+      "name": "Summarize Each Meeting"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        900,
+        260
+      ],
+      "id": "6f5180a7-e806-42d2-9e5b-1f150adb469f",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc81601a-8d86-406e-8565-0582dbac6dc8",
+              "name": "department",
+              "value": "={{ $('Collect Meeting Notes').all()[$itemIndex].json.department }}",
+              "type": "string"
+            },
+            {
+              "id": "821209bc-29a0-4019-99a2-9c18794de973",
+              "name": "summary",
+              "value": "={{ $json.response ?? $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        880,
+        0
+      ],
+      "id": "847222f8-a988-45cb-9a4e-be821c3f1118",
+      "name": "Label Department Summaries"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "meetings",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "67522f3b-8d93-44dc-96b5-dec8898507eb",
+      "name": "Aggregate Meeting Summaries"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9c888c1-eaa5-44d9-aebb-3ddd82010a11",
+              "name": "meetingsText",
+              "value": "={{ $json.meetings.map(m => '### ' + m.department + '\\n' + m.summary).join('\\n\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "4e7d382c-c56b-4170-8a40-96749951aad4",
+      "name": "Prepare Overall Input"
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputJson",
+        "chunkingMode": "simple",
+        "chunkSize": 800,
+        "chunkOverlap": 100,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "map_reduce",
+              "combineMapPrompt": "Extract the key points from this part of the combined morning meeting summaries (several departments). Keep decisions, risks and any dependencies between departments. Do not invent facts.\n\n\"{text}\"\n\nKEY POINTS:",
+              "prompt": "Write a general summary of today's morning meetings for company leadership, based on the notes below. Format: 1) a short paragraph (max 4 sentences) with the overall picture; 2) 'Cross-team dependencies:' with 2-3 bullets; 3) 'Top risks:' with 2-3 bullets. Do not invent facts.\n\n\"{text}\"\n\nGENERAL SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "dffd2c3e-e01e-4a57-8927-5653b67cabcd",
+      "name": "Summarize All Meetings"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $('Morning Schedule').first().json.timestamp }}",
+        "format": "custom",
+        "customFormat": "EEEE, dd MMMM yyyy",
+        "outputFieldName": "formattedDate",
+        "options": {
+          "includeInputFields": true,
+          "useWorkflowTimezone": true
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "35cfef45-5b0e-4d25-9e7b-fd124a9d76cb",
+      "name": "Format Date"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9685ffc-4ee3-48c6-b1cb-380698808858",
+              "name": "reportDate",
+              "value": "={{ $json.formattedDate }}",
+              "type": "string"
+            },
+            {
+              "id": "5ef87b0b-b1b4-46e3-9c9f-ea869e42df4f",
+              "name": "title",
+              "value": "={{ 'Morning meetings summary - ' + $json.formattedDate }}",
+              "type": "string"
+            },
+            {
+              "id": "cb9e8c33-8728-416f-91eb-dea31988b4e1",
+              "name": "generalSummary",
+              "value": "={{ $json.response ?? $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "62aa6e8f-6aa2-47ef-a2ee-977998805412",
+              "name": "departmentSummaries",
+              "value": "={{ $('Aggregate Meeting Summaries').first().json.meetings }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1980,
+        0
+      ],
+      "id": "092fd9fd-914b-4ead-bcef-2354b95c4137",
+      "name": "Attach Date To Summary"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9ddcb659-a9f6-45af-99f9-3311d3a90991",
+              "leftValue": "={{ $('Config').first().json.runComparison }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        660,
+        480
+      ],
+      "id": "824df9d7-66cf-4998-ac83-980f18cdbdc4",
+      "name": "Run Comparison?"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "notes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        480
+      ],
+      "id": "e6c480a7-2937-4e3a-9a9a-88684e301348",
+      "name": "Aggregate Notes For Comparison"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c7f3ad3-f8d6-4106-918f-c9bbdd19c899",
+              "name": "allNotes",
+              "value": "={{ $json.notes.map(n => '## ' + n.department + '\\n' + n.notes).join('\\n\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1100,
+        480
+      ],
+      "id": "d2a7ef59-67ef-4b04-8685-cf4033c4b592",
+      "name": "Prepare Comparison Input"
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputJson",
+        "chunkingMode": "simple",
+        "chunkSize": 500,
+        "chunkOverlap": 100,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "stuff",
+              "prompt": "Write a concise summary of the following company meeting notes. Focus on decisions, action items (with owners) and risks.\n\n\"{text}\"\n\nCONCISE SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        320
+      ],
+      "id": "a380b5b8-c362-49a5-8ef3-24db4092a73e",
+      "name": "Summarize Stuff"
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputJson",
+        "chunkingMode": "simple",
+        "chunkSize": 500,
+        "chunkOverlap": 100,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "refine",
+              "refineQuestionPrompt": "Write a concise summary of the following company meeting notes. Focus on decisions, action items (with owners) and risks.\n\n\"{text}\"\n\nCONCISE SUMMARY:",
+              "refinePrompt": "Your job is to produce a final summary of company meeting notes (decisions, action items with owners, risks).\nWe have an existing summary up to a certain point: \"{existing_answer}\"\nWe have the opportunity to refine the existing summary (only if needed) with some more context below.\n------------\n\"{text}\"\n------------\n\nGiven the new context, refine the original summary. If the context isn't useful, return the original summary.\n\nREFINED SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        480
+      ],
+      "id": "d5df93f2-71d8-43f6-be94-f61e0062bc43",
+      "name": "Summarize Refine"
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputJson",
+        "chunkingMode": "simple",
+        "chunkSize": 500,
+        "chunkOverlap": 100,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "map_reduce",
+              "combineMapPrompt": "Summarize this part of company meeting notes. Focus on decisions, action items (with owners) and risks.\n\n\"{text}\"\n\nPARTIAL SUMMARY:",
+              "prompt": "Combine the partial summaries below into one concise summary. Focus on decisions, action items (with owners) and risks.\n\n\"{text}\"\n\nCONCISE SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        640
+      ],
+      "id": "c962f6e7-682c-4fd0-aa9d-16b19eb0e1cd",
+      "name": "Summarize Map Reduce"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1540,
+        480
+      ],
+      "id": "4c7b5d1e-28af-4b8e-bc81-3724fe0eb620",
+      "name": "Merge Results"
+    },
+    {
+      "parameters": {
+        "jsCode": "// R7 (bonus): one row per summarisation method.\n// Merge (Append) keeps the input order: 1 = Stuff, 2 = Refine, 3 = Map Reduce.\nconst methods = ['Stuff', 'Refine', 'Map Reduce'];\nconst size = 500, overlap = 100; // same values as the three chain nodes\nconst text = $('Prepare Comparison Input').first().json.allNotes;\n// Rough estimate: the chains split the item's JSON text, so the real chunk count can differ a little.\nconst chunks = Math.max(1, Math.ceil((text.length - overlap) / (size - overlap)));\nconst calls = [1, chunks, chunks + 1]; // Stuff: 1 call; Refine: one per chunk, sequential; Map Reduce: one per chunk + 1 combine\nreturn $input.all().map((item, i) => {\n  const summary = item.json.response ?? item.json.output ?? '';\n  return { json: { method: methods[i], estimatedChunks: chunks, estimatedLlmCalls: calls[i], summaryChars: summary.length, summary } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        480
+      ],
+      "id": "98ea5cc6-0d0f-4b2e-b252-86d54296a43c",
+      "name": "Build Comparison"
+    },
+    {
+      "parameters": {
+        "content": "## Meeting Notes Summariser (Week 03 / HW 04)\nSchedule Trigger -> Config -> Collect Meeting Notes (4 items) -> Summarize Each Meeting (Map Reduce, per meeting) -> Label -> Aggregate -> Prepare Overall Input -> Summarize All Meetings (Map Reduce) -> Format Date -> Attach Date To Summary.\n\n**Coverage**\n- R1 notes for Engineering, Sales, HR, Finance (generated with Claude)\n- R2 Morning Schedule (daily 10:00, Europe/Sofia); run it manually with Execute workflow\n- R3 Collect Meeting Notes (Code)\n- R4 Summarize Each Meeting + Summarize All Meetings (Map Reduce)\n- R5 Format Date (timestamp from Morning Schedule)\n- R6 Attach Date To Summary (Edit)\n- R7 (bonus) lower branch: Stuff vs Refine vs Map Reduce on the same input -> Build Comparison. Switch it off with runComparison = false in Config.\n\nSetup: connect the OpenRouter credential on the chat model. Add the tag encorp-homework after import if it is missing.",
+        "height": 420,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -480
+      ],
+      "id": "33612c46-3dc4-4e2d-96c6-912e75acd120",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Morning Schedule": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Collect Meeting Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Meeting Notes": {
+      "main": [
+        [
+          {
+            "node": "Summarize Each Meeting",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run Comparison?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Each Meeting": {
+      "main": [
+        [
+          {
+            "node": "Label Department Summaries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Department Summaries": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Meeting Summaries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Meeting Summaries": {
+      "main": [
+        [
+          {
+            "node": "Prepare Overall Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Overall Input": {
+      "main": [
+        [
+          {
+            "node": "Summarize All Meetings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize All Meetings": {
+      "main": [
+        [
+          {
+            "node": "Format Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Date": {
+      "main": [
+        [
+          {
+            "node": "Attach Date To Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Comparison?": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Notes For Comparison",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Aggregate Notes For Comparison": {
+      "main": [
+        [
+          {
+            "node": "Prepare Comparison Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Comparison Input": {
+      "main": [
+        [
+          {
+            "node": "Summarize Stuff",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Summarize Refine",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Summarize Map Reduce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Stuff": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Refine": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Summarize Map Reduce": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Build Comparison",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize Each Meeting",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Summarize All Meetings",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Summarize Stuff",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Summarize Refine",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Summarize Map Reduce",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Sofia"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}
