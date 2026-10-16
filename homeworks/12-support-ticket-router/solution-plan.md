@@ -58,11 +58,11 @@ Sticky Notes: общо описание (какво е променено и з�
 - Дизайнът на v1 (два workflow-а и Data Table) не е тестван; архивиран е само като алтернатива.
 
 ## Доказателства от теста (screenshots)
-Снимките са на Здравко от теста на 2026-10-16 (изрязани, без лични данни от пощата и Google Tasks):
-- `screenshots/review-01-inbox.png` - имейлът за ревю в пощата (`[Review needed] <ticketId> - AI: Urgent / Technical`).
+Снимките са на Здравко от теста на 2026-10-16 (оригинални, непроменени; Здравко се е погрижил да няма конфиденциални данни):
+- `screenshots/review-01-inbox.png` - входящата поща с имейла за ревю (`[Review needed] <ticketId> - AI: Urgent / Technical`).
 - `screenshots/review-02-email.png` - съдържанието на имейла: ticket id, клиент, отдел, AI категория, текст и бутон "Open review form".
 - `screenshots/review-03-form.png` - Custom Form на Send and Wait: dropdown `Sentiment category` и `Reviewer note`.
-- `screenshots/review-04-google-tasks.png` - създадените задачи в списъка за тикетите (`[Department] ...`, ticket id и категория в бележките).
+- `screenshots/review-04-google-tasks.png` - Google Tasks със създадените задачи в списъка за тикетите (`[Department] ...`, ticket id и категория в бележките).
 Липсват снимки на Executions/канвас и на таба `Tickets` и `Audit Log`; добави ги при предаване, ако се изискват.
 
 ## Тестов план

@@ -1,7 +1,7 @@
 # Changelog
 
 ## 2026-10-16 - 12-support-ticket-router (само документация)
-- Промяна: добавени 4 снимки от теста в `homeworks/12-support-ticket-router/screenshots/` (имейл за ревю, форма, Google Tasks).
+- Промяна: добавени 4 снимки от теста в `homeworks/12-support-ticket-router/screenshots/` (имейл за ревю, форма, Google Tasks) - оригинални, непроменени.
 - Причина: искане на Здравко - потвърждение от теста.
 - Засегнати нодове: няма.
 
