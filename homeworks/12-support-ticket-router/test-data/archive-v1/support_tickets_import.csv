@@ -1,0 +1,2 @@
+ticketId,receivedAt,customerName,ticketText,sentimentAi,department,status,sentimentFinal,reviewerNote,reviewedAt,processedAt,errorNote
+sample,sample,sample,sample,sample,sample,sample,sample,sample,sample,sample,sample

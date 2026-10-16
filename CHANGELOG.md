@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-10-16 - 12-support-ticket-router (само документация)
+- Промяна: добавени 4 снимки от теста в `homeworks/12-support-ticket-router/screenshots/` (имейл за ревю, форма, Google Tasks).
+- Причина: искане на Здравко - потвърждение от теста.
+- Засегнати нодове: няма.
+
+## 2026-10-16 - 12-support-ticket-router v2 (tested)
+- Промяна: няма промяна във файла; потвърдено от Здравко, че всички тестови сценарии работят без проблеми (Gmail Send and Wait Custom Form, Google Sheets Tool, Google Tasks Tool). Статус -> tested.
+- Причина: потвърждение от теста в неговия n8n.
+- Засегнати нодове: няма.
+
+## 2026-10-16 - 12-support-ticket-router v2
+- Промяна: един workflow с Gmail Send and Wait (Custom Form) вместо два workflow-а и Data Table; добавена Sticky Note "Design considerations, alternatives and recommendations"; v1 е в `n8n-workflows/_versions/12-support-ticket-router/`, файловете за Data Table - в `test-data/archive-v1/`.
+- Причина: Здравко реши по-прост дизайн при малък обем на тикетите, след собствено проучване за влиянието на Wait/HITL възлите.
+- Засегнати нодове: премахнати Data Table, Load/Mark и Form completion нодове; нови Compose Review Message, Request Sentiment Review, Read Review Decision. Не е тестван.
+
+## 2026-10-16 - 12-support-ticket-router (само документация)
+- Промяна: добавен `homeworks/12-support-ticket-router/test-data/support_tickets_import.csv` за импорт на Data Table.
+- Причина: искане на Здравко - по-лесно създаване на таблицата.
+- Засегнати нодове: няма.
+
+## 2026-10-15 - 12-support-ticket-router v1
+- Промяна: нов домашен - два workflow-а (Intake и Review): Form Trigger, Sentiment Analysis, Text Classifier, Data Table като състояние на тикета, Gmail ревю през форма, AI Agent с Google Sheets Tool и Google Tasks Tool, таб `Audit Log`.
+- Причина: ново домашно (седмица 3, задача 5); Здравко одобри плана с Data Table вместо Send and Wait (без изчакващи изпълнения).
+- Засегнати нодове: всички (нов). Не е тестван.
+
 ## 2026-10-15 - 11-meeting-notes-summariser v2 (tested)
 - Промяна: няма промяна във файла; потвърдено от Здравко, че главният поток работи (Date & Time, Attach Date). Статус -> tested.
 - Причина: потвърждение от теста в неговия n8n.
