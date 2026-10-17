@@ -1,0 +1,404 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Weekly Report",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Expense Weekly Report (bonus B1)\nMonday Schedule (or Manual Trigger) -> Config Report -> Get Expenses -> Last Week Final Only -> Summarize (department, category, decision, currency) -> Build Report Table -> Write Commentary (Basic LLM Chain) -> Build Report Email -> Send To Finance.\n\nThe numbers come from Summarize and Build Report Table; the LLM only writes a short commentary from them. Pending and expired rows are not counted. If there were no decided expenses last week, nothing is sent (the Filter returns no items).\n\nSetup: Data Table expenses, OpenRouter + Gmail credentials, financeEmail in Config Report. The schedule uses the instance time zone.",
+        "height": 260,
+        "width": 900
+      },
+      "id": "1237af0a-1d67-4c9c-a7f0-409240741fc4",
+      "name": "Sticky Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "5e2796b1-9bde-42cb-b75c-0d1d6d31a2bd",
+      "name": "Monday Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a409b596-5281-4d7e-87a1-19a08bd9afcd",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4388270-1553-460f-9ee5-27859942be31",
+              "name": "financeEmail",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "ecdb8b48-dbb9-4548-94f5-0759798611fe",
+              "name": "fromDate",
+              "value": "={{ $now.startOf('week').minus({ weeks: 1 }).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "b7270e46-6d10-436c-9463-58953d8667f9",
+              "name": "toDate",
+              "value": "={{ $now.startOf('week').toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "fd6dde03-852e-4a38-9926-771109ac5c09",
+              "name": "periodLabel",
+              "value": "={{ $now.startOf('week').minus({ weeks: 1 }).toFormat('yyyy-LL-dd') + ' - ' + $now.startOf('week').minus({ days: 1 }).toFormat('yyyy-LL-dd') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "bacea775-1e53-4b00-ba6f-973b5c96e4ee",
+      "name": "Config Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "expenses"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "bf3f90af-7bed-4a1a-952b-2699351a42cf",
+      "name": "Get Expenses",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "df8eb8fc-f38a-456d-89f4-d958a7f39f83",
+              "leftValue": "={{ ['approved', 'rejected'].includes($json.decision) && !!$json.decidedAt && new Date($json.decidedAt) >= new Date($('Config Report').first().json.fromDate) && new Date($json.decidedAt) < new Date($('Config Report').first().json.toDate) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b2853c64-1d39-4ecc-8d89-70cd65559bee",
+      "name": "Last Week Final Only",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "count",
+              "field": "submissionId"
+            },
+            {
+              "aggregation": "sum",
+              "field": "total"
+            },
+            {
+              "aggregation": "sum",
+              "field": "approvedAmount"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "department,category,decision,currency",
+        "options": {}
+      },
+      "id": "b252a132-5a7f-4909-8b3a-f55ee8a6e97d",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turns the Summarize rows into an HTML table and a compact JSON for the commentary.\nconst rows = $input.all().map((i) => i.json).filter((r) => r.department);\nconst esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst num = (v) => (Number(v) || 0).toFixed(2);\nconst cnt = (r) => r.count_submissionId ?? r.count ?? 0;\nlet html = '<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tr><th>Department</th><th>Category</th><th>Decision</th><th>Currency</th><th>Expenses</th><th>Claimed</th><th>Approved</th></tr>';\nfor (const r of rows) {\n  html += '<tr><td>' + esc(r.department) + '</td><td>' + esc(r.category) + '</td><td>' + esc(r.decision) + '</td><td>' + esc(r.currency) + '</td><td>' + cnt(r) + '</td><td>' + num(r.sum_total) + '</td><td>' + num(r.sum_approvedAmount) + '</td></tr>';\n}\nhtml += '</table>';\nconst compact = rows.map((r) => ({ department: r.department, category: r.category, decision: r.decision, currency: r.currency, expenses: cnt(r), claimed: Number(num(r.sum_total)), approved: Number(num(r.sum_approvedAmount)) }));\nreturn [{ json: { tableHtml: html, rowsJson: JSON.stringify(compact), rowCount: rows.length } }];"
+      },
+      "id": "379cf2e3-74a2-4977-9cc1-46bbd6d8ce14",
+      "name": "Build Report Table",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Period: ' + $('Config Report').first().json.periodLabel + '\\nRows (JSON): ' + $json.rowsJson }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a finance assistant. Write a short commentary (4 to 6 sentences, plain text) on last week's employee expenses for the finance team. Use ONLY the numbers in the data. Mention the department and the category with the highest approved amount and how many expenses were rejected. Do not invent numbers and do not convert currencies."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "6c3036b9-1288-4e62-8ac2-c2fee61574e4",
+      "name": "Write Commentary",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1440,
+        280
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2,
+          "maxRetries": 3
+        }
+      },
+      "id": "a82c00a6-f108-433c-bf90-1d3131011f8a",
+      "name": "Report Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        520
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Final e-mail: heading, table from Build Report Table and the escaped LLM commentary.\nconst cfg = $('Config Report').first().json;\nconst table = $('Build Report Table').first().json.tableHtml;\nconst esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\n/g, '<br>');\nconst comment = $json.text ?? $json.output ?? '';\nconst html = '<h3>Weekly expense report ' + esc(cfg.periodLabel) + '</h3>' + table + '<br><p>' + esc(comment) + '</p>';\nreturn [{ json: { subject: 'Weekly expense report ' + cfg.periodLabel, html } }];"
+      },
+      "id": "bedca396-5f89-4dc4-886b-3cdff3c43588",
+      "name": "Build Report Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Config Report').first().json.financeEmail }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9a9f1901-93df-40b3-939d-769c18e8f4ed",
+      "name": "Send To Finance",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        280
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "webhookId": "ae08f01f-fb18-4f34-b4f7-650094dd3aa5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Report Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Commentary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monday Schedule": {
+      "main": [
+        [
+          {
+            "node": "Config Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config Report": {
+      "main": [
+        [
+          {
+            "node": "Get Expenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Expenses": {
+      "main": [
+        [
+          {
+            "node": "Last Week Final Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last Week Final Only": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Build Report Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report Table": {
+      "main": [
+        [
+          {
+            "node": "Write Commentary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Commentary": {
+      "main": [
+        [
+          {
+            "node": "Build Report Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report Email": {
+      "main": [
+        [
+          {
+            "node": "Send To Finance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}

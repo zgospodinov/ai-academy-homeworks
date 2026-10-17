@@ -1,0 +1,126 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Error Alert",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "94ca532f-eb6f-43da-bd28-0bda5b8309b1",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa-msg",
+              "name": "message",
+              "value": "={{ 'Workflow failed: ' + $json.workflow.name + '\\nNode: ' + $json.execution.lastNodeExecuted + '\\n\\n' + $json.execution.error.message + '\\n\\n' + ($json.execution.url || '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d9ee80c-e727-4551-83c6-1e32daddc7a6",
+      "name": "Format Alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7ecf3dff-3361-42a2-8f9d-06415154e280",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        208
+      ],
+      "webhookId": "b43981c0-6982-4ee9-80a6-1115ca2a3c8b",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "Bt80gzlOv5umjweU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Expense Error Alert (bonus B3)\nError workflow: select it in Settings > Error workflow of Expense Receipt Assistant. When that workflow fails, a Telegram message with the workflow name, the last node and the error text is sent.\n\nSetup: replace YOUR_TELEGRAM_CHAT_ID in Send Telegram Alert (placeholder). The Telegram credential is already bound.",
+        "height": 200,
+        "width": 600,
+        "color": 6
+      },
+      "id": "6c82eeae-30df-414f-96a5-cc1df9521daf",
+      "name": "Sticky Note 670ae36c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -144
+      ]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alert": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "0882898b-b151-443c-b5e5-f74f435e3fbb",
+      "name": "Alert",
+      "nodeNames": [
+        "Format Alert",
+        "Send Telegram Alert"
+      ],
+      "description": "Formats the error and sends it to Telegram (B3)"
+    }
+  ]
+}

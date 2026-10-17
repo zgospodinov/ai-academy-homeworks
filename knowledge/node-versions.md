@@ -54,3 +54,13 @@
 | `n8n-nodes-base.merge` | 3.2 | 11 (3 входа, изпълнено) |
 | `n8n-nodes-base.dateTime` | 2 | 11 (Format a Date: `operation: formatDate`, `format: custom`, `customFormat`, `outputFieldName`, `options.includeInputFields`, `options.useWorkflowTimezone` - главният поток работи по думите на Здравко) |
 | `n8n-nodes-base.scheduleTrigger` | 1.4 | 11 (ръчно пускане с Execute workflow; `timestamp` се чете от Date & Time) |
+| `n8n-nodes-base.formTrigger` | 2.6 | 13 (файл поле, dropdown, number; потвърдено) |
+| `@n8n/n8n-nodes-langchain.chainLlm` | 1.9 | 13 (Image (Binary) съобщение + Structured Output Parser; потвърдено) |
+| `n8n-nodes-base.dataTable` | 1.1 | 13 (get/insert/update по филтър; Always Output Data при липса; потвърдено) |
+| `n8n-nodes-base.switch` | 3.4 | 13 (потвърдено) |
+| `n8n-nodes-base.gmail` | 2.2 | 13 (send и sendAndWait с Custom Form; потвърдено) |
+| `n8n-nodes-base.summarize` | 1.1 | 13 (потвърдено; суми само върху числа) |
+| `@n8n/n8n-nodes-langchain.toolWorkflow` | 2.2 | 13 (Call n8n Workflow Tool; потвърдено) |
+| `@n8n/n8n-nodes-langchain.chatTrigger` | 1.5 | 13 (потвърдено) |
+| `@n8n/n8n-nodes-langchain.memoryBufferWindow` | 1.4 | 13 (потвърдено) |
+| `n8n-nodes-base.executeWorkflowTrigger` | 1.2 | 13 (потвърдено) |

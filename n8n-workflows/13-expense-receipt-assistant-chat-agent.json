@@ -1,0 +1,195 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Chat Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "402492c4-641c-4b4d-9105-d9d162ab47d5",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        208
+      ],
+      "webhookId": "9d36c740-5e65-45d6-9f7f-ba5cf3b83045"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are an assistant that answers questions about an employee's expenses.\n- Before the first lookup you need the employee's work e-mail. If you do not have it yet, ask for it and wait.\n- Use the tool \"get_employee_expenses\" to look up numbers. Pass the e-mail and, if the question is about one category, the category. The categories are Travel, Food, Office, Software, Entertainment and Other (map words like trips, hotel or fuel to Travel). Leave the category empty for all categories.\n- Call the tool once per question. Never guess or invent amounts. If the tool says nothing was found, say so.\n- Answer briefly, with the amounts and currencies exactly as returned. Say how much is approved, how much is pending and how much was rejected when that is relevant.\n- Answer in the language of the user."
+        }
+      },
+      "id": "ae90fc53-25d3-4b54-812c-295ed6a030af",
+      "name": "Expense Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "id": "dc9741e2-e0f7-4b0b-9d89-6e78d96860f8",
+      "name": "Agent Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        160,
+        448
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "d97a01b3-57cc-4a1d-9f73-2e283e3430a2",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "description": "Returns the sums of claimed and approved expenses of one employee, split by decision (approved, rejected, pending) and currency. Optionally for one category.",
+        "workflowId": {
+          "__rl": true,
+          "value": "sz6oRpgEq17QjU1x",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/sz6oRpgEq17QjU1x",
+          "cachedResultName": "Encorp | Homework | Week 03 | HW 06 | Expense Spending Lookup"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "employeeEmail": "={{ $fromAI('employeeEmail', 'The work e-mail of the employee', 'string') }}",
+            "category": "={{ $fromAI('category', 'One of Travel, Food, Office, Software, Entertainment, Other. Empty string for all categories', 'string') }}"
+          },
+          "schema": [
+            {
+              "id": "employeeEmail",
+              "displayName": "employeeEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      },
+      "id": "80e32756-0161-49df-ad1f-f03c1c557249",
+      "name": "Get Employee Expenses Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Expense Chat Agent (bonus B2)\nChat Trigger -> Expense Agent. The agent asks for the e-mail and calls the sub-workflow Expense Spending Lookup as a tool (Call n8n Workflow Tool). It never invents numbers.\n\nNeeds: OpenRouter credential (chat model), the sub-workflow Expense Spending Lookup.",
+        "height": 200,
+        "width": 700,
+        "color": 6
+      },
+      "id": "1c4deaad-9962-4570-bdb0-a68568420dce",
+      "name": "Sticky Note 831dcf34",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -144
+      ]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Employee Expenses Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ]
+}

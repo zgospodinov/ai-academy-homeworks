@@ -1,0 +1,7 @@
+category,allowed,auto_approve_up_to_eur,description
+Travel,true,150,"Hotels, transport, fuel, parking"
+Food,true,40,"Meals on business trips or with clients"
+Office,true,100,"Office supplies and small equipment"
+Software,true,50,"Subscriptions and licences"
+Entertainment,false,0,"Team events, bowling, cinema – not reimbursed"
+Other,true,30,"Anything else – above the limit the manager decides"

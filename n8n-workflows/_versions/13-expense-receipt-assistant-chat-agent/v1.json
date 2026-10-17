@@ -1,0 +1,195 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Chat Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Expense Chat Agent (bonus B2)\nChat Trigger -> Expense Agent (OpenRouter model, Simple Memory, tool Get Employee Expenses = Call n8n Workflow Tool -> workflow Expense Spending Lookup).\n\nExample: \"How much did I spend on travel?\" The agent asks for the work e-mail first, then calls the tool once per question.\n\nSetup: import and save Expense Spending Lookup first, then choose it in the tool (replace YOUR_SPENDING_LOOKUP_WORKFLOW_ID). Connect OpenRouter. Open the chat with the Chat button on the canvas.\nNote: there is no login; anyone who knows an e-mail can ask about it. Fine for the homework, not for production.",
+        "height": 260,
+        "width": 760
+      },
+      "id": "e8c02f51-0744-4302-bfa4-a3a3d99c06fd",
+      "name": "Sticky Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1903efa7-eede-4899-b934-9a43956687ff",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        200
+      ],
+      "webhookId": "f29bee90-1933-4498-8ce6-602d822dacdc"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are an assistant that answers questions about an employee's expenses.\n- Before the first lookup you need the employee's work e-mail. If you do not have it yet, ask for it and wait.\n- Use the tool \"get_employee_expenses\" to look up numbers. Pass the e-mail and, if the question is about one category, the category. The categories are Travel, Food, Office, Software, Entertainment and Other (map words like trips, hotel or fuel to Travel). Leave the category empty for all categories.\n- Call the tool once per question. Never guess or invent amounts. If the tool says nothing was found, say so.\n- Answer briefly, with the amounts and currencies exactly as returned. Say how much is approved, how much is pending and how much was rejected when that is relevant.\n- Answer in the language of the user."
+        }
+      },
+      "id": "e9945ef5-da78-49e9-8920-fa59d6a02db0",
+      "name": "Expense Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "id": "bb7ed614-c526-4ac2-8fae-af5cfd5d7306",
+      "name": "Agent Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        160,
+        440
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "9332aa4e-eedc-4002-a275-0636ddb5b284",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "name": "get_employee_expenses",
+        "description": "Returns the sums of claimed and approved expenses of one employee, split by decision (approved, rejected, pending) and currency. Optionally for one category.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_SPENDING_LOOKUP_WORKFLOW_ID",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "employeeEmail": "={{ $fromAI('employeeEmail', 'The work e-mail of the employee', 'string') }}",
+            "category": "={{ $fromAI('category', 'One of Travel, Food, Office, Software, Entertainment, Other. Empty string for all categories', 'string') }}"
+          },
+          "schema": [
+            {
+              "id": "employeeEmail",
+              "displayName": "employeeEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      },
+      "id": "d1c93cba-9500-4807-86bd-4224cee01541",
+      "name": "Get Employee Expenses Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        440
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Employee Expenses Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Expense Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}

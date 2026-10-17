@@ -1,0 +1,517 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Weekly Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "7a70e04f-dc8e-41e0-a53d-134a94fab9e1",
+      "name": "Monday Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cr-mail",
+              "name": "financeEmail",
+              "type": "string",
+              "value": "you@example.com"
+            },
+            {
+              "id": "cr-from",
+              "name": "fromDate",
+              "type": "string",
+              "value": "={{ $json.testFromDate || $now.startOf('week').minus({ weeks: 1 }).toISO() }}"
+            },
+            {
+              "id": "cr-to",
+              "name": "toDate",
+              "type": "string",
+              "value": "={{ $json.testToDate || $now.startOf('week').toISO() }}"
+            },
+            {
+              "id": "cr-label",
+              "name": "periodLabel",
+              "type": "string",
+              "value": "={{ $json.testLabel || ($now.startOf('week').minus({ weeks: 1 }).toFormat('yyyy-LL-dd') + ' - ' + $now.startOf('week').minus({ days: 1 }).toFormat('yyyy-LL-dd')) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7b37bea3-a89e-4a91-915a-a81518086d04",
+      "name": "Config Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        288
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "702b394e-54cc-4ea2-a8c4-36cfcb9c74e7",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tw-from",
+              "name": "testFromDate",
+              "type": "string",
+              "value": "={{ $now.minus({ days: 7 }).toISO() }}"
+            },
+            {
+              "id": "tw-to",
+              "name": "testToDate",
+              "type": "string",
+              "value": "={{ $now.plus({ minutes: 1 }).toISO() }}"
+            },
+            {
+              "id": "tw-label",
+              "name": "testLabel",
+              "type": "string",
+              "value": "={{ 'TEST last 7 days ' + $now.minus({ days: 7 }).toFormat('yyyy-LL-dd') + ' - ' + $now.toFormat('yyyy-LL-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0dfba4a4-9c55-4487-a0c1-36de05fd65f5",
+      "name": "Manual Test Window",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        112,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "4fPRW0W7DHOG23Tz",
+          "cachedResultName": "expenses"
+        },
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true
+      },
+      "id": "68d8efba-1638-468f-9f6c-540c36b15256",
+      "name": "Get Expenses",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        288
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "lw-1",
+              "leftValue": "={{ ['approved', 'rejected'].includes($json.decision) && !!$json.decidedAt && new Date($json.decidedAt) >= new Date($('Config Report').first().json.fromDate) && new Date($json.decidedAt) < new Date($('Config Report').first().json.toDate) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0d012aeb-fa1a-4f33-8b25-e1569e39be84",
+      "name": "Last Week Final Only",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        288
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca-total",
+              "name": "total",
+              "type": "number",
+              "value": "={{ Number($json.total) || 0 }}"
+            },
+            {
+              "id": "ca-appr",
+              "name": "approvedAmount",
+              "type": "number",
+              "value": "={{ Number($json.approvedAmount) || 0 }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a1d226ee-d923-40de-a30a-b276e20de540",
+      "name": "Convert Amounts",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        848,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "submissionId"
+            },
+            {
+              "aggregation": "sum",
+              "field": "total"
+            },
+            {
+              "aggregation": "sum",
+              "field": "approvedAmount"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "department,category,decision,currency",
+        "options": {}
+      },
+      "id": "8233cd21-e259-4861-b907-90eefc01f5a8",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1008,
+        288
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turns the Summarize rows into an HTML table and a compact JSON for the commentary.\nconst rows = $input.all().map((i) => i.json).filter((r) => r.department);\nconst esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst num = (v) => (Number(v) || 0).toFixed(2);\nconst cnt = (r) => r.count_submissionId ?? r.count ?? 0;\nlet html = '<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tr><th>Department</th><th>Category</th><th>Decision</th><th>Currency</th><th>Expenses</th><th>Claimed</th><th>Approved</th></tr>';\nfor (const r of rows) {\n  html += '<tr><td>' + esc(r.department) + '</td><td>' + esc(r.category) + '</td><td>' + esc(r.decision) + '</td><td>' + esc(r.currency) + '</td><td>' + cnt(r) + '</td><td>' + num(r.sum_total) + '</td><td>' + num(r.sum_approvedAmount) + '</td></tr>';\n}\nhtml += '</table>';\nconst compact = rows.map((r) => ({ department: r.department, category: r.category, decision: r.decision, currency: r.currency, expenses: cnt(r), claimed: Number(num(r.sum_total)), approved: Number(num(r.sum_approvedAmount)) }));\nreturn [{ json: { tableHtml: html, rowsJson: JSON.stringify(compact), rowCount: rows.length } }];"
+      },
+      "id": "ebc0c046-a564-4528-a5b1-5ee866724a68",
+      "name": "Build Report Table",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Period: ' + $('Config Report').first().json.periodLabel + '\\nRows (JSON): ' + $json.rowsJson }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a finance assistant. Write a short commentary (4 to 6 sentences, plain text) on last week's employee expenses for the finance team. Use ONLY the numbers in the data. Mention the department and the category with the highest approved amount and how many expenses were rejected. Do not invent numbers and do not convert currencies. If the data is empty, say that there were no decided expenses last week."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "01de0918-7b1f-4ccf-884d-31f1ad1d2fe9",
+      "name": "Write Commentary",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1440,
+        288
+      ],
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0.2,
+          "maxRetries": 3
+        }
+      },
+      "id": "dc511de1-d355-4ff6-b170-e52588bb74a9",
+      "name": "Report Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        528
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Final e-mail: heading, table from Build Report Table and the escaped LLM commentary.\nconst cfg = $('Config Report').first().json;\nconst table = $('Build Report Table').first().json.tableHtml;\nconst esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\n/g, '<br>');\nconst comment = $json.text ?? $json.output ?? '';\nconst html = '<h3>Weekly expense report ' + esc(cfg.periodLabel) + '</h3>' + table + '<br><p>' + esc(comment) + '</p>';\nreturn [{ json: { subject: 'Weekly expense report ' + cfg.periodLabel, html } }];"
+      },
+      "id": "98ad46d7-09f3-4394-8ea3-6d5959ba3451",
+      "name": "Build Report Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Config Report').first().json.financeEmail }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7d942bda-6312-440f-b8cf-388e2554815c",
+      "name": "Send To Finance",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        288
+      ],
+      "webhookId": "5c7d4f6b-b9f5-441e-8f98-a3209585e455",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HSDc1PIlgu4WcjO7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Expense Weekly Report (bonus B1)\nMonday 08:00 -> Config Report (period = previous calendar week) -> reads the expenses table -> keeps final decisions (approved/rejected by decidedAt) in the period -> Convert Amounts (text -> number) -> Summarize by department, category, decision, currency -> HTML table + LLM commentary (Basic LLM Chain) -> e-mail to finance.\n\n**Manual test:** Manual Trigger -> Manual Test Window overrides the period with the last 7 days (label starts with TEST). Config Report uses the test values only if they exist, so the Monday schedule keeps the calendar-week logic.\n\nSetup: financeEmail in Config Report (placeholder), OpenRouter and Gmail credentials. The workflow is not published; publish it for the schedule to run.",
+        "height": 220,
+        "width": 1000,
+        "color": 6
+      },
+      "id": "250c95fd-df93-489b-9d2f-b663a796305f",
+      "name": "Sticky Note d370462c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -144
+      ]
+    }
+  ],
+  "connections": {
+    "Monday Schedule": {
+      "main": [
+        [
+          {
+            "node": "Config Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Manual Test Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Test Window": {
+      "main": [
+        [
+          {
+            "node": "Config Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config Report": {
+      "main": [
+        [
+          {
+            "node": "Get Expenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Expenses": {
+      "main": [
+        [
+          {
+            "node": "Last Week Final Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last Week Final Only": {
+      "main": [
+        [
+          {
+            "node": "Convert Amounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Amounts": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Build Report Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report Table": {
+      "main": [
+        [
+          {
+            "node": "Write Commentary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Commentary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Commentary": {
+      "main": [
+        [
+          {
+            "node": "Build Report Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report Email": {
+      "main": [
+        [
+          {
+            "node": "Send To Finance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "e5690496-0eb0-4ea2-92d7-f09aacd9f233",
+      "name": "Collect and summarize",
+      "nodeNames": [
+        "Get Expenses",
+        "Last Week Final Only",
+        "Convert Amounts",
+        "Summarize",
+        "Build Report Table"
+      ],
+      "description": "Last week final decisions, amounts converted to numbers, summarized by department and category (B1)"
+    },
+    {
+      "id": "78794ae1-741a-4816-bb2a-c64c36922582",
+      "name": "Commentary and e-mail",
+      "nodeNames": [
+        "Write Commentary",
+        "Report Chat Model",
+        "Build Report Email",
+        "Send To Finance"
+      ],
+      "description": "LLM commentary and the e-mail to finance (B1)"
+    }
+  ]
+}

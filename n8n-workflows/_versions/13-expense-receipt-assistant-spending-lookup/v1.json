@@ -1,0 +1,212 @@
+{
+  "name": "Encorp | Homework | Week 03 | HW 06 | Expense Spending Lookup",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Expense Spending Lookup (bonus B2, sub-workflow used as a tool)\nWhen Executed by Another Workflow (employeeEmail, category) -> Get Employee Expenses -> Category Match -> Summarize Spending -> Format Result.\n\nCalled by the Expense Chat Agent. Returns one text in the field result: sums of claimed and approved amounts per decision (approved, rejected, pending) and currency. An empty category means all categories. Setup: Data Table expenses.",
+        "height": 220,
+        "width": 760
+      },
+      "id": "e4891fbb-5649-43be-8f23-c96307964853",
+      "name": "Sticky Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "employeeEmail"
+            },
+            {
+              "name": "category"
+            }
+          ]
+        }
+      },
+      "id": "6dfdd959-522e-4cdf-9dd6-4814144b8221",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "expenses"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "employeeEmail",
+              "condition": "eq",
+              "keyValue": "={{ String($json.employeeEmail || '').trim().toLowerCase() }}"
+            }
+          ]
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "07f09860-707d-4f80-a181-d8d07efc12c1",
+      "name": "Get Employee Expenses",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "488f98f5-eda0-4365-9323-3e84d6bb8568",
+              "leftValue": "={{ !!$json.id && (!$('When Executed by Another Workflow').first().json.category || String($json.category).toLowerCase() === String($('When Executed by Another Workflow').first().json.category).toLowerCase()) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "64561dd6-9224-4a3e-9b84-a7d97f417b27",
+      "name": "Category Match",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "count",
+              "field": "submissionId"
+            },
+            {
+              "aggregation": "sum",
+              "field": "total"
+            },
+            {
+              "aggregation": "sum",
+              "field": "approvedAmount"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "decision,currency",
+        "options": {}
+      },
+      "id": "38b31aa0-8dca-4c3c-b216-c803e2e33493",
+      "name": "Summarize Spending",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Builds one plain text answer for the agent. Rows without a decision come from the empty-result placeholder.\nconst input = $('When Executed by Another Workflow').first().json;\nconst rows = $input.all().map((i) => i.json).filter((r) => r.decision);\nconst who = input.employeeEmail || 'unknown';\nconst scope = input.category ? 'category ' + input.category : 'all categories';\nif (!rows.length) return [{ json: { result: 'No expenses found for ' + who + ' (' + scope + ').' } }];\nconst num = (v) => (Number(v) || 0).toFixed(2);\nconst lines = rows.map((r) => r.decision + ': ' + (r.count_submissionId ?? r.count ?? 0) + ' expense(s), claimed ' + num(r.sum_total) + ' ' + r.currency + ', approved ' + num(r.sum_approvedAmount) + ' ' + r.currency);\nreturn [{ json: { result: 'Expenses of ' + who + ' (' + scope + '): ' + lines.join('; ') + '.' } }];"
+      },
+      "id": "bf6175b4-3598-455e-ae08-c36f05f2f6f3",
+      "name": "Format Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        200
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Employee Expenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Employee Expenses": {
+      "main": [
+        [
+          {
+            "node": "Category Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Category Match": {
+      "main": [
+        [
+          {
+            "node": "Summarize Spending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Spending": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-09-30T14:40:40.502Z",
+      "createdAt": "2026-09-30T14:40:40.502Z",
+      "id": "UWSKCNyzKNSwLzYn",
+      "name": "encorp-homework"
+    }
+  ]
+}

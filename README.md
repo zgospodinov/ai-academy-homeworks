@@ -18,6 +18,7 @@
 | 10 | 3 | Smart Content Categorizer (Webhook + Text Classifier + Data Table) | tested | v3 | `n8n-workflows/10-smart-content-categorizer.json` (+ `-reject-article`, `-error-handler`) | webhook, respondToWebhook, splitOut, textClassifier, set, merge, dataTable, aggregate, executeWorkflow, stopAndError, errorTrigger, telegram | 2026-10-14 |
 | 11 | 3 | Резюме на сутрешни срещи (Summarization Chain: Map Reduce / Refine / Stuff) | tested | v2 | `n8n-workflows/11-meeting-notes-summariser.json` | scheduleTrigger, code, chainSummarization, lmChatOpenRouter, dateTime, set, aggregate, if, merge | 2026-10-14 |
 | 12 | 3 | Support Ticket Router with Human Support (Sentiment + Text Classifier + Gmail Send and Wait + AI Agent) | tested | v2 | `n8n-workflows/12-support-ticket-router.json` | formTrigger, sentimentAnalysis, textClassifier, gmail (sendAndWait), agent, googleSheets, googleSheetsTool, googleTasksTool | 2026-10-16 |
+| 13 | 3 | Expense Receipt Assistant (Form + vision Basic LLM Chain + Data Tables + Send and Wait; бонуси: отчет, чат агент, error alert) | tested | v2 | `n8n-workflows/13-expense-receipt-assistant.json` (+ `-weekly-report`, `-chat-agent`, `-spending-lookup`, `-error-alert`) | formTrigger, chainLlm, outputParserStructured, dataTable, switch, gmail (sendAndWait), summarize, toolWorkflow | 2026-10-16 |
 
 Статуси: `received` -> `plan-proposed` -> `plan-approved` -> `json-delivered` -> `tested` -> `submitted` -> `graded`.
 
