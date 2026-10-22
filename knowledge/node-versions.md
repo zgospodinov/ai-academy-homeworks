@@ -64,3 +64,9 @@
 | `@n8n/n8n-nodes-langchain.chatTrigger` | 1.5 | 13 (потвърдено) |
 | `@n8n/n8n-nodes-langchain.memoryBufferWindow` | 1.4 | 13 (потвърдено) |
 | `n8n-nodes-base.executeWorkflowTrigger` | 1.2 | 13 (потвърдено) |
+
+| `@n8n/n8n-nodes-langchain.openAi` (text/response, simplify off) | 2.3 | 14 (изпълнено) |
+| `@n8n/n8n-nodes-langchain.googleGemini` (text/message, simplify off) | 1.2 | 14 (изпълнено) |
+| `n8n-nodes-base.code` (runOnceForEachItem) | 2 | 14 (изпълнено) |
+| `n8n-nodes-base.switch` | 3.4 | 14 (rules, 2 изхода) |
+| `n8n-nodes-base.set` | 3.5 | 14 (изпълнено) |

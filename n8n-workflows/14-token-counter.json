@@ -1,0 +1,753 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 01 | Token Counter",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Token Counter",
+        "formDescription": "Send the same prompt to different LLM models and compare token usage and cost.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Prompt",
+              "fieldName": "prompt",
+              "fieldType": "textarea",
+              "placeholder": "Enter your prompt",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Model",
+              "fieldName": "model",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "gpt-6-luna"
+                  },
+                  {
+                    "option": "gpt-6.1-sol"
+                  },
+                  {
+                    "option": "gemini-3.1-flash-lite"
+                  },
+                  {
+                    "option": "gemini-3.6-flash"
+                  }
+                ]
+              },
+              "fieldType": "dropdown",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thanks! The result is saved in the Google Sheet."
+            }
+          }
+        }
+      },
+      "id": "1db27cab-aa4f-45b2-a3de-ac175e100adb",
+      "name": "Token Counter Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "7cf9390e-7bdb-464b-bd55-b68dd38c555f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "model",
+              "value": "={{ $json.model }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "provider",
+              "value": "={{ $json.model.startsWith('gemini') ? 'Gemini' : 'OpenAI' }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "submittedAt",
+              "value": "={{ $json.submittedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2445e374-d590-4711-822a-580ceecfcaee",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        544,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.provider }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "OpenAI",
+                    "id": "3ab351f6-8131-4fb9-a333-ecc71389f788"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OpenAI"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.provider }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "Gemini",
+                    "id": "43532ffc-5664-40c8-944c-63800913b50a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gemini"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6544d74a-df45-4786-888b-8cc99bd544b5",
+      "name": "Route by Provider",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "images": {
+          "values": []
+        },
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.model }}"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 2048
+        }
+      },
+      "id": "478e936e-c389-48ec-a64c-cc26ae62b0a7",
+      "name": "Message OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        144
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7h4hO4DHUDjhMjd4",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "o1",
+              "name": "timestamp",
+              "value": "={{ $('Normalize Input').item.json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "o2",
+              "name": "provider",
+              "value": "={{ $('Normalize Input').item.json.provider }}",
+              "type": "string"
+            },
+            {
+              "id": "o3",
+              "name": "model",
+              "value": "={{ $('Normalize Input').item.json.model }}",
+              "type": "string"
+            },
+            {
+              "id": "o4",
+              "name": "prompt",
+              "value": "={{ $('Normalize Input').item.json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "o5",
+              "name": "input_tokens",
+              "value": "={{ $json.usage.input_tokens }}",
+              "type": "number"
+            },
+            {
+              "id": "o6",
+              "name": "completion_tokens",
+              "value": "={{ $json.usage.output_tokens }}",
+              "type": "number"
+            },
+            {
+              "id": "o7",
+              "name": "total_tokens",
+              "value": "={{ $json.usage.total_tokens }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "928521ba-e599-4f94-acc7-2bbb83081cba",
+      "name": "Extract OpenAI Tokens",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1504,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Price table in USD per 1M tokens (edit here when prices change).\n// Sources: developers.openai.com/api/docs/pricing and ai.google.dev/gemini-api/docs/pricing\n// NOTE: gemini-3.6-flash has a promo price valid through 2026-12-31 (input 0.75 / output 3.75);\n// from 2027-01-01 it becomes input 1.50 / output 7.50 - update then.\nconst PRICES = {\n  'gpt-6-luna': { input: 0.10, output: 0.50 },\n  'gpt-6.1-sol': { input: 2.00, output: 10.00 },\n  'gemini-3.1-flash-lite': { input: 0.25, output: 1.50 },\n  'gemini-3.6-flash': { input: 0.75, output: 3.75 },\n};\n\nconst item = $input.item.json;\nconst price = PRICES[item.model];\nconst round6 = (n) => Math.round(n * 1e6) / 1e6;\n\n// Unknown model: keep the tokens, leave the cost empty.\nif (!price) {\n  return { json: { ...item, input_cost_usd: '', output_cost_usd: '', total_cost_usd: '' } };\n}\n\nconst inputCost = (item.input_tokens / 1e6) * price.input;\nconst outputCost = (item.completion_tokens / 1e6) * price.output;\n\nreturn {\n  json: {\n    ...item,\n    input_cost_usd: round6(inputCost),\n    output_cost_usd: round6(outputCost),\n    total_cost_usd: round6(inputCost + outputCost),\n  },\n};"
+      },
+      "id": "c352177f-f0e3-41e9-aeb1-a6f0e8e12db9",
+      "name": "Calculate Cost",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "timestamp",
+              "id": "timestamp",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "provider",
+              "id": "provider",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "model",
+              "id": "model",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "prompt",
+              "id": "prompt",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "input_tokens",
+              "id": "input_tokens",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "completion_tokens",
+              "id": "completion_tokens",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "total_tokens",
+              "id": "total_tokens",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "input_cost_usd",
+              "id": "input_cost_usd",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "output_cost_usd",
+              "id": "output_cost_usd",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "total_cost_usd",
+              "id": "total_cost_usd",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "provider": "={{ $json.provider }}",
+            "model": "={{ $json.model }}",
+            "prompt": "={{ $json.prompt }}",
+            "input_tokens": "={{ $json.input_tokens }}",
+            "completion_tokens": "={{ $json.completion_tokens }}",
+            "total_tokens": "={{ $json.total_tokens }}",
+            "input_cost_usd": "={{ $json.input_cost_usd }}",
+            "output_cost_usd": "={{ $json.output_cost_usd }}",
+            "total_cost_usd": "={{ $json.total_cost_usd }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Token Counter",
+          "mode": "id",
+          "value": "1T5c5_vB60dCMt2CK0mkFLE3JkE5S2HBXPU_FXALimxc"
+        },
+        "operation": "append",
+        "options": {
+          "cellFormat": "RAW"
+        },
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "Лист1",
+          "mode": "name",
+          "value": "Лист1"
+        }
+      },
+      "id": "b5c866dd-5778-4862-aacd-79494cf97a84",
+      "name": "Save to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2160,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zJy85a5GrnnEpBYj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "=models/{{ $json.model }}"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "maxOutputTokens": 2048
+        }
+      },
+      "id": "9b54b2f3-19e1-4df7-97cc-0be962782f2a",
+      "name": "Message Gemini Model",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        464
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM) - Encorp AI Academy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g1",
+              "name": "timestamp",
+              "value": "={{ $('Normalize Input').item.json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "g2",
+              "name": "provider",
+              "value": "={{ $('Normalize Input').item.json.provider }}",
+              "type": "string"
+            },
+            {
+              "id": "g3",
+              "name": "model",
+              "value": "={{ $('Normalize Input').item.json.model }}",
+              "type": "string"
+            },
+            {
+              "id": "g4",
+              "name": "prompt",
+              "value": "={{ $('Normalize Input').item.json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "g5",
+              "name": "input_tokens",
+              "value": "={{ $json.usageMetadata.promptTokenCount }}",
+              "type": "number"
+            },
+            {
+              "id": "g6",
+              "name": "completion_tokens",
+              "value": "={{ ($json.usageMetadata.candidatesTokenCount ?? 0) + ($json.usageMetadata.thoughtsTokenCount ?? 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "g7",
+              "name": "total_tokens",
+              "value": "={{ $json.usageMetadata.totalTokenCount }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0498841b-4fdc-492e-b332-122abb701396",
+      "name": "Extract Gemini Tokens",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1504,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Token Counter\nForm (prompt + model) -> split by provider -> Message a Model (Simplify Output OFF) -> extract tokens -> calculate cost -> append row to Google Sheet.\n\nCoverage: R1 Form, R2 Switch by provider, R3/R4 Message a Model with raw output, R5 Extract Tokens, R6 Calculate Cost, R7/R8 Google Sheet rows for comparison.",
+        "height": 220,
+        "width": 560,
+        "color": 4
+      },
+      "id": "52ef2405-3691-4baf-9863-45e89b366d56",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Input and Routing\nForm collects the prompt and the model; the provider is derived from the model name and routes to the right branch. Covers R1, R2.",
+        "height": 260,
+        "width": 820,
+        "color": 5
+      },
+      "id": "39855898-782b-4334-9041-dda0767780c2",
+      "name": "Group - Input and Routing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## OpenAI\nMessage a Model with raw output, then take usage.input_tokens / output_tokens / total_tokens. Covers R3, R4, R5.",
+        "height": 260,
+        "width": 520,
+        "color": 6
+      },
+      "id": "bf574405-becf-4c6a-9ce4-73e01f38038e",
+      "name": "Group - OpenAI",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Gemini\nMessage a Model with raw output, then take usageMetadata. Completion = candidates + thinking tokens. Covers R3, R4, R5.",
+        "height": 260,
+        "width": 520,
+        "color": 3
+      },
+      "id": "b574b2bc-a64d-429c-98c4-3c841788b2da",
+      "name": "Group - Gemini",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Cost and Save\nPrice table (USD per 1M tokens) gives input/output/total cost; the row is appended to the Google Sheet. Covers R6, R7, R8.",
+        "height": 260,
+        "width": 520,
+        "color": 7
+      },
+      "id": "94a59d4c-c56b-4fc4-9bd1-de5d038321bf",
+      "name": "Group - Cost and Save",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Token Counter Form": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Route by Provider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Provider": {
+      "main": [
+        [
+          {
+            "node": "Message OpenAI Model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message Gemini Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message OpenAI Model": {
+      "main": [
+        [
+          {
+            "node": "Extract OpenAI Tokens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract OpenAI Tokens": {
+      "main": [
+        [
+          {
+            "node": "Calculate Cost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Cost": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Gemini Model": {
+      "main": [
+        [
+          {
+            "node": "Extract Gemini Tokens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Gemini Tokens": {
+      "main": [
+        [
+          {
+            "node": "Calculate Cost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "9a14a1f4-8d02-41fb-9c99-63f06ac2d6a6",
+      "name": "Routing",
+      "nodeNames": [
+        "Normalize Input",
+        "Route by Provider"
+      ],
+      "description": "Derives the provider from the model and routes to the right branch"
+    },
+    {
+      "id": "e47aa84b-2a79-492b-85dd-0754eb7f8ade",
+      "name": "OpenAI",
+      "nodeNames": [
+        "Message OpenAI Model",
+        "Extract OpenAI Tokens"
+      ],
+      "description": "Message a Model (raw output) and extract OpenAI token usage"
+    },
+    {
+      "id": "a5450ab6-f6d5-4edc-99c8-f222fd49a234",
+      "name": "Gemini",
+      "nodeNames": [
+        "Message Gemini Model",
+        "Extract Gemini Tokens"
+      ],
+      "description": "Message a Model (raw output) and extract Gemini token usage"
+    },
+    {
+      "id": "333f8e95-1e28-49f4-a332-e2f002259e8d",
+      "name": "Cost and Save",
+      "nodeNames": [
+        "Calculate Cost",
+        "Save to Google Sheet"
+      ],
+      "description": "Calculates the cost per model and appends a row to Google Sheets"
+    }
+  ]
+}

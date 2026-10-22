@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-10-22 - 14-token-counter v1 (tested)
+- Промяна: добавен експорт `n8n-workflows/14-token-counter.json`; тест на всички 4 модела успешен. По пътя: върнато `columns` съпоставяне в Sheets нода, махнат излишен параметър `images` от OpenAI нода, Gemini моделите сменени на `gemini-3.1-flash-lite` и `gemini-3.6-flash` (gemini-2.5-* са затворени за нови потребители).
+- Санитизиране: валидаторът смени само името на Google Sheets credential-а; credential id остават.
+- Засегнати нодове: Save to Google Sheet, Message OpenAI Model, Token Counter Form, Calculate Cost.
+- n8n: workflow id ZKIAUoQPdr5bCpv6
+
+## 2026-10-22 - 14-token-counter v1
+- Промяна: нов workflow `Encorp | Homework | Week 04 | HW 01 | Token Counter` (Form Trigger, Switch по доставчик, OpenAI и Gemini Message a Model с Simplify Output off, Code за цена, Google Sheets).
+- Причина: ново домашно.
+- Засегнати нодове: всички (ново).
+- n8n: workflow id ZKIAUoQPdr5bCpv6, v1
+
 ## 2026-10-17 - 13-expense-receipt-assistant v2 (експорт на актуалните workflow-и)
 - Промяна: `n8n-workflows/13-expense-receipt-assistant*.json` са заменени с експорт на живите workflow-и (основен `cOzlOG0ugCGic76O`, 35 нода; Spending Lookup `sz6oRpgEq17QjU1x`; Chat Agent `z6CUn8Ia5PZx4wgg`; Weekly Report `wVQNc1AMYVtN6G5y`; Error Alert `9A3TqOb0v0ZA1y78`). Новото спрямо v1: `Is Global Error` + `Raise Global Error` (глобални грешки на Read Receipt задействат Error workflow-а; потвърдено от Здравко), `Convert Amounts` в Spending Lookup и Weekly Report, `Manual Test Window`, node groups, актуални typeVersion от инстанса, бележка 10 за `pending` редове след грешка. Старите файлове са в `n8n-workflows/_versions/13-expense-receipt-assistant*/v1.json`.
 - Санитизиране: Telegram chat id -> `YOUR_TELEGRAM_CHAT_ID`, `managerEmail`/`financeEmail` -> плейсхолдъри, `formUrl` -> `https://YOUR-N8N-DOMAIN/form/expense-receipt`, имена на credentials обезличени, `errorWorkflow` махнат от settings. След импорт: избери credentials, попълни тези стойности и избери Expense Error Alert като Error workflow.
