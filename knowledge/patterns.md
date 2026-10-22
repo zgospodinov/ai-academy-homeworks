@@ -32,3 +32,6 @@ Gmail нод (`operation: sendAndWait`, `responseType: customForm`, `defineForm:
 
 ## Tool-calling агент с Calculator и Wikipedia (домашно 15, потвърдено)
 Chat Trigger -> AI Agent (3.1, `promptType: define`, `text = {{ $json.chatInput }}`) с OpenRouter Chat Model, Calculator и Wikipedia tool нодове (без credentials). Системният промпт казва кога се ползва кой tool: фактите само от Wikipedia, цялата аритметика само през Calculator, при липса на данни агентът го казва. Агентът сам планира стъпките; в T1 вика Wikipedia два пъти (списък на монарсите, после статията), което е безвредно. Тестове: `homeworks/15-fact-finding-agent/test-data/test-scenarios.md`.
+
+## Персона чрез system prompt (домашно 17)
+Chat Trigger -> AI Agent (без tools) с System Message от секции `Role and Objective`, `Instructions & Constraints` (Задължително / Забранено / Извън темата), `Reasoning/Thinking Steps` (вътрешни, не се показват) и `Output Format` (Markdown структура + отделен формат за откази). Тестът за последователност е набор от заявки: типични, извън темата, опит за излизане от роля, опит за разкриване на промпта, чужд език, опасна заявка; оценка по чеклист (език, роля, аналогия, шега, формат, дължина).

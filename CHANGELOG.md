@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-22 - 17-system-prompt-fun v1
+- Промяна: ново домашно W04 HW04 (персона "Бай Митко", system prompt от 4 секции); workflow създаден през MCP; добавен `test-plan.md` (ново изискване в умението n8n-academy-homeworks).
+- Причина: ново домашно.
+- Засегнати нодове: chatTrigger, agent, lmChatOpenRouter.
+- n8n: workflow id `vzMPsOjXK7iuqBew`, v1
+
 ## 2026-10-22 - 16-long-term-memory-agent v1 (tested)
 - Промяна: нов workflow `Encorp | Homework | Week 04 | HW 03 | Long Term Memory Agent` (Chat Trigger, AI Agent 3.1, OpenRouter gpt-4o-mini, Postgres Chat Memory 1.4, прозорец 20); таблица `public.n8n_chat_histories` в Supabase проекта `weekly-shopping-assistant` (миграция `create_n8n_chat_histories`, RLS включен); санитизиран експорт `n8n-workflows/16-long-term-memory-agent.json`; тест сценарии в `homeworks/16-long-term-memory-agent/test-data/`.
 - Причина: ново домашно.

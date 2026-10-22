@@ -31,3 +31,4 @@
 - `knowledge/` - модели, поуки, потвърдени `typeVersion`
 - `tools/validate_workflow.py` - валидатор и санитизатор на експорти (`--sanitize`)
 | 16 | 4 | Long-Term Memory Agent (AI Agent + Postgres Chat Memory + Supabase, памет по session_id) | tested | v1 | `n8n-workflows/16-long-term-memory-agent.json` | chatTrigger, agent, lmChatOpenRouter, memoryPostgresChat | 2026-10-22 |
+| 17 | 4 | System Prompt Fun (персона "Шеговит автомонтьор", system prompt от 4 секции, AI Agent) | tested | v1 | `n8n-workflows/17-system-prompt-fun.json` | chatTrigger, agent, lmChatOpenRouter | 2026-10-22 |
