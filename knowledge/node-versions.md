@@ -75,3 +75,4 @@
 | `@n8n/n8n-nodes-langchain.toolWikipedia` | 1 | 15 (T1-T5 изпълнени) |
 | `@n8n/n8n-nodes-langchain.agent` | 3.1 | 15 (Chat Trigger 1.5 + два tool-а; потвърдено) |
 | `@n8n/n8n-nodes-langchain.chatTrigger` | 1.5 | 15 (потвърдено) |
+| `@n8n/n8n-nodes-langchain.memoryPostgresChat` | 1.4 | 16 (T1, T2, T3, T5 изпълнени, Здравко 2026-10-22) |

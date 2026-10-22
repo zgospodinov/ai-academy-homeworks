@@ -1,0 +1,141 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 03 | Long Term Memory Agent",
+  "nodes": [
+    {
+      "id": "a6d23f48-4309-432d-9388-a8493333566c",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        304
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "925edce4-3f53-4f9a-bf24-15b58e793969",
+      "name": "Memory Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        304
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a friendly assistant with long-term memory. The conversation history for the current session is provided to you from a database before every reply. Use it to remember what the user told you earlier (names, preferences, facts) and answer follow-up questions from it. If the history does not contain the answer, say that you do not know yet and, if useful, ask the user. Never invent facts about the user. Keep answers short and reply in the language of the user.",
+          "maxIterations": 10
+        }
+      }
+    },
+    {
+      "id": "9b317df7-e3b9-4c73-b67b-29afb71d84a6",
+      "name": "Agent Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        208,
+        560
+      ],
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "id": "6af2d2a5-ab65-43f0-965c-2b664ad1215d",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        432,
+        560
+      ],
+      "parameters": {
+        "sessionIdType": "fromInput",
+        "tableName": "n8n_chat_histories",
+        "contextWindowLength": 20
+      },
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "c9e4adbe-72f8-4716-8ceb-06e7258d9378",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -260
+      ],
+      "parameters": {
+        "content": "## Long-Term Memory Agent (Week 04, HW 03)\nChat Trigger -> AI Agent with **Postgres Chat Memory** (Supabase table `n8n_chat_histories`: id, session_id, message jsonb).\nBefore every reply the memory node loads the last 20 interactions for the current `session_id`; after the reply it saves the new human + AI messages.\n\n- R1, R2: Supabase Postgres + table `n8n_chat_histories`\n- R3: memory node saves each interaction to the table\n- R4: memory node reads the history for the session_id before the agent answers\n- R5: test \"My favorite color is blue.\" -> \"What is my favorite color?\" in the same chat -> blue\n\nNeeds: OpenRouter credential (model) and Postgres credential pointing to Supabase (session pooler).\nTest in the Chat panel; check the table with SQL (see test-data).",
+        "color": 5,
+        "width": 640,
+        "height": 280
+      }
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ]
+}

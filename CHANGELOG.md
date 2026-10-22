@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-22 - 16-long-term-memory-agent v1 (tested)
+- Промяна: нов workflow `Encorp | Homework | Week 04 | HW 03 | Long Term Memory Agent` (Chat Trigger, AI Agent 3.1, OpenRouter gpt-4o-mini, Postgres Chat Memory 1.4, прозорец 20); таблица `public.n8n_chat_histories` в Supabase проекта `weekly-shopping-assistant` (миграция `create_n8n_chat_histories`, RLS включен); санитизиран експорт `n8n-workflows/16-long-term-memory-agent.json`; тест сценарии в `homeworks/16-long-term-memory-agent/test-data/`.
+- Причина: ново домашно.
+- Засегнати нодове: всички (ново).
+- n8n: workflow id FVRIPPuU7skXYO1Y, v1; смоук тест изпълнение 2242 успешно (2 реда в таблицата). Здравко потвърди T1, T2, T3, T5; T4 пропуснат (няма две сесии в тестовия чат). Изтриването на временната таблица през MCP беше отменено; остава за ръчно изпълнение в Supabase.
+
 ## 2026-10-22 - 15-fact-finding-agent v2 (tested)
 - Промяна: ръчно променен от Здравко системен промпт (краен отговор само кратък, на езика на въпроса); експортът `n8n-workflows/15-fact-finding-agent.json` е обновен, v1 е архивиран в `_versions/`; тестовете T1-T5 са покрити.
 - Причина: ръчна корекция на Здравко.
