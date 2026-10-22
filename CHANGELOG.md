@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-10-22 - 15-fact-finding-agent v2 (tested)
+- Промяна: ръчно променен от Здравко системен промпт (краен отговор само кратък, на езика на въпроса); експортът `n8n-workflows/15-fact-finding-agent.json` е обновен, v1 е архивиран в `_versions/`; тестовете T1-T5 са покрити.
+- Причина: ръчна корекция на Здравко.
+- Засегнати нодове: Fact-Finding Agent.
+- n8n: workflow id RIuJ4dtYVrCtAjA4
+
+## 2026-10-22 - 15-fact-finding-agent v1
+- Промяна: нов workflow `Encorp | Homework | Week 04 | HW 02 | Fact Finding Agent` (Chat Trigger, AI Agent v3.1, OpenRouter gpt-4o-mini, Calculator, Wikipedia); санитизиран експорт `n8n-workflows/15-fact-finding-agent.json`; тест сценарии в `homeworks/15-fact-finding-agent/test-data/`.
+- Причина: ново домашно.
+- Засегнати нодове: всички (ново).
+- n8n: workflow id RIuJ4dtYVrCtAjA4, v1
+
 ## 2026-10-22 - 14-token-counter v1 (tested)
 - Промяна: добавен експорт `n8n-workflows/14-token-counter.json`; тест на всички 4 модела успешен. По пътя: върнато `columns` съпоставяне в Sheets нода, махнат излишен параметър `images` от OpenAI нода, Gemini моделите сменени на `gemini-3.1-flash-lite` и `gemini-3.6-flash` (gemini-2.5-* са затворени за нови потребители).
 - Санитизиране: валидаторът смени само името на Google Sheets credential-а; credential id остават.

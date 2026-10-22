@@ -1,0 +1,153 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 02 | Fact Finding Agent",
+  "nodes": [
+    {
+      "id": "0b40733f-a304-4521-8fe9-cdce5d9c4fb2",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "98cb2d5d-a066-4dd5-81ed-1214bc68056a",
+      "name": "Fact-Finding Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a fact-finding assistant. You answer multi-step questions that need both information retrieval and calculation.\n\nTools:\n- \"Wikipedia\": use it for EVERY factual claim (dates, durations, names, sizes, quantities). Never answer a fact from memory.\n- \"Calculator\": use it for EVERY arithmetic operation (multiply, divide, add, subtract, percentages, unit conversion), even a trivial one. Never calculate in your head.\n\nHow to work:\n1. Split the question into parts: what must be looked up and what must be calculated.\n2. Look up each fact with Wikipedia first. Search with a short, precise query (for example \"Queen Victoria\").\n3. Pass the number you found to Calculator as a plain math expression (for example 63*3).\n4. If Wikipedia states a duration explicitly (for example \"63 years and 216 days\"), use the whole years as the number and mention the extra days. If it gives only dates, compute the duration from the dates with Calculator and say that you computed it.\n5. If Wikipedia does not contain the information, say so clearly. Do not invent numbers and do not guess.\n\nFinal answer: short and in the language of the question. Show (1) the fact from Wikipedia, (2) the calculation, (3) the final result in bold.",
+          "maxIterations": 10
+        }
+      }
+    },
+    {
+      "id": "553de0f5-7039-4de6-a03a-9ed39b433262",
+      "name": "Agent Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        200,
+        560
+      ],
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "id": "c7c5ffab-ac3b-405c-ad2b-988aab5014af",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        420,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "cb0e503c-0f9e-46a7-84fe-b29adc757dc9",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        640,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "5255df19-420d-4800-82cb-256af8ec99a5",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        40
+      ],
+      "parameters": {
+        "content": "## Fact-Finding Agent (Week 04, HW 02)\nChat Trigger -> AI Agent with two tools: **Wikipedia** (facts) and **Calculator** (arithmetic). The agent splits a multi-step question, looks facts up first, then calculates, and answers.\n\n- R1: Chat Trigger -> Fact-Finding Agent\n- R2: Calculator + Wikipedia tools\n- R3, R5: system prompt in the agent decides which tool serves which part\n- R4: test \"According to Wikipedia, how many years did Queen Victoria reign? Multiply that number by 3.\" -> 63 x 3 = 189\n\nNeeds: OpenRouter credential (chat model). Wikipedia and Calculator need no credentials.\nTest in the Chat panel and check the Logs for tool calls.",
+        "color": 5,
+        "width": 640,
+        "height": 230
+      }
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fact-Finding Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fact-Finding Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fact-Finding Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fact-Finding Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ]
+}

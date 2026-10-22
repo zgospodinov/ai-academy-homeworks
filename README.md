@@ -20,6 +20,7 @@
 | 12 | 3 | Support Ticket Router with Human Support (Sentiment + Text Classifier + Gmail Send and Wait + AI Agent) | tested | v2 | `n8n-workflows/12-support-ticket-router.json` | formTrigger, sentimentAnalysis, textClassifier, gmail (sendAndWait), agent, googleSheets, googleSheetsTool, googleTasksTool | 2026-10-16 |
 | 13 | 3 | Expense Receipt Assistant (Form + vision Basic LLM Chain + Data Tables + Send and Wait; бонуси: отчет, чат агент, error alert) | tested | v2 | `n8n-workflows/13-expense-receipt-assistant.json` (+ `-weekly-report`, `-chat-agent`, `-spending-lookup`, `-error-alert`) | formTrigger, chainLlm, outputParserStructured, dataTable, switch, gmail (sendAndWait), summarize, toolWorkflow | 2026-10-16 |
 | 14 | 4 | Token Counter (Form Trigger + Gemini/OpenAI Message a Model + Google Sheets, токени и цена) | tested | v1 | `n8n-workflows/14-token-counter.json` | formTrigger, switch, openAi, googleGemini, set, code, googleSheets | 2026-10-22 |
+| 15 | 4 | The Fact-Finding Agent (AI Agent + Calculator + Wikipedia tool) | tested | v2 | `n8n-workflows/15-fact-finding-agent.json` | chatTrigger, agent, lmChatOpenRouter, toolCalculator, toolWikipedia | 2026-10-22 |
 
 Статуси: `received` -> `plan-proposed` -> `plan-approved` -> `json-delivered` -> `tested` -> `submitted` -> `graded`.
 

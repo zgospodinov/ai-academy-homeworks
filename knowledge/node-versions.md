@@ -70,3 +70,8 @@
 | `n8n-nodes-base.code` (runOnceForEachItem) | 2 | 14 (изпълнено) |
 | `n8n-nodes-base.switch` | 3.4 | 14 (rules, 2 изхода) |
 | `n8n-nodes-base.set` | 3.5 | 14 (изпълнено) |
+
+| `@n8n/n8n-nodes-langchain.toolCalculator` | 1 | 15 (T1-T5 изпълнени, Здравко 2026-10-22) |
+| `@n8n/n8n-nodes-langchain.toolWikipedia` | 1 | 15 (T1-T5 изпълнени) |
+| `@n8n/n8n-nodes-langchain.agent` | 3.1 | 15 (Chat Trigger 1.5 + два tool-а; потвърдено) |
+| `@n8n/n8n-nodes-langchain.chatTrigger` | 1.5 | 15 (потвърдено) |
