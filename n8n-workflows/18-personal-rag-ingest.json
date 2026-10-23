@@ -1,0 +1,524 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 05 | Personal RAG Ingest",
+  "nodes": [
+    {
+      "id": "f2dbeeb4-9219-4022-8e8d-02a6a0784cc0",
+      "name": "Upload Manual",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        304
+      ],
+      "parameters": {
+        "formTitle": "Personal RAG - Upload Manual",
+        "formDescription": "Upload the manual as a plain text file (.txt or .md) to index it in Supabase.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Manual",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".txt,.md",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Index document",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Indexing started. Check the execution for the result."
+            }
+          }
+        }
+      },
+      "webhookId": "6d2ac66d-07b4-491d-8431-d0f43f439142"
+    },
+    {
+      "id": "520cac1a-d10a-481c-9c7b-525c23f4f838",
+      "name": "Extract Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        304
+      ],
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "={{ Object.keys($binary)[0] }}",
+        "destinationKey": "text",
+        "options": {}
+      }
+    },
+    {
+      "id": "40af061c-6cde-4dc5-be15-b0b9928d6580",
+      "name": "Prepare Document",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        688,
+        304
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "source",
+              "value": "={{ Object.values($(\"Upload Manual\").item.binary)[0].fileName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "86d5354f-d975-45c9-8f74-d299ff281d53",
+      "name": "Delete Old Chunks",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1280,
+        300
+      ],
+      "parameters": {
+        "resource": "database",
+        "operation": "executeQuery",
+        "query": "delete from public.manual_chunks where metadata->>'source' = $1",
+        "options": {
+          "queryReplacement": "={{ $json.source }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres Weekly Shopping Assistant"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "8e53d9c7-e0ab-40d4-9251-0dfd2182b74b",
+      "name": "Insert Chunks",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1960,
+        300
+      ],
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "manual_chunks"
+        },
+        "embeddingBatchSize": 10,
+        "options": {
+          "queryName": "match_manual_chunks"
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "bNOtyObNivw01MxU",
+          "name": "Supabase - Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "23beab5d-505d-4690-babc-c47b8ddd49d6",
+      "name": "Gemini Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        460
+      ],
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM) - Encorp AI Academy"
+        }
+      }
+    },
+    {
+      "id": "e9f5b201-0f16-4dbb-b4a7-f6d8927cd2e8",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1960,
+        460
+      ],
+      "parameters": {
+        "dataType": "json",
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $json.source }}"
+              },
+              {
+                "name": "segment",
+                "value": "={{ $json.segment }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dd20efba-6b92-4a32-bd4b-6890549a9c19",
+      "name": "Recursive Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        620
+      ],
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      }
+    },
+    {
+      "id": "3c383b43-ac24-468c-a9a7-0986a7d24129",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        32
+      ],
+      "parameters": {
+        "content": "## Personal RAG - Ingest\nUpload a .txt file -> Extract From File (text) -> stop if empty -> delete old chunks -> split into ~60k-char segments -> loop: chunks (2000 chars, 200 overlap) -> Gemini embeddings (3072) -> Supabase table manual_chunks -> wait 65 s.\nCovers R1, R4 (R2, R3 are the Supabase migration).\nThe PDF was converted to text first (pdftotext). The loop and the wait keep the Gemini free-tier limits (100 requests/min, 30K tokens/min, 1000/day).",
+        "color": 4,
+        "height": 160,
+        "width": 640
+      }
+    },
+    {
+      "id": "3b8bf809-dafb-44ad-98fc-6d3aa5f7cb9a",
+      "name": "Group - Upload and Extract",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        208
+      ],
+      "parameters": {
+        "content": "## Upload and Extract\nForm upload of the text file and Extract From File. Covers R1, R4.",
+        "color": 5,
+        "height": 260,
+        "width": 440
+      }
+    },
+    {
+      "id": "ff545cd1-f564-430d-ae18-8a8e9375a47b",
+      "name": "Group - Chunk Embed Store",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        200
+      ],
+      "parameters": {
+        "content": "## Chunk Embed Store\nDelete old chunks of the same file, split the text into segments, then loop: split into chunks (2000/200), embed with Gemini, insert into Supabase, wait 65 s (Gemini free tier: 100 requests/min, 1000/day). Covers R4.",
+        "color": 6,
+        "height": 580,
+        "width": 1240
+      }
+    },
+    {
+      "id": "0f392d61-c0be-405d-ac55-6c4714c8c3a2",
+      "name": "Has Text",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ ($json.text || '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "48a6d472-7073-4873-a29e-934b85ac40cb",
+      "name": "Stop - Empty Text",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        940,
+        460
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "The uploaded file contains no text. Nothing was indexed."
+      }
+    },
+    {
+      "id": "06417a05-dafe-4a3b-bf7a-bde4538cd39a",
+      "name": "Split Segments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Split the document into segments (~60k chars, cut before a page marker)\n// so each segment stays under the Gemini free-tier limits: 100 requests/min and 30K tokens/min.\nconst { text, source } = $('Prepare Document').first().json;\nconst TARGET = 60000;\nconst segments = [];\nlet start = 0;\nwhile (start < text.length) {\n  let end = Math.min(start + TARGET, text.length);\n  if (end < text.length) {\n    const cut = text.lastIndexOf('\\n\\n[', end);\n    if (cut > start + TARGET * 0.5) end = cut;\n  }\n  const part = text.slice(start, end).trim();\n  if (part) segments.push(part);\n  start = end;\n}\nreturn segments.map((part, i) => ({ json: { text: part, source, segment: i + 1, totalSegments: segments.length } }));"
+      }
+    },
+    {
+      "id": "e724fc5d-95a6-4e51-ba5b-baf8ae47d910",
+      "name": "Loop Over Segments",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1720,
+        300
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "490a90d0-b1d4-4ded-b2b8-13fffe3c7424",
+      "name": "Wait Rate Limit",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2180,
+        300
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 65,
+        "unit": "seconds"
+      },
+      "webhookId": "9f64c453-09fa-4289-9ef1-252006873efd"
+    }
+  ],
+  "connections": {
+    "Upload Manual": {
+      "main": [
+        [
+          {
+            "node": "Extract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Document": {
+      "main": [
+        [
+          {
+            "node": "Has Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Chunks": {
+      "main": [
+        [
+          {
+            "node": "Split Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text": {
+      "main": [
+        [
+          {
+            "node": "Prepare Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Text": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop - Empty Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Segments": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Segments": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Chunks": {
+      "main": [
+        [
+          {
+            "node": "Wait Rate Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Rate Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "60ab9809-1ac2-4919-b55b-627e7df49f31",
+      "name": "Upload and Extract",
+      "nodeNames": [
+        "Extract Text",
+        "Prepare Document"
+      ],
+      "description": "Reads the uploaded text file and prepares text and source name"
+    },
+    {
+      "id": "9766fd77-5057-40ed-9c4b-37d4839f2a05",
+      "name": "Chunk Embed Store",
+      "nodeNames": [
+        "Delete Old Chunks",
+        "Split Segments",
+        "Loop Over Segments",
+        "Insert Chunks",
+        "Wait Rate Limit",
+        "Default Data Loader",
+        "Recursive Text Splitter",
+        "Gemini Embeddings"
+      ],
+      "description": "Removes old chunks, splits, embeds with Gemini and inserts into Supabase"
+    }
+  ]
+}

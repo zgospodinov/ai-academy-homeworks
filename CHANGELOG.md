@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-10-23 - 18-personal-rag Ingest v3
+- Промяна: цикъл по сегменти с пауза 65 s, chunks 2000/200, batch 10 (нови нодове Split Segments, Loop Over Segments, Wait Rate Limit); v2 е архивиран.
+- Причина: Gemini Embedding (безплатен план: 100 заявки/мин, 30K токена/мин, 1 000/ден) връща празен вектор над лимита - изпълнения 2787 и 2790 спряха след 100 реда.
+- Засегнати нодове: Insert Chunks, Default Data Loader, Recursive Text Splitter и три нови.
+- n8n: workflow id I8vF7IT8l61GJjUA, v3.
+
+## 2026-10-23 - 18-personal-rag Ingest v2
+- Промяна: форма за `.txt,.md`; Extract From File в режим `text`; махнато `Max pages`; добавени `Has Text` и `Stop - Empty Text`; групата на Chunk Embed Store е изместена надясно; v1 е архивиран в `_versions/`.
+- Причина: грешка при изпълнение 2762 - Extract From File (pdf) върна празен текст за 652-страничен PDF, нищо не беше записано.
+- Засегнати нодове: Upload Manual, Extract Text (преименуван), Has Text, Stop - Empty Text.
+- n8n: workflow id I8vF7IT8l61GJjUA, v2.
+
+## 2026-10-23 - 18-personal-rag v1
+- Промяна: ново домашно W04 HW05 "Personal RAG": два workflow-а (Ingest: Form Trigger, Extract From File, Recursive Splitter 1000/200, Gemini embeddings, Supabase Vector Store; Ask: Chat Trigger, Supabase Vector Store load top 5, Basic LLM Chain само от откъсите); таблица `public.manual_chunks` `vector(3072)` и функция `match_manual_chunks` в Supabase; план, тестов план, D-021.
+- Причина: ново домашно.
+- Засегнати нодове: formTrigger, extractFromFile, set, postgres, vectorStoreSupabase (insert и load), embeddingsGoogleGemini, documentDefaultDataLoader, textSplitterRecursiveCharacterTextSplitter, aggregate, chatTrigger, chainLlm, lmChatOpenRouter.
+- n8n: workflow id I8vF7IT8l61GJjUA (Ingest) и LsO3QY8fZB9SqadC (Ask), v1; смоук тест на Ask: изпълнение 2750 успешно (празна таблица).
+
 ## 2026-10-22 - 17-system-prompt-fun v1
 - Промяна: ново домашно W04 HW04 (персона "Бай Митко", system prompt от 4 секции); workflow създаден през MCP; добавен `test-plan.md` (ново изискване в умението n8n-academy-homeworks).
 - Причина: ново домашно.

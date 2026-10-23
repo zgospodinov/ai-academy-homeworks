@@ -1,0 +1,3 @@
+# Лични/авторски PDF файлове не се качват в публичното репо
+homeworks/18-personal-rag/attachments/*.pdf
+homeworks/18-personal-rag/attachments/*.txt

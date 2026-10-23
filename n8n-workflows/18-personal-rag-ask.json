@@ -1,0 +1,273 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 05 | Personal RAG Ask",
+  "nodes": [
+    {
+      "id": "594522d7-bbf1-4c0d-ab8d-4e006dcb09e4",
+      "name": "Ask Question",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "public": false,
+        "options": {}
+      },
+      "webhookId": "6c124e04-3fb2-4574-80d6-0f5ef0a08e09"
+    },
+    {
+      "id": "bc86f44f-20b1-43ee-a1cc-4562cf56cb9e",
+      "name": "Search Manual",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "mode": "load",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "manual_chunks"
+        },
+        "prompt": "={{ $json.chatInput }}",
+        "topK": 5,
+        "includeDocumentMetadata": true,
+        "options": {
+          "queryName": "match_manual_chunks"
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "bNOtyObNivw01MxU",
+          "name": "Supabase - Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "d240f715-b7dd-4434-9526-977981b2811a",
+      "name": "Gemini Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        500,
+        460
+      ],
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM) - Encorp AI Academy"
+        }
+      }
+    },
+    {
+      "id": "d8acfe94-c485-411c-a9f4-7564c98e810c",
+      "name": "Collect Chunks",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "aggregate": "aggregateIndividualFields",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "document.pageContent",
+              "renameField": true,
+              "outputFieldName": "chunks"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "860f92f1-7c30-4f58-85e6-13b8a083a144",
+      "name": "Answer From Manual",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        980,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Ask Question').item.json.chatInput }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You are an assistant for the vehicle owner's manual. Answer the user's question using ONLY the manual excerpts below. If the excerpts do not contain the answer, say clearly that you could not find it in the manual, and do not use any outside knowledge. Reply in the language of the question. Be concise and practical.\n\nManual excerpts:\n{{ $json.chunks.map((c, i) => '[' + (i + 1) + '] ' + c).join('\\n\\n') }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c16d6456-68be-48ca-96de-a45ff74fa41c",
+      "name": "Answer Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        460
+      ],
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "id": "ebf0e8e1-7cac-4039-b00f-815f372dadc5",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        20
+      ],
+      "parameters": {
+        "content": "## Personal RAG - Ask\nQuestion -> Gemini embedding of the question -> Supabase similarity search (top 5 chunks) -> LLM answers ONLY from those chunks.\nCovers R5 (Ask Question), R6 (Gemini Embeddings sub-node of Search Manual), R7 (Search Manual), R8 (Answer From Manual).\nUse the same embedding model as in the Ingest workflow.",
+        "color": 4,
+        "height": 160,
+        "width": 640
+      }
+    },
+    {
+      "id": "c2957a64-740c-4207-9a33-14149bd513f4",
+      "name": "Group - Retrieval",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        200
+      ],
+      "parameters": {
+        "content": "## Retrieval\nEmbeds the question and finds the 5 most similar chunks in Supabase. Covers R6, R7.",
+        "color": 5,
+        "height": 420,
+        "width": 440
+      }
+    },
+    {
+      "id": "6402f765-e522-4a49-b717-35439e3ba880",
+      "name": "Group - Augmented Answer",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        200
+      ],
+      "parameters": {
+        "content": "## Augmented Answer\nQuestion plus chunks go to the LLM with an instruction to answer only from the text. Covers R8.",
+        "color": 6,
+        "height": 420,
+        "width": 240
+      }
+    }
+  ],
+  "connections": {
+    "Ask Question": {
+      "main": [
+        [
+          {
+            "node": "Search Manual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Manual": {
+      "main": [
+        [
+          {
+            "node": "Collect Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Manual",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Chunks": {
+      "main": [
+        [
+          {
+            "node": "Answer From Manual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer From Manual",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "669ee955-f650-48cb-b9aa-8f18e6ccf37d",
+      "name": "Retrieval",
+      "nodeNames": [
+        "Search Manual",
+        "Collect Chunks",
+        "Gemini Embeddings"
+      ],
+      "description": "Embeds the question and fetches the top 5 chunks from Supabase"
+    },
+    {
+      "id": "bc0234f1-7182-4aae-aa0f-91321d51ed0d",
+      "name": "Augmented Answer",
+      "nodeNames": [
+        "Answer From Manual",
+        "Answer Chat Model"
+      ],
+      "description": "LLM answers only from the retrieved chunks"
+    }
+  ]
+}

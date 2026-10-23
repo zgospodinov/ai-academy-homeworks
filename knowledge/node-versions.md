@@ -76,3 +76,18 @@
 | `@n8n/n8n-nodes-langchain.agent` | 3.1 | 15 (Chat Trigger 1.5 + два tool-а; потвърдено) |
 | `@n8n/n8n-nodes-langchain.chatTrigger` | 1.5 | 15 (потвърдено) |
 | `@n8n/n8n-nodes-langchain.memoryPostgresChat` | 1.4 | 16 (T1, T2, T3, T5 изпълнени, Здравко 2026-10-22) |
+
+| `@n8n/n8n-nodes-langchain.embeddingsGoogleGemini` | 1 | 18 (изпълнено: embedding на въпрос, модел `models/gemini-embedding-001`) |
+| `@n8n/n8n-nodes-langchain.vectorStoreSupabase` (mode load) | 1.3 | 18 (изпълнено срещу празна таблица, RPC `match_manual_chunks` без грешка) |
+| `@n8n/n8n-nodes-langchain.vectorStoreSupabase` (mode insert) | 1.3 | 18 (създадено през MCP, още не е изпълнено) |
+| `@n8n/n8n-nodes-langchain.documentDefaultDataLoader` | 1.1 | 18 (създадено, още не е изпълнено) |
+| `@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter` | 1 | 18 (създадено, още не е изпълнено) |
+| `n8n-nodes-base.extractFromFile` (pdf) | 1.1 | 18 (създадено, още не е изпълнено) |
+| `n8n-nodes-base.postgres` (executeQuery) | 2.7 | 18 (създадено, още не е изпълнено) |
+| `n8n-nodes-base.aggregate` | 1 | 18 (създадено, още не е изпълнено) |
+| `n8n-nodes-base.if` | 2.3 | 18 (създадено през MCP, още не е изпълнено) |
+| `n8n-nodes-base.stopAndError` | 1 | 18 (създадено през MCP, още не е изпълнено) |
+| `n8n-nodes-base.extractFromFile` (pdf) | 1.1 | 18: изпълнено, но върна празен текст (виж gotchas) |
+| `n8n-nodes-base.splitInBatches` | 3 | 18 (изпълнено: batch 1, изход loop = индекс 1) |
+| `n8n-nodes-base.wait` | 1.1 | 18 (изпълнено: timeInterval 65 s) |
+| `n8n-nodes-base.code` (runOnceForAllItems, JavaScript) | 2 | 18 (изпълнено: сегментиране на текст) |
