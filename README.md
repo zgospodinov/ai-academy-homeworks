@@ -21,6 +21,10 @@
 | 13 | 3 | Expense Receipt Assistant (Form + vision Basic LLM Chain + Data Tables + Send and Wait; бонуси: отчет, чат агент, error alert) | tested | v2 | `n8n-workflows/13-expense-receipt-assistant.json` (+ `-weekly-report`, `-chat-agent`, `-spending-lookup`, `-error-alert`) | formTrigger, chainLlm, outputParserStructured, dataTable, switch, gmail (sendAndWait), summarize, toolWorkflow | 2026-10-16 |
 | 14 | 4 | Token Counter (Form Trigger + Gemini/OpenAI Message a Model + Google Sheets, токени и цена) | tested | v1 | `n8n-workflows/14-token-counter.json` | formTrigger, switch, openAi, googleGemini, set, code, googleSheets | 2026-10-22 |
 | 15 | 4 | The Fact-Finding Agent (AI Agent + Calculator + Wikipedia tool) | tested | v2 | `n8n-workflows/15-fact-finding-agent.json` | chatTrigger, agent, lmChatOpenRouter, toolCalculator, toolWikipedia | 2026-10-22 |
+| 16 | 4 | Long-Term Memory Agent (AI Agent + Postgres Chat Memory + Supabase, памет по session_id) | tested | v1 | `n8n-workflows/16-long-term-memory-agent.json` | chatTrigger, agent, lmChatOpenRouter, memoryPostgresChat | 2026-10-22 |
+| 17 | 4 | System Prompt Fun (персона "Шеговит автомонтьор", system prompt от 4 секции, AI Agent) | tested | v1 | `n8n-workflows/17-system-prompt-fun.json` | chatTrigger, agent, lmChatOpenRouter | 2026-10-22 |
+| 18 | 4 | Personal RAG (Supabase pgvector + Gemini embeddings, ingest и Q&A workflow върху PDF ръководство) | json-delivered | Ingest v3, Ask v1 | `n8n-workflows/18-personal-rag-ingest.json`, `18-personal-rag-ask.json` | formTrigger, extractFromFile, if, stopAndError, code, splitInBatches, wait, vectorStoreSupabase, embeddingsGoogleGemini, documentDefaultDataLoader, textSplitterRecursiveCharacterTextSplitter, aggregate, chainLlm, chatTrigger | 2026-10-23 |
+| 19 | 4 | Jailbreak Attack & Defense (support бот "Nova" със секрет; Data Table с атаки, базов и hardened агент, оценяване) | json-delivered | v1 | `n8n-workflows/19-jailbreak-attack-defense.json` | manualTrigger, dataTable, agent, lmChatOpenRouter, set, code, summarize | 2026-10-23 |
 
 Статуси: `received` -> `plan-proposed` -> `plan-approved` -> `json-delivered` -> `tested` -> `submitted` -> `graded`.
 
@@ -30,6 +34,3 @@
 - `homeworks/NN-slug/` - условие, план, changelog, тестови данни, скриншоти (по желание), обратна връзка
 - `knowledge/` - модели, поуки, потвърдени `typeVersion`
 - `tools/validate_workflow.py` - валидатор и санитизатор на експорти (`--sanitize`)
-| 16 | 4 | Long-Term Memory Agent (AI Agent + Postgres Chat Memory + Supabase, памет по session_id) | tested | v1 | `n8n-workflows/16-long-term-memory-agent.json` | chatTrigger, agent, lmChatOpenRouter, memoryPostgresChat | 2026-10-22 |
-| 17 | 4 | System Prompt Fun (персона "Шеговит автомонтьор", system prompt от 4 секции, AI Agent) | tested | v1 | `n8n-workflows/17-system-prompt-fun.json` | chatTrigger, agent, lmChatOpenRouter | 2026-10-22 |
-| 18 | 4 | Personal RAG (Supabase pgvector + Gemini embeddings, ingest и Q&A workflow върху PDF ръководство) | json-delivered | Ingest v3, Ask v1 | `n8n-workflows/18-personal-rag-ingest.json`, `18-personal-rag-ask.json` | formTrigger, extractFromFile, if, stopAndError, code, splitInBatches, wait, vectorStoreSupabase, embeddingsGoogleGemini, documentDefaultDataLoader, textSplitterRecursiveCharacterTextSplitter, aggregate, chainLlm, chatTrigger | 2026-10-23 |

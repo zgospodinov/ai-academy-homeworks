@@ -91,3 +91,12 @@
 | `n8n-nodes-base.splitInBatches` | 3 | 18 (изпълнено: batch 1, изход loop = индекс 1) |
 | `n8n-nodes-base.wait` | 1.1 | 18 (изпълнено: timeInterval 65 s) |
 | `n8n-nodes-base.code` (runOnceForAllItems, JavaScript) | 2 | 18 (изпълнено: сегментиране на текст) |
+
+| `n8n-nodes-base.dataTable` (row, get, returnAll) | 1.1 | 19 (изпълнено: 24 реда, #2885) |
+| `@n8n/n8n-nodes-langchain.agent` | 3.1 | 19 (изпълнено: `promptType: define`, `text` от `$json.prompt`, 2 агента с различен system prompt) |
+| `@n8n/n8n-nodes-langchain.lmChatOpenRouter` | 1 | 19 (изпълнено) |
+| `n8n-nodes-base.set` | 3.5 | 19 (изпълнено) |
+| `n8n-nodes-base.code` (runOnceForAllItems, JavaScript) | 2 | 19 (изпълнено: оценяване на отговорите) |
+| `n8n-nodes-base.summarize` | 1.1 | 19 (изпълнено: Sum и Count, Split By `caseId`) |
+| `n8n-nodes-base.manualTrigger` | 1 | 19 (изпълнено през MCP) |
+| `n8n-nodes-base.stickyNote` | 1 | 19 |
