@@ -1,6 +1,6 @@
 # 20-rag-research-assistant - Solution plan
 
-- Статус: `json-delivered` (2026-10-24; създадено през MCP, непубликувано; тестове T1-T9 минали с Agent v3c, виж test-plan.md)
+- Статус: `tested` (2026-10-24; създадено през MCP, непубликувано; тестове T1-T9 минали с Agent v3c, виж test-plan.md)
 - Версия: Ingest v1, Agent v3c (v2: system prompt с дата и правило за грешки; v3: answer_box в Web Search, RAG винаги първо; v3c: изрично съобщение при неуспешен Web Search, 2026-10-24)
 - Workflow 1: `Encorp | Homework | Week 04 | HW 07 | RAG Research Assistant Ingest`, таг `encorp-homework`, id `7GOMJy4Mb8iVwf2l`
 - Workflow 2: `Encorp | Homework | Week 04 | HW 07 | RAG Research Assistant Agent`, таг `encorp-homework`, id `PIqiLBnwp8wy2jPN`
