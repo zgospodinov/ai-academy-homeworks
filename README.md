@@ -25,6 +25,7 @@
 | 17 | 4 | System Prompt Fun (персона "Шеговит автомонтьор", system prompt от 4 секции, AI Agent) | tested | v1 | `n8n-workflows/17-system-prompt-fun.json` | chatTrigger, agent, lmChatOpenRouter | 2026-10-22 |
 | 18 | 4 | Personal RAG (Supabase pgvector + Gemini embeddings, ingest и Q&A workflow върху PDF ръководство) | json-delivered | Ingest v3, Ask v1 | `n8n-workflows/18-personal-rag-ingest.json`, `18-personal-rag-ask.json` | formTrigger, extractFromFile, if, stopAndError, code, splitInBatches, wait, vectorStoreSupabase, embeddingsGoogleGemini, documentDefaultDataLoader, textSplitterRecursiveCharacterTextSplitter, aggregate, chainLlm, chatTrigger | 2026-10-23 |
 | 19 | 4 | Jailbreak Attack & Defense (support бот "Nova" със секрет; Data Table с атаки, базов и hardened агент, оценяване) | json-delivered | v1 | `n8n-workflows/19-jailbreak-attack-defense.json` | manualTrigger, dataTable, agent, lmChatOpenRouter, set, code, summarize | 2026-10-23 |
+| 20 | 4 | RAG-Powered Research Assistant (RAG върху Wikipedia + агент с RAG Search и Web Search/SerpApi) | json-delivered | Ingest v1, Agent v3 | `n8n-workflows/20-rag-research-assistant-ingest.json`, `20-rag-research-assistant-agent.json` | httpRequest, vectorStoreSupabase (insert и retrieve-as-tool), embeddingsGoogleGemini, documentDefaultDataLoader, splitInBatches, wait, postgres, chatTrigger, agent, lmChatOpenRouter, httpRequestTool | 2026-10-24 |
 
 Статуси: `received` -> `plan-proposed` -> `plan-approved` -> `json-delivered` -> `tested` -> `submitted` -> `graded`.
 

@@ -1,0 +1,252 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 07 | RAG Research Assistant Agent",
+  "nodes": [
+    {
+      "id": "25c73cd7-b769-4bc0-981d-7c7cb3c4aadc",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -128
+      ],
+      "parameters": {
+        "content": "## RAG Research Assistant - Agent (Week 04, HW 07)\nChat Trigger -> AI Agent with two tools: **RAG Search** (Supabase vector store ai_wiki_chunks with the Wikipedia article \"Artificial intelligence\") and **Web Search** (SerpApi, Google). The system prompt makes the agent call RAG Search first and use Web Search only when the passages do not contain the answer. The last line of every answer names the source.\n\n- R2: Chat Trigger -> Research Assistant\n- R3: RAG Search tool (+ Gemini embeddings, same model as Ingest)\n- R4: Web Search tool (HTTP Request Tool -> SerpApi)\n- R5: system prompt in Research Assistant\n- R6: test questions in homeworks/20-rag-research-assistant/test-plan.md\n\nNeeds: Query Auth credential \"SerpApi\" (parameter api_key) for Web Search. Run the Ingest workflow first. Check the tool calls in the execution log.",
+        "color": 4,
+        "width": 700,
+        "height": 314
+      }
+    },
+    {
+      "id": "614eab98-9ecf-45a8-99ab-4b8384e16317",
+      "name": "Group - Research Agent",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        208
+      ],
+      "parameters": {
+        "content": "## Group - Research Agent\nAI Agent with its model and two tools: RAG Search first, Web Search only when RAG has no answer. Covers R2, R3, R4, R5.",
+        "color": 5,
+        "width": 672,
+        "height": 676
+      }
+    },
+    {
+      "id": "55f7feb5-77b2-47f3-8b2a-8b4373ecf2c8",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        304
+      ],
+      "parameters": {
+        "options": {}
+      },
+      "webhookId": "8e9c4e66-a91e-4dea-a56a-75f4a336ca3b"
+    },
+    {
+      "id": "7192457a-1405-4f31-a3c7-beed6e1460a7",
+      "name": "Research Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        304
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "maxIterations": 8,
+          "systemMessage": "=You are a research assistant with two tools:\n- RAG Search: a knowledge base containing ONLY the English Wikipedia article \"Artificial intelligence\".\n- Web Search: Google results via SerpApi.\n\nToday's date: {{ $now.toFormat('yyyy-MM-dd') }}\n\nRules:\n1. For EVERY question, call RAG Search first, with a short English query (translate if the question is in another language).\n2. Read the returned passages. If they explicitly contain the answer, answer using only them and do NOT call Web Search.\n3. If the passages are unrelated, missing the fact, or only partly answer, call Web Search once with a focused query. Do NOT add a year or month to the query unless the user gave one. For \"latest / newest / current / this month\" questions, use today's date above to judge recency and prefer the most recent result by date. If RAG helped partly, combine both and say which part came from where.\n4. Never answer from your own memory. If neither tool gives an answer, say so.\n5. If a tool returns an error, tell the user that the search failed and why (for example an authorization error). Never present a failed tool as a source.\n6. Reply in the language of the question, concisely.\n7. End with exactly one line: \"Source: Wikipedia KB (RAG)\", \"Source: Web (SerpApi)\", \"Source: Wikipedia KB (RAG) + Web (SerpApi)\" or \"Source: none\" (when no tool produced the answer)."
+        }
+      }
+    },
+    {
+      "id": "aee5cd92-0f14-4180-ac52-129c2ba64a0c",
+      "name": "OpenRouter Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        208,
+        560
+      ],
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "credentials": {
+        "openRouterApi": {
+          "id": "ZVmyn6i4mBR80Pjr",
+          "name": "OpenRouter Encorp Academy Homeworks"
+        }
+      }
+    },
+    {
+      "id": "33e7e75a-4f34-40bc-8cba-1bf8c10bd656",
+      "name": "RAG Search",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        560
+      ],
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Searches the knowledge base: the English Wikipedia article \"Artificial intelligence\" (definitions, history, subfields, techniques, applications, ethics, philosophy). Input: a short search query in English. Returns the most relevant passages of the article. Always call this tool FIRST for every question. If the returned passages do not contain the answer, the knowledge base does not have it.",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ai_wiki_chunks"
+        },
+        "topK": 5,
+        "includeDocumentMetadata": true,
+        "options": {
+          "queryName": "match_ai_wiki_chunks"
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "bNOtyObNivw01MxU",
+          "name": "Supabase - Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "536dca52-ef64-4c3f-8181-9947db091a6b",
+      "name": "Gemini Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        432,
+        720
+      ],
+      "parameters": {},
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM) - Encorp AI Academy"
+        }
+      }
+    },
+    {
+      "id": "9e6edb28-210c-4aee-8a70-3637cac8b1b4",
+      "name": "Web Search",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        560
+      ],
+      "parameters": {
+        "toolDescription": "Searches the web with Google (SerpApi). Input: a focused search query. Returns the top organic results (title, link, snippet). Use it only when RAG Search did not return passages that answer the question.",
+        "method": "GET",
+        "url": "https://serpapi.com/search.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "num",
+              "value": "5"
+            },
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', 'The web search query') }}"
+            }
+          ]
+        },
+        "optimizeResponse": true,
+        "responseType": "json",
+        "dataField": "organic_results",
+        "fieldsToInclude": "selected",
+        "fields": "title,link,snippet"
+      },
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "F4Xn3XCI5cfx8aeG",
+          "name": "Query Auth - SerpApi"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "RAG Search",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ]
+}

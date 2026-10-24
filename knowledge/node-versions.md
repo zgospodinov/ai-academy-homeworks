@@ -100,3 +100,9 @@
 | `n8n-nodes-base.summarize` | 1.1 | 19 (изпълнено: Sum и Count, Split By `caseId`) |
 | `n8n-nodes-base.manualTrigger` | 1 | 19 (изпълнено през MCP) |
 | `n8n-nodes-base.stickyNote` | 1 | 19 |
+
+| `@n8n/n8n-nodes-langchain.vectorStoreSupabase` (mode retrieve-as-tool) | 1.3 | 20 (изпълнено, Здравко 2026-10-24; параметри от `get_node_types`: `toolDescription`, `topK`, `includeDocumentMetadata`, `options.queryName`) |
+| `n8n-nodes-base.httpRequestTool` (SerpApi, `httpQueryAuth`, `optimizeResponse`) | 4.5 | 20 (изпълнено, #3302 и #3305-#3321) |
+| `n8n-nodes-base.httpRequest` (Wikipedia MediaWiki API, `User-Agent` header) | 4.4 | 20 (изпълнено, #3302 и #3305-#3321) |
+| `@n8n/n8n-nodes-langchain.vectorStoreSupabase` (mode insert) | 1.3 | 20 (изпълнено, #3302 и #3305-#3321) |
+

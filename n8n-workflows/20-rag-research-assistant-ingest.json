@@ -1,0 +1,515 @@
+{
+  "name": "Encorp | Homework | Week 04 | HW 07 | RAG Research Assistant Ingest",
+  "nodes": [
+    {
+      "id": "2b0692ab-de9e-4aeb-ae32-481a931b2631",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        16
+      ],
+      "parameters": {
+        "content": "## RAG Research Assistant - Ingest (Week 04, HW 07)\nManual run -> fetch the Wikipedia article \"Artificial intelligence\" (plain text via the MediaWiki API) -> stop if empty -> delete old chunks -> split into ~60k-char segments -> loop: chunks (2000 chars, 200 overlap) -> Gemini embeddings (3072) -> Supabase table ai_wiki_chunks -> wait 65 s.\nCovers R1. The loop and the wait keep the Gemini free-tier limits (100 requests/min, 30K tokens/min, 1000/day).",
+        "color": 4,
+        "width": 700,
+        "height": 170
+      }
+    },
+    {
+      "id": "1906f660-5012-4fe2-a6b2-c08f1d533d96",
+      "name": "Group - Fetch Article",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        404,
+        204
+      ],
+      "parameters": {
+        "content": "## Group - Fetch Article\nReads the article text straight from Wikipedia and prepares text, title and source. Covers R1.",
+        "color": 5,
+        "width": 444,
+        "height": 260
+      }
+    },
+    {
+      "id": "ab99a4ce-cfec-4455-a88f-3d1265b20d4b",
+      "name": "Group - Chunk Embed Store",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        200
+      ],
+      "parameters": {
+        "content": "## Group - Chunk Embed Store\nDeletes old chunks of the same article, splits the text into segments, then loops: chunks (2000/200), Gemini embeddings, insert into Supabase, wait 65 s. Covers R1.",
+        "color": 6,
+        "width": 1240,
+        "height": 580
+      }
+    },
+    {
+      "id": "abcefa5c-ed66-46a3-a2b9-2cd46528bf05",
+      "name": "Start Indexing",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "f4b58a89-6824-4053-8fbc-c6b2736caedc",
+      "name": "Fetch Wikipedia Article",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        464,
+        304
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://en.wikipedia.org/w/api.php",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "query"
+            },
+            {
+              "name": "prop",
+              "value": "extracts"
+            },
+            {
+              "name": "explaintext",
+              "value": "1"
+            },
+            {
+              "name": "titles",
+              "value": "Artificial intelligence"
+            },
+            {
+              "name": "redirects",
+              "value": "1"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "ai-academy-homework/1.0 (educational n8n RAG demo)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "972f55b9-44cb-4ab7-a5ba-71d3498e50bf",
+      "name": "Prepare Document",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        688,
+        304
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "text",
+              "value": "={{ Object.values($json.query.pages)[0].extract }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "title",
+              "value": "={{ Object.values($json.query.pages)[0].title }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "source",
+              "value": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "4566c5ac-6daa-43a5-aaac-905ed4403de8",
+      "name": "Has Text",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        940,
+        304
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ ($json.text || '').trim() }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c56725f7-b0e9-42e3-93a2-6713a9dc2c30",
+      "name": "Delete Old Chunks",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1280,
+        304
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "delete from public.ai_wiki_chunks where metadata->>'source' = $1",
+        "options": {
+          "queryReplacement": "={{ $json.source }}"
+        }
+      },
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "eb70757e-4aed-4524-9278-8acfdb913b2a",
+      "name": "Split Segments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        304
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Split the article into segments of about 60k characters (cut at a paragraph break)\n// so that each segment stays under the Gemini free-tier limits: 100 requests/min and 30K tokens/min.\nconst { text, source } = $('Prepare Document').first().json;\nconst TARGET = 60000;\nconst segments = [];\nlet start = 0;\nwhile (start < text.length) {\n  let end = Math.min(start + TARGET, text.length);\n  if (end < text.length) {\n    const cut = text.lastIndexOf('\\n\\n', end);\n    if (cut > start + TARGET * 0.5) end = cut;\n  }\n  const part = text.slice(start, end).trim();\n  if (part) segments.push(part);\n  start = end;\n}\nreturn segments.map((part, i) => ({ json: { text: part, source, segment: i + 1, totalSegments: segments.length } }));"
+      }
+    },
+    {
+      "id": "48442ea6-c10c-4d17-ab97-d7bcd9cb463d",
+      "name": "Insert Chunks",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1960,
+        304
+      ],
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ai_wiki_chunks"
+        },
+        "embeddingBatchSize": 10,
+        "options": {
+          "queryName": "match_ai_wiki_chunks"
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "bNOtyObNivw01MxU",
+          "name": "Supabase - Weekly Shopping Assistant"
+        }
+      }
+    },
+    {
+      "id": "3defa310-f1be-446d-bb85-c5b33ef26afa",
+      "name": "Gemini Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        464
+      ],
+      "parameters": {},
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM) - Encorp AI Academy"
+        }
+      }
+    },
+    {
+      "id": "ac262a4f-3c31-419c-a943-4f3d62426ee8",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1960,
+        464
+      ],
+      "parameters": {
+        "dataType": "json",
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $json.source }}"
+              },
+              {
+                "name": "segment",
+                "value": "={{ $json.segment }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "83c428c8-5b31-4f24-843d-5530f334c305",
+      "name": "Recursive Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        624
+      ],
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      }
+    },
+    {
+      "id": "e0d6c8bc-be60-4597-8ac1-93ba86169b99",
+      "name": "Wait Rate Limit",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2180,
+        304
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 65,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "4934d49d-bf93-4fba-8a8f-cfcec2030b3f",
+      "name": "Loop Over Segments",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1720,
+        304
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "c417b45f-a635-4c94-8150-9393bb8daf2a",
+      "name": "Stop - Empty Text",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        940,
+        464
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "The Wikipedia API returned no text. Nothing was indexed."
+      }
+    }
+  ],
+  "connections": {
+    "Start Indexing": {
+      "main": [
+        [
+          {
+            "node": "Fetch Wikipedia Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Wikipedia Article": {
+      "main": [
+        [
+          {
+            "node": "Prepare Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Document": {
+      "main": [
+        [
+          {
+            "node": "Has Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Text": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop - Empty Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Chunks": {
+      "main": [
+        [
+          {
+            "node": "Split Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Segments": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Chunks": {
+      "main": [
+        [
+          {
+            "node": "Wait Rate Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Rate Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Segments": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "b4AD0VRXX5dw8Ve7",
+      "name": "encorp-homework"
+    }
+  ]
+}
