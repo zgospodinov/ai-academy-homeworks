@@ -1,0 +1,138 @@
+{
+  "name": "Encorp | Homework | Week 05 | HW 01 | Orders Processor Guard MCP Server",
+  "nodes": [
+    {
+      "id": "458e6abd-29c6-4e54-a7b1-7e6d34ab188e",
+      "name": "MCP Server Trigger - Guard Server",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "path": "orders-guard",
+        "authentication": "none",
+        "instructions": "Guard server for the Orders Processor. Tool check_text checks a text for jailbreak and prompt injection attempts and returns JSON with safe and reason."
+      },
+      "webhookId": "5250072f-04ff-4494-b81c-02ab2e87db75"
+    },
+    {
+      "id": "877251d2-2a88-455e-8fcb-1c1ee3e9ad37",
+      "name": "check_text",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        520
+      ],
+      "parameters": {
+        "description": "Checks a text for jailbreak and prompt injection attempts. Returns JSON with safe (true or false) and reason. Call it with the text to check, the direction (input for user messages, output for model replies) and the chat session id.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "t2G5luWPzreeK9Dq"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', 'The text to check') }}",
+            "direction": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('direction', 'input for user messages, output for model replies') }}",
+            "session_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('session_id', 'The chat session id') }}"
+          },
+          "schema": [
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "26bd14e9-adf3-40b6-8826-edbd3795e4d0",
+      "name": "Sticky Note 8629e296",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        100
+      ],
+      "parameters": {
+        "content": "## Guard MCP Server\nExposes the Guard Check sub-workflow as an MCP tool (check_text). The Orders Processor calls it with the MCP Client node on the user input and on the agent output. Other agents can reuse it as an MCP Client Tool. Must be published to get the production URL. Covers R13.",
+        "color": 4,
+        "width": 700,
+        "height": 140
+      }
+    },
+    {
+      "id": "ef195f16-e012-4e3d-a6f6-9b58557fa75c",
+      "name": "Sticky Auth Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        520
+      ],
+      "parameters": {
+        "color": 3,
+        "content": "## Бележка: автентикация\nMCP Server Trigger е без автентикация само заради демото/домашното. В реална среда се включва Bearer или Header Auth, а MCP клиентът в основния workflow използва същия credential.",
+        "height": 140,
+        "width": 520
+      }
+    }
+  ],
+  "connections": {
+    "check_text": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger - Guard Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Sofia",
+    "binaryMode": "separate",
+    "errorWorkflow": "gC2GWs1oq8HAGyCL"
+  },
+  "tags": [
+    {
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

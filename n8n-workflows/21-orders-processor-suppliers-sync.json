@@ -1,0 +1,503 @@
+{
+  "name": "Encorp | Homework | Week 05 | HW 01 | Orders Processor Suppliers Sync",
+  "nodes": [
+    {
+      "id": "8599625d-bdf0-41e5-8900-14d30a85484e",
+      "name": "Supabase Vector Store - Insert Vectors",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2400,
+        320
+      ],
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "supplier_chunks"
+        },
+        "embeddingBatchSize": 10,
+        "options": {
+          "queryName": "match_supplier_chunks"
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "bNOtyObNivw01MxU",
+          "name": "Supabase"
+        }
+      }
+    },
+    {
+      "id": "f4b7943f-705c-455c-b5aa-d17c6e365193",
+      "name": "Embeddings Google Gemini - Supplier Index",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        680
+      ],
+      "parameters": {},
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ga2uE1xGAMtzZtxO",
+          "name": "Google Gemini(PaLM)"
+        }
+      }
+    },
+    {
+      "id": "e1de3751-d36b-40bb-b37c-252f46427bbb",
+      "name": "Default Data Loader - Supplier Document",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2600,
+        680
+      ],
+      "parameters": {
+        "dataType": "json",
+        "jsonData": "=Company: {{ $json.company }}\nContact person: {{ $json.contact_person }}\nEmail: {{ $json.email }}",
+        "jsonMode": "expressionData",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "company",
+                "value": "={{ $json.company }}"
+              },
+              {
+                "name": "contact_person",
+                "value": "={{ $json.contact_person }}"
+              },
+              {
+                "name": "email",
+                "value": "={{ $json.email }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "1e875125-587e-4d81-ba58-4df3cb98b561",
+      "name": "Manual Trigger - Rebuild Index",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        420
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "a91d1dfc-e8f6-4ce7-b0d2-48a8337f4a4c",
+      "name": "Google Sheets - Read Suppliers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        320
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "16ndyUF30n_079LcapSwDPUSKdWpGXBj8-QN6-yrLQtA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "suppliers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zJy85a5GrnnEpBYj",
+          "name": "Google Sheets account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "64de697a-1c6f-4165-9a0a-ba3edee9df88",
+      "name": "Sticky Note 237ccbdc",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        40
+      ],
+      "parameters": {
+        "content": "## Suppliers Sync\nSuppliers live in the suppliers tab of the Google Sheet. Every 5 minutes the sheet is read and hashed; if the hash differs from the stored one (a row was added, edited or deleted) the supplier_chunks vector table is cleared and rebuilt, then the new hash is saved. Rebuild Suppliers Index forces a rebuild. Covers R7.",
+        "color": 5,
+        "width": 1100,
+        "height": 120
+      }
+    },
+    {
+      "id": "46eed8e6-d1eb-4750-baec-89340d746169",
+      "name": "Schedule Trigger - Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        220
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2c9938d9-d781-452b-98cd-152998b90424",
+      "name": "Aggregate - Pack Suppliers",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        320
+      ],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "suppliers",
+        "include": "allFields"
+      }
+    },
+    {
+      "id": "180cf021-58fd-450c-8c17-e85fd8f346fc",
+      "name": "Crypto - Hash Suppliers",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        960,
+        320
+      ],
+      "parameters": {
+        "action": "hash",
+        "dataPropertyName": "hash",
+        "encoding": "hex",
+        "type": "SHA256",
+        "value": "={{ JSON.stringify($json.suppliers.map(s => [s.company, s.contact_person, s.email])) }}"
+      }
+    },
+    {
+      "id": "87353353-1c72-4017-b280-73522d039b59",
+      "name": "Postgres - Get Stored Hash",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1200,
+        320
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "select content_hash from public.supplier_sync_state where id = 1",
+        "resource": "database"
+      },
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "de89f725-4aae-49b1-9ec4-651d0c5ba0f3",
+      "name": "If - Changed Or Manual",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        320
+      ],
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $execution.mode === \"test\" || ($json.content_hash ?? \"\") !== $(\"Crypto - Hash Suppliers\").first().json.hash }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      }
+    },
+    {
+      "id": "b2d6dad6-e539-4925-9e3d-8b62d79342cf",
+      "name": "Postgres - Clear Vectors",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1680,
+        320
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "truncate table public.supplier_chunks restart identity",
+        "resource": "database"
+      },
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "efa06950-f0b4-4992-9690-0eb4091c8174",
+      "name": "Edit Fields - Load Suppliers",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        320
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "l1",
+              "name": "suppliers",
+              "type": "array",
+              "value": "={{ $(\"Crypto - Hash Suppliers\").first().json.suppliers }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      }
+    },
+    {
+      "id": "de678b7b-549b-405f-8187-dc68cc9d1c8c",
+      "name": "Split Out - Suppliers",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        320
+      ],
+      "parameters": {
+        "fieldToSplitOut": "suppliers",
+        "include": "noOtherFields"
+      }
+    },
+    {
+      "id": "304f8ea8-aed2-43fe-8a40-5cf3297a962e",
+      "name": "Postgres - Save Hash",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2640,
+        320
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "insert into public.supplier_sync_state (id, content_hash, updated_at) values (1, '{{ $(\"Crypto - Hash Suppliers\").first().json.hash }}', now()) on conflict (id) do update set content_hash = excluded.content_hash, updated_at = now()",
+        "resource": "database"
+      },
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "oV65LOmb39oe06bd",
+          "name": "Postgres"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    }
+  ],
+  "connections": {
+    "Embeddings Google Gemini - Supplier Index": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store - Insert Vectors",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader - Supplier Document": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store - Insert Vectors",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Read Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Aggregate - Pack Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger - Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Read Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger - Rebuild Index": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Read Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate - Pack Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Crypto - Hash Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crypto - Hash Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Get Stored Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Get Stored Hash": {
+      "main": [
+        [
+          {
+            "node": "If - Changed Or Manual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Changed Or Manual": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Clear Vectors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Clear Vectors": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Load Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Load Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Split Out - Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out - Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store - Insert Vectors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store - Insert Vectors": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Save Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Sofia",
+    "binaryMode": "separate",
+    "errorWorkflow": "gC2GWs1oq8HAGyCL"
+  },
+  "tags": [
+    {
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

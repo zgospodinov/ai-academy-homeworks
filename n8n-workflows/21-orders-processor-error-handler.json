@@ -1,0 +1,288 @@
+{
+  "name": "Encorp | Homework | Week 05 | HW 01 | Orders Processor Error Handler",
+  "nodes": [
+    {
+      "id": "ad8606b4-0aac-450e-91cf-d0976ebcc78d",
+      "name": "Error Trigger - Workflow Failure",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "823fcd57-c308-4ece-b7c6-c47ce152bfdc",
+      "name": "Edit Fields - Parse Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p1",
+              "name": "adminChatId",
+              "value": "YOUR_TELEGRAM_CHAT_ID",
+              "type": "string"
+            },
+            {
+              "id": "p2",
+              "name": "workflowName",
+              "value": "={{ $json.workflow?.name ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "p3",
+              "name": "executionId",
+              "value": "={{ $json.execution?.id ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "p4",
+              "name": "executionUrl",
+              "value": "={{ $json.execution?.url ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "p5",
+              "name": "failedNode",
+              "value": "={{ $json.execution?.lastNodeExecuted ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "p6",
+              "name": "errorMessage",
+              "value": "={{ $json.execution?.error?.message ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "p7",
+              "name": "ctx",
+              "value": "={{ ($json.execution?.error?.message ?? \"\").includes(\"| {\") ? JSON.parse($json.execution.error.message.slice($json.execution.error.message.indexOf(\"| {\") + 2)) : {} }}",
+              "type": "object"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "94fc42eb-e418-4263-bce9-3026532b81b8",
+      "name": "Google Sheets - Log Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "16ndyUF30n_079LcapSwDPUSKdWpGXBj8-QN6-yrLQtA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "error_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "workflow": "={{ $json.workflowName }}",
+            "execution_id": "={{ $json.executionId }}",
+            "failed_node": "={{ $json.failedNode }}",
+            "error_message": "={{ String($json.errorMessage).slice(0, 1000) }}",
+            "session_id": "={{ $json.ctx.sessionId ?? \"\" }}",
+            "user_message": "={{ String($json.ctx.userMessage ?? \"\").slice(0, 1000) }}",
+            "retry_attempt": "={{ $json.ctx.attempts ?? \"\" }}"
+          },
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow",
+              "displayName": "workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "failed_node",
+              "displayName": "failed_node",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_message",
+              "displayName": "user_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "retry_attempt",
+              "displayName": "retry_attempt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zJy85a5GrnnEpBYj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "11a93f2c-afa7-4b93-9624-55d8fd9ca1db",
+      "name": "Telegram - Send Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        300
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $(\"Edit Fields - Parse Context\").first().json.adminChatId }}",
+        "text": "=Orders Processor error\nWorkflow: {{ $(\"Edit Fields - Parse Context\").first().json.workflowName }}\nFailed node: {{ $(\"Edit Fields - Parse Context\").first().json.failedNode }}\nError: {{ $(\"Edit Fields - Parse Context\").first().json.errorMessage }}\nSession: {{ $(\"Edit Fields - Parse Context\").first().json.ctx.sessionId ?? \"-\" }}\nUser message: {{ $(\"Edit Fields - Parse Context\").first().json.ctx.userMessage ?? \"-\" }}\nExecution: {{ $(\"Edit Fields - Parse Context\").first().json.executionUrl }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "webhookId": "dfd41332-345e-4cb7-bde4-a434c33f4e1c",
+      "credentials": {
+        "telegramApi": {
+          "id": "Bt80gzlOv5umjweU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "f81db120-b6e7-4b14-a8f2-b048722134b7",
+      "name": "Sticky Note cea5f083",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        100
+      ],
+      "parameters": {
+        "content": "## Error Handler\nError Trigger -> parse the context sent by Stop and Error -> row in error_log -> Telegram alert with the details. Set YOUR_TELEGRAM_CHAT_ID in Parse Context. Covers R11.",
+        "color": 3,
+        "width": 900,
+        "height": 120
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger - Workflow Failure": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Parse Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Parse Context": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Log Error": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Send Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Sofia",
+    "binaryMode": "separate"
+  },
+  "tags": [
+    {
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

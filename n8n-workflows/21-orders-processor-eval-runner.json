@@ -1,0 +1,361 @@
+{
+  "name": "Encorp | Homework | Week 05 | HW 01 | Orders Processor Eval Runner",
+  "nodes": [
+    {
+      "id": "9e0a1eef-7c67-4ac1-8c12-89fbaa7b57c0",
+      "name": "Manual Trigger - Run All Cases",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "7a1d2308-f0d2-43e1-a0e8-9e1698665f1a",
+      "name": "Data table - Get Cases",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8mMwcpU7Y6RP5snR"
+        },
+        "returnAll": true,
+        "matchType": "anyCondition",
+        "filters": {
+          "conditions": []
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000
+    },
+    {
+      "id": "c4eb982b-4a69-4b15-bb2e-b7406ae0cb9b",
+      "name": "Edit Fields - Mark Runner",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "runner",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6def1b4a-58e2-440f-8c0d-0b158b468f0b",
+      "name": "Execute Workflow - Run Processor",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "HCwlvpKPMzxXNSKv"
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a3d789a1-b09e-4ee5-a2ac-0a8848ad9330",
+      "name": "Edit Fields - Format Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "run_at",
+              "value": "={{ $now.setZone(\"Europe/Sofia\").toFormat(\"yyyy-MM-dd HH:mm:ss\") }}",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "case_id",
+              "value": "={{ $json.case_id ?? $(\"Edit Fields - Mark Runner\").all()[$itemIndex]?.json.case_id ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "scenario",
+              "value": "={{ $json.scenario ?? $(\"Edit Fields - Mark Runner\").all()[$itemIndex]?.json.scenario ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "pass",
+              "value": "={{ $json.pass ?? 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "f5",
+              "name": "failed_checks",
+              "value": "={{ $json.failed_checks ?? ($json.error ? \"execution_error\" : \"no_result\") }}",
+              "type": "string"
+            },
+            {
+              "id": "f6",
+              "name": "expected_status",
+              "value": "={{ $json.expected_status ?? $(\"Edit Fields - Mark Runner\").all()[$itemIndex]?.json.expected_status ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f7",
+              "name": "actual_status",
+              "value": "={{ $json.actual_status ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f8",
+              "name": "actual_email",
+              "value": "={{ $json.actual_email ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f9",
+              "name": "actual_items",
+              "value": "={{ $json.actual_items ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f10",
+              "name": "actual_date",
+              "value": "={{ $json.actual_date ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f11",
+              "name": "actual_message",
+              "value": "={{ $json.actual_message ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f12",
+              "name": "error",
+              "value": "={{ $json.error ? (typeof $json.error === \"string\" ? $json.error : JSON.stringify($json.error)).slice(0, 300) : \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f13",
+              "name": "execution_url",
+              "value": "={{ \"https://n8n.example.com/workflow/\" + $workflow.id + \"/executions/\" + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f14",
+              "name": "status_ok",
+              "value": "={{ $json.status_ok ?? 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "f15",
+              "name": "date_ok",
+              "value": "={{ $json.date_ok ?? 0 }}",
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1cffae89-bedb-4026-8d7e-ae14fe73385f",
+      "name": "Google Sheets - Save Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "16ndyUF30n_079LcapSwDPUSKdWpGXBj8-QN6-yrLQtA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "eval_results"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null,
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zJy85a5GrnnEpBYj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "a613179a-bf78-4bad-a23e-631e45593506",
+      "name": "Edit Fields - Pass Rate",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "u1",
+              "name": "total",
+              "value": "={{ $(\"Edit Fields - Format Result\").all().length }}",
+              "type": "number"
+            },
+            {
+              "id": "u2",
+              "name": "passed",
+              "value": "={{ $(\"Edit Fields - Format Result\").all().filter(i => i.json.pass === 1).length }}",
+              "type": "number"
+            },
+            {
+              "id": "u3",
+              "name": "pass_rate",
+              "value": "={{ Math.round(100 * $(\"Edit Fields - Format Result\").all().filter(i => i.json.pass === 1).length / Math.max(1, $(\"Edit Fields - Format Result\").all().length)) + \"%\" }}",
+              "type": "string"
+            },
+            {
+              "id": "u4",
+              "name": "failed",
+              "value": "={{ $(\"Edit Fields - Format Result\").all().filter(i => i.json.pass !== 1).map(i => i.json.case_id + \" (\" + i.json.failed_checks + \")\").join(\"; \") }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger - Run All Cases": {
+      "main": [
+        [
+          {
+            "node": "Data table - Get Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data table - Get Cases": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Mark Runner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Mark Runner": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow - Run Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow - Run Processor": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Format Result": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Save Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Save Result": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Pass Rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "gC2GWs1oq8HAGyCL"
+  },
+  "tags": [
+    {
+      "name": "encorp-homework"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -55,3 +55,18 @@
 - `dataField` + `fields` в HTTP Request Tool губят блокове като `answer_box` (време, бърз отговор); без `dataField` `fields` връща целите вложени обекти (132k символа за заявка за времето).
 - Решение: SerpApi параметър `json_restrictor` (напр. `answer_box.{type,answer,snippet,...},organic_results[].{title,link,snippet}`) реже отговора на сървъра; `optimizeResponse` се изключва.
 - gpt-4o-mini може да прескочи първия инструмент при въпрос "извън темата" - правилото "първото действие винаги е RAG Search" трябва да е изрично.
+
+## n8n Evaluations и Chat нодове (HW 21, 2026-10-30)
+- Chat нод "Send message" в под-изпълнение (Execute Workflow / Evaluation) прехвърля изпълнението в "waiting" и родителят не запазва резултатите. В eval режим Chat нодовете се прескачат с IF по флаг.
+- Evaluation Trigger 4.7 чете от Data Table; Evaluation нод 4.8 (setOutputs, setMetrics) пише обратно. За ръчно пускане на всички случаи служи отделен workflow с Execute Workflow (Run once for each item).
+- `get_data_table_rows` през MCP иска `projectId`.
+- Guardrails с нисък threshold (0.7) даде фалшиво положително за нормална поръчка; 0.9 работи.
+- Стар таб на редактора може да презапише промени, направени през MCP: презареди таба преди ръчно запазване; връщане с `restore_workflow_version`.
+- Различни модели се справят различно с двусмислен доставчик (двама Димитър): gpt-4.1-mini следва правилото "питай", gpt-4o-mini избира един.
+- Проверявай модела в workflow-а след възстановяване на версия или ръчно запазване: Agent Chat Model се беше върнал на gpt-4o-mini и всички тестове вървяха с него.
+- "Model output doesn't fit required format" от Structured Output Parser след извикване на tool: агентът пада в error изхода; в пакетния тест се вижда като празен изход (`EMPTY_AGENT_OUTPUT`).
+- Retrieve-as-tool с малък topK (2) пропуска записи със същото малко име: търсенето е по сходство, не по точно съвпадение.
+- Guardrails: custom prompt (`customizePrompt` + `prompt` в `guardrails.jailbreak.value`) намалява фалшивите положителни; праг и JSON формат се налагат от нода.
+- n8n MCP `renameNode` преименува нода и свързванията, но НЕ променя `$("Старо име")` в изразите и Code нодовете: препратките се намират с regex и се пренаписват със `setNodeParameter`, иначе потокът се чупи.
+- Името на `Call n8n Workflow Tool` е името на MCP инструмента (`check_text`), а името на retrieve-as-tool нод е името на инструмента за агента: не преименувай `check_text` и провери агента след преименуване на Vector Store нода.
+- Postgres нод (executeQuery): полето `query` НЕ приема водещо `=`; `{{ }}` вътре се оценява и без него (валидаторът предупреждава за обратното). Проверено в Suppliers Sync: хешът се записва правилно.

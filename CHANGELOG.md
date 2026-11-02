@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-11-02 - 21-orders-processor v5 (error handling и идемпотентност)
+- Промяна: ledger в Data Table `orders_ledger`. След одобрение ключ SHA256 (сесия, получател, тема, текст, срок) -> статус new/claimed/sent/logged. Преди Gmail редът се заявява (`claimed`); при `claimed` се проверява Gmail Sent и имейлът не се праща втори път; `sent` води само до запис в Sheets; `logged` връща "вече е изпратена".
+- Промяна: Sheets запис е `appendOrUpdate` по `po_number` + `line_no` (повторен опит не дублира редове); номерът на поръчката е стабилен (`PO-дата-хеш`).
+- Промяна: Gmail без автоматичен retry; при грешка `continueErrorOutput` -> съобщение в чата + Stop and Error -> Error Handler. Втори опит е безопасен заради ledger-а.
+- Промяна: retry 3 опита с пауза (1-3 s) за Agent, Guard MCP клиентите, четенето от Sheets, Postgres и Data Table, upsert-а в Sheets и ledger update-ите; `maxRetries` на модела 0, за да не се трупат слоеве.
+- Промяна: Error Workflow е зададен на всички потоци освен самия Error Handler; Error Handler, Guard MCP Server и Guard Check са публикувани (Error Workflow изисква публикуван handler; Guard е нужен за eval).
+- Резултат: Eval Runner 16/16 (изпълнение 10677). Ledger пътят не е тестван от край до край в чата (нужно е одобрение), виж `test-plan.md`.
+- Бележка: Suppliers Sync е на 5 минути; при постоянна грешка ще праща алерт на всеки цикъл (няма ограничаване на честотата).
+
+## 2026-11-02 - 21-orders-processor v4
+- Промяна: имената на нодовете във всички 6 workflow-а са `Оригинално име - кратко описание`; препратките в изразите са обновени; JSON копията са пренаписани, снимка в `_versions/21-orders-processor/v4.json`.
+- Причина: четими имена без отваряне на нода.
+- Бележка: evaluations 16/16 след преименуването. Подробности в `homeworks/21-orders-processor/CHANGELOG.md`.
+
+## 2026-11-01 - 21-orders-processor v3
+- Промяна: evaluations 16/16 в два последователни прогона; модел gpt-4.1-mini, температура 0, Supplier Search topK 5, уточнено правило 2 в промпта, custom prompt на Guardrails; `n8n-workflows/21-orders-processor.json` и `-guard-check.json` са обновени, снимка в `_versions/21-orders-processor/v3.json`.
+- Причина: нестабилни резултати (9-15 от 16); основната причина беше върнат модел gpt-4o-mini.
+- Бележка: подробности в `homeworks/21-orders-processor/CHANGELOG.md` и `test-plan.md`. Не е комитвано.
+
+## 2026-10-30 - 21-orders-processor v2
+- Промяна: домашно 21 (Orders Processor) е със статус `tested`; JSON на 6-те workflow-а в `n8n-workflows/21-orders-processor*.json`; автоматични evaluations 16/16; `solution-plan.md` е обновен 1:1 с workflow-а; n8n workflow-ите са в папка `Week 05 - HW 01 - Orders Processor`.
+- Причина: приключване на изграждането и тестването; подреждане на репото.
+- Санитизиране: тестовият имейл е `you@example.com`, имената на credentials без лични имена, Telegram chat id е placeholder.
+- Бележка: пълният чат поток с одобрение чака ръчен ретест от Здравко. Подробности в `homeworks/21-orders-processor/CHANGELOG.md`.
+
 ## 2026-10-24 - 20-rag-research-assistant Agent v3
 - Промяна: Web Search връща и `answer_box` (SerpApi `json_restrictor`: резюме на answer_box + title/link/snippet на органичните резултати, `optimizeResponse` изключен); system prompt: първото действие винаги е RAG Search, държава към имената на места, никога година/месец в заявката, изрично съобщение при неуспешно или празно търсене.
 - Причина: тест на Здравко - регресия на T4 (времето в София): `dataField: organic_results` изрязваше answer_box с времето и резултатите не споменаваха София. Между v3 и v3b: при първия вариант (`fields: answer_box,organic_results`) отговорът беше 132k символа и агентът прескочи RAG (изп. #3333).
