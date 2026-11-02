@@ -1,5 +1,12 @@
 # Changelog - 21-orders-processor
 
+## 2026-11-02 - 21-orders-processor v5.1 (документация и setup)
+- Промяна: два нови Sticky Note-а в основния workflow - "Стратегия за обработка на грешки" и "Prerequisites" (какво остава ръчно при нова инстанция).
+- Промяна: `homeworks/21-orders-processor/setup/` - CSV шаблони за Data Tables (`orders_eval_dataset`, `orders_eval_images`, `orders_ledger`) и за табовете на Google Sheet, SQL за Supabase, README.
+- Причина: бърз сетъп на нова n8n инстанция без ръчно създаване на таблици.
+- Засегнати нодове: Sticky Error Strategy, Sticky Prerequisites (само бележки).
+- Промяна (подредба): възлите на основния workflow са преподредени - групите са подредени една под друга, във всяка нодовете вървят отляво надясно по дълбочина на потока, AI под-нодовете са под агента, нищо не се припокрива; нов Sticky Note "4b. Защита от дубликати"; Guard Auth бележката е при другите бележки горе.
+
 ## 2026-11-02 - 21-orders-processor v5 (error handling и идемпотентност)
 - Промяна: ledger в Data Table `orders_ledger`. След одобрение ключ SHA256 (сесия, получател, тема, текст, срок) -> статус new/claimed/sent/logged. Преди Gmail редът се заявява (`claimed`); при `claimed` се проверява Gmail Sent и имейлът не се праща втори път; `sent` води само до запис в Sheets; `logged` връща "вече е изпратена".
 - Промяна: Sheets запис е `appendOrUpdate` по `po_number` + `line_no` (повторен опит не дублира редове); номерът на поръчката е стабилен (`PO-дата-хеш`).

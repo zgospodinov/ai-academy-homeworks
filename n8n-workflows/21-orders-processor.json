@@ -8,7 +8,7 @@
       "typeVersion": 1.5,
       "position": [
         0,
-        340
+        830
       ],
       "parameters": {
         "public": true,
@@ -30,8 +30,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        240,
-        340
+        260,
+        830
       ],
       "parameters": {
         "assignments": {
@@ -90,8 +90,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        340
+        520,
+        830
       ],
       "parameters": {
         "assignments": {
@@ -126,8 +126,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        720,
-        340
+        1040,
+        830
       ],
       "parameters": {
         "mode": "combine",
@@ -141,8 +141,8 @@
       "type": "@n8n/n8n-nodes-langchain.mcpClient",
       "typeVersion": 1.1,
       "position": [
-        480,
-        510
+        780,
+        830
       ],
       "parameters": {
         "endpointUrl": "https://n8n.gospodinov.dev/mcp/orders-guard",
@@ -165,8 +165,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        960,
-        340
+        1300,
+        830
       ],
       "parameters": {
         "conditions": {
@@ -197,8 +197,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        240,
-        900
+        0,
+        1340
       ],
       "parameters": {
         "promptType": "define",
@@ -222,7 +222,7 @@
       "typeVersion": 1,
       "position": [
         0,
-        1070
+        1570
       ],
       "parameters": {
         "model": "openai/gpt-4.1-mini",
@@ -244,8 +244,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.4,
       "position": [
-        240,
-        1070
+        260,
+        1570
       ],
       "parameters": {
         "sessionIdType": "customKey",
@@ -265,8 +265,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        720,
-        1070
+        780,
+        1570
       ],
       "parameters": {
         "mode": "retrieve-as-tool",
@@ -294,8 +294,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        720,
-        1240
+        780,
+        1740
       ],
       "parameters": {},
       "credentials": {
@@ -311,8 +311,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        480,
-        1070
+        520,
+        1570
       ],
       "parameters": {
         "jsonSchemaExample": "{ \"status\": \"draft_ready\", \"message\": \"Кратко съобщение към потребителя\", \"draft\": { \"supplier_company\": \"Фирма ООД\", \"contact_person\": \"Иван Иванов\", \"to\": \"you@example.com\", \"subject\": \"Заявка за доставка\", \"email_body\": \"Уважаеми г-н Иванов, ... срок [[DELIVERY_DATE]] ...\", \"delivery_when\": { \"type\": \"weekday\", \"days\": 0, \"weekday\": 1, \"next_week\": false, \"day\": 0, \"month\": 0, \"year\": 0 }, \"written_confirmation\": true, \"items\": [ { \"name\": \"Тетрадка А5\", \"quantity\": 20, \"description\": \"\", \"image_index\": -1 } ] } }"
@@ -324,8 +324,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        1200,
-        510
+        1820,
+        1000
       ],
       "parameters": {
         "message": "Не мога да обработя това съобщение. Моля, опишете поръчка за доставчик.",
@@ -340,7 +340,7 @@
       "typeVersion": 2.2,
       "position": [
         0,
-        1630
+        2080
       ],
       "parameters": {
         "conditions": {
@@ -371,8 +371,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        240,
-        1630
+        260,
+        2080
       ],
       "parameters": {
         "assignments": {
@@ -418,8 +418,8 @@
       "type": "@n8n/n8n-nodes-langchain.mcpClient",
       "typeVersion": 1.1,
       "position": [
-        0,
-        1800
+        260,
+        2250
       ],
       "parameters": {
         "endpointUrl": "https://n8n.gospodinov.dev/mcp/orders-guard",
@@ -442,8 +442,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        480,
-        1630
+        520,
+        2080
       ],
       "parameters": {
         "conditions": {
@@ -474,8 +474,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        960,
-        1970
+        1040,
+        2590
       ],
       "parameters": {
         "message": "За съжаление асистентът не успя да обработи заявката. Администраторът е уведомен. Моля, опитайте отново по-късно.",
@@ -490,8 +490,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1200,
-        1970
+        1300,
+        2590
       ],
       "parameters": {
         "errorMessage": "=EMPTY_AGENT_OUTPUT | {{ JSON.stringify({ sessionId: $(\"Edit Fields - Count Attempt\").last().json.sessionId, userMessage: $(\"Edit Fields - Count Attempt\").last().json.userMessage, attempts: $(\"Edit Fields - Count Attempt\").last().json.attempt }) }}"
@@ -503,8 +503,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        960,
-        1630
+        1040,
+        2080
       ],
       "parameters": {
         "message": "Получих непълен отговор от асистента. Опитвам отново...",
@@ -519,8 +519,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        240,
-        1800
+        520,
+        2250
       ],
       "parameters": {
         "conditions": {
@@ -552,7 +552,7 @@
       "typeVersion": 3.4,
       "position": [
         0,
-        2360
+        3100
       ],
       "parameters": {
         "assignments": {
@@ -586,8 +586,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        480,
-        1970
+        1040,
+        2760
       ],
       "parameters": {
         "message": "Отговорът на асистента беше блокиран от защитата. Моля, преформулирайте заявката.",
@@ -601,8 +601,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        960,
-        2360
+        1040,
+        3100
       ],
       "parameters": {
         "conditions": {
@@ -633,8 +633,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        2360
+        520,
+        3100
       ],
       "parameters": {
         "assignments": {
@@ -663,8 +663,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        960,
-        2530
+        1300,
+        3270
       ],
       "parameters": {
         "operation": "sendAndWait",
@@ -685,8 +685,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1200,
-        2360
+        1300,
+        3100
       ],
       "parameters": {
         "conditions": {
@@ -717,8 +717,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1440,
-        2360
+        1560,
+        3100
       ],
       "parameters": {
         "assignments": {
@@ -747,8 +747,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        1680,
-        2360
+        1820,
+        3100
       ],
       "parameters": {
         "operation": "sendAndWait",
@@ -777,8 +777,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1920,
-        2360
+        2080,
+        3100
       ],
       "parameters": {
         "conditions": {
@@ -810,7 +810,7 @@
       "typeVersion": 2,
       "position": [
         0,
-        2920
+        4290
       ],
       "parameters": {
         "jsCode": "const draft = $(\"Edit Fields - Draft Message\").last().json;\nconst plan = $input.first().json;\nlet binary = {};\ntry {\n  binary = $(\"Merge - Combine Input\").first(0, 0).binary || {};\n} catch (e) {\n  binary = {};\n}\nreturn [{ json: { ...draft, orderAction: plan.orderAction, poNumber: plan.poNumber }, binary }];"
@@ -822,8 +822,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        1920,
-        2530
+        2340,
+        3100
       ],
       "parameters": {
         "operation": "sendAndWait",
@@ -844,8 +844,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        240,
-        2920
+        520,
+        4290
       ],
       "parameters": {
         "conditions": {
@@ -876,8 +876,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        480,
-        2920
+        780,
+        4290
       ],
       "parameters": {
         "sendTo": "={{ $(\"Edit Fields - Run Settings\").first().json.testMode ? $(\"Edit Fields - Run Settings\").first().json.testRecipientOverride : $json.draft.to }}",
@@ -910,8 +910,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        480,
-        3090
+        780,
+        4460
       ],
       "parameters": {
         "sendTo": "={{ $(\"Edit Fields - Run Settings\").first().json.testMode ? $(\"Edit Fields - Run Settings\").first().json.testRecipientOverride : $json.draft.to }}",
@@ -937,8 +937,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        720,
-        2920
+        1300,
+        4290
       ],
       "parameters": {
         "assignments": {
@@ -1038,8 +1038,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        960,
-        2920
+        1560,
+        4290
       ],
       "parameters": {
         "fieldToSplitOut": "items",
@@ -1053,8 +1053,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1200,
-        2920
+        1820,
+        4290
       ],
       "parameters": {
         "operation": "appendOrUpdate",
@@ -1289,8 +1289,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        1440,
-        2920
+        2340,
+        4290
       ],
       "parameters": {
         "message": "=Поръчка {{ $(\"Edit Fields - Purchase Order\").first().json.po_number }} е изпратена до {{ $(\"Edit Fields - Purchase Order\").first().json.sent_to }} и записана в таблицата ({{ $(\"Edit Fields - Purchase Order\").first().json.items.length }} реда).",
@@ -1305,13 +1305,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        220
+        -60,
+        730
       ],
       "parameters": {
         "content": "## 1. Вход и снимки\nChat Trigger приема текст и снимки. Prepare Input нормализира текста, а Merge връща снимките след проверката на Guard (R1, R3).",
-        "height": 480,
-        "width": 1500,
+        "height": 430,
+        "width": 2040,
         "color": 4
       }
     },
@@ -1321,13 +1321,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        780
+        -60,
+        1240
       ],
       "parameters": {
         "content": "## 2. Order Agent\nAgent с RAG инструмент за доставчици, постоянна памет и структуриран изход. Не изпраща имейли (R2, R4, R6-R10).",
-        "height": 650,
-        "width": 1020,
+        "height": 660,
+        "width": 1000,
         "color": 5
       }
     },
@@ -1337,13 +1337,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        1510
+        -60,
+        1980
       ],
       "parameters": {
         "content": "## 3. Празен изход и Guard на изхода\nПразен или невалиден отговор се подава пак до 2 пъти, после Stop and Error пуска Error Handler (R11, R12). Изходът минава през Guard (R13).",
-        "height": 650,
-        "width": 1500,
+        "height": 940,
+        "width": 1520,
         "color": 3
       }
     },
@@ -1353,13 +1353,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        2240
+        -60,
+        3000
       ],
       "parameters": {
         "content": "## 4. Валидация и одобрение\nДатата и денят от седмицата се смятат детерминирано. Имейлът се праща само след бутон Изпрати (R5, R10).",
-        "height": 480,
-        "width": 2220,
+        "height": 430,
+        "width": 2560,
         "color": 6
       }
     },
@@ -1369,13 +1369,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        2800
+        -60,
+        4190
       ],
       "parameters": {
         "content": "## 5. Изпращане и запис\nGmail праща с всички снимки, после по ред за артикул в purchase_orders с общ PO номер (R15, R16).",
-        "height": 480,
-        "width": 1740
+        "height": 430,
+        "width": 2560
       }
     },
     {
@@ -1384,8 +1384,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1200,
-        340
+        1560,
+        830
       ],
       "parameters": {
         "jsCode": "// Връща снимките от първото съобщение на потребителя към всеки вход на агента\nreturn [{ json: $input.first().json, binary: $(\"Merge - Combine Input\").first(0, 0).binary || {} }];"
@@ -1397,8 +1397,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        720,
-        1800
+        780,
+        2250
       ],
       "parameters": {
         "jsCode": "// Повторно подаване на съобщението на потребителя заедно със снимките му\nconst last = $(\"Merge - Combine Input\").last().json;\nconst problems = $(\"Edit Fields - Count Attempt\").last().json.problems;\nconst text = last.text + (problems ? \"\\n\\n[Системна забележка: предишната чернова беше невалидна: \" + problems + \". Поправи я или попитай потребителя за липсващото.]\" : \"\");\nreturn [{ json: { text, sessionId: last.sessionId, memoryKey: last.memoryKey }, binary: $(\"Merge - Combine Input\").first(0, 0).binary || {} }];"
@@ -1410,8 +1410,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        0
+        2100,
+        -540
       ],
       "parameters": {
         "content": "## Бележка: автентикация на Guard MCP\nMCP клиентите към orders-guard са без автентикация само заради демото/домашното. В реална среда сървърът се защитава (Bearer или Header Auth), а клиентите получават съответния credential.",
@@ -1426,8 +1426,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        240,
-        2360
+        260,
+        3100
       ],
       "parameters": {
         "assignments": {
@@ -1451,7 +1451,7 @@
       "typeVersion": 4.7,
       "position": [
         0,
-        3480
+        320
       ],
       "parameters": {
         "dataTableId": {
@@ -1468,7 +1468,7 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        3650
+        490
       ],
       "parameters": {
         "inputSource": "passthrough"
@@ -1480,8 +1480,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        480,
-        3480
+        520,
+        320
       ],
       "parameters": {
         "jsCode": "// Тестовите данни са в Data Tables: orders_eval_dataset (съобщения и очаквани резултати) и orders_eval_images (снимки).\n// Този нод само сглобява реда от dataset-а във вход както от Chat Trigger (текст + снимки). Няма вградени данни.\nlet row;\ntry {\n  row = $(\"Evaluation Trigger - Dataset Cases\").first().json;\n} catch (e) {\n  row = $(\"When Executed by Another Workflow - Eval Runner\").first().json;\n}\nconst library = {};\nfor (const r of $(\"Data table - Get Eval Images\").all()) {\n  library[r.json.image_name] = r.json;\n}\nconst names = String(row.images || \"\").split(\",\").map((s) => s.trim()).filter(Boolean);\nconst binary = {};\nfor (let i = 0; i < names.length; i++) {\n  const img = library[names[i]];\n  if (!img) throw new Error(\"Unknown eval image: \" + names[i]);\n  binary[\"data\" + i] = await this.helpers.prepareBinaryData(Buffer.from(img.base64, \"base64\"), names[i] + \".jpg\", img.mime_type || \"image/jpeg\");\n}\nconst { images, ...rest } = row;\nreturn [{\n  json: {\n    chatInput: String(row.text || \"\"),\n    sessionId: \"eval-\" + row.case_id + \"-\" + Date.now(),\n    evalMode: true,\n    runner: row.runner === true,\n    case: rest,\n    imageNames: names\n  },\n  binary\n}];"
@@ -1493,8 +1493,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        720,
-        2360
+        780,
+        3100
       ],
       "parameters": {
         "conditions": {
@@ -1525,8 +1525,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        960,
-        510
+        1560,
+        1000
       ],
       "parameters": {
         "conditions": {
@@ -1557,8 +1557,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        240,
-        1970
+        780,
+        2590
       ],
       "parameters": {
         "conditions": {
@@ -1590,7 +1590,7 @@
       "typeVersion": 3.4,
       "position": [
         0,
-        4040
+        4800
       ],
       "parameters": {
         "assignments": {
@@ -1636,8 +1636,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        240,
-        4040
+        260,
+        4800
       ],
       "parameters": {
         "assignments": {
@@ -1708,8 +1708,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        4040
+        520,
+        4800
       ],
       "parameters": {
         "assignments": {
@@ -1786,8 +1786,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        720,
-        4040
+        780,
+        4800
       ],
       "parameters": {
         "conditions": {
@@ -1818,8 +1818,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        960,
-        4040
+        1040,
+        4800
       ],
       "parameters": {}
     },
@@ -1829,8 +1829,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        960,
-        4210
+        1040,
+        4970
       ],
       "parameters": {
         "dataTableId": {
@@ -1870,8 +1870,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        1200,
-        4210
+        1300,
+        4970
       ],
       "parameters": {
         "operation": "setMetrics",
@@ -1948,8 +1948,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        720,
-        1630
+        780,
+        2080
       ],
       "parameters": {
         "conditions": {
@@ -1980,8 +1980,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        720,
-        1970
+        780,
+        2420
       ],
       "parameters": {
         "conditions": {
@@ -2012,8 +2012,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        240,
-        3480
+        260,
+        320
       ],
       "parameters": {
         "operation": "get",
@@ -2038,14 +2038,14 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        3360
+        -60,
+        220
       ],
       "parameters": {
         "color": 7,
         "content": "## 6. Evaluations: вход\nEvaluation Trigger чете случаите от Data Table orders_eval_dataset, а Eval Runner вика workflow-а през второто задействане. Снимките идват от orders_eval_images и влизат в Config като при истински чат.",
-        "height": 480,
-        "width": 780
+        "height": 430,
+        "width": 740
       }
     },
     {
@@ -2054,14 +2054,14 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -80,
-        3920
+        -60,
+        4700
       ],
       "parameters": {
         "color": 7,
         "content": "## 7. Evaluations: оценка\nВ eval режим Chat нодовете се прескачат. Eval Scores сравнява статус, доставчик, артикули, количества, снимки и дата; Eval Verdict дава pass/fail. Runner връща резултата, а нативният eval записва Eval Outputs и Eval Metrics.",
-        "height": 480,
-        "width": 1500
+        "height": 430,
+        "width": 1520
       }
     },
     {
@@ -2070,8 +2070,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        960,
-        1800
+        1040,
+        2420
       ],
       "parameters": {
         "assignments": {
@@ -2117,8 +2117,8 @@
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 2,
       "position": [
-        240,
-        3900
+        0,
+        3610
       ],
       "parameters": {
         "action": "hash",
@@ -2134,8 +2134,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        480,
-        3900
+        260,
+        3610
       ],
       "parameters": {
         "assignments": {
@@ -2181,8 +2181,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        720,
-        3900
+        520,
+        3610
       ],
       "parameters": {
         "dataTableId": {
@@ -2216,8 +2216,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        960,
-        3900
+        780,
+        3610
       ],
       "parameters": {
         "mode": "rules",
@@ -2330,8 +2330,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1200,
-        3780
+        1040,
+        3610
       ],
       "parameters": {
         "columns": {
@@ -2428,8 +2428,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1200,
-        3960
+        1040,
+        3780
       ],
       "parameters": {
         "filters": {
@@ -2459,8 +2459,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1440,
-        3960
+        1300,
+        3780
       ],
       "parameters": {
         "conditions": {
@@ -2492,8 +2492,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1680,
-        3780
+        1560,
+        3610
       ],
       "parameters": {
         "assignments": {
@@ -2521,8 +2521,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1680,
-        3960
+        1560,
+        3780
       ],
       "parameters": {
         "assignments": {
@@ -2550,8 +2550,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        1200,
-        4140
+        1040,
+        3950
       ],
       "parameters": {
         "message": "=Поръчка {{ $(\"Data table - Find Order\").first().json.po_number }} вече е изпратена до {{ $(\"Data table - Find Order\").first().json.sent_to }} и записана в таблицата. Втори имейл не е изпратен.",
@@ -2565,8 +2565,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        240,
-        3000
+        260,
+        4290
       ],
       "parameters": {
         "conditions": {
@@ -2598,8 +2598,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        600,
-        3000
+        1040,
+        4290
       ],
       "parameters": {
         "columns": {
@@ -2659,8 +2659,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1320,
-        2920
+        2080,
+        4290
       ],
       "parameters": {
         "columns": {
@@ -2721,8 +2721,8 @@
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1.3,
       "position": [
-        480,
-        3260
+        1040,
+        4460
       ],
       "parameters": {
         "message": "=Имейлът за поръчка {{ $(\"Edit Fields - Order Identity\").first().json.poNumber }} НЕ е потвърден като изпратен. Администраторът е уведомен. Ако потвърдите отново същата чернова, системата първо ще провери в изпратените и няма да изпрати втори имейл, ако първият е излязъл.",
@@ -2736,11 +2736,59 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        720,
-        3260
+        1300,
+        4460
       ],
       "parameters": {
         "errorMessage": "=ORDER_EMAIL_NOT_CONFIRMED | {{ JSON.stringify({ sessionId: $(\"Edit Fields - Order Identity\").first().json.sessionId, userMessage: \"Неуспешно изпращане на \" + $(\"Edit Fields - Order Identity\").first().json.poNumber + \" до \" + $(\"Edit Fields - Order Identity\").first().json.sentTo }) }}"
+      }
+    },
+    {
+      "id": "e8840e26-4451-43da-8e79-3abfbc47f783",
+      "name": "Sticky Error Strategy",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -540
+      ],
+      "parameters": {
+        "color": 2,
+        "content": "## Стратегия за обработка на грешки (v5)\nИзпращането на имейл към доставчик е критичната стъпка: грешките се делят на **временни**, **постоянни** и **бизнес случаи** (непознат или двусмислен доставчик - не са грешка, а нормален клон).\n\n**1. В нода:** retry 3 опита с пауза само на идемпотентни стъпки - Agent, Guard MCP клиентите, четене от Sheets/Postgres/Data Table, upsert в Sheets, ledger update-и. `maxRetries` на модела е 0, за да не се трупат слоеве. **Gmail няма автоматичен retry** (timeout след изпращане би дал втори имейл).\n\n**2. В потока:** празен изход на агента - до 2 повторни подавания, после съобщение в чата и Stop and Error. Грешка в Gmail - `continueErrorOutput`, съобщение в чата и Stop and Error.\n\n**3. Централен Error Workflow** (Error Handler, зададен в Settings на всеки поток освен самия него): ред в `error_log` и Telegram алерт с workflow, нод, сесия, съобщение и връзка към изпълнението. Работи само за production изпълнения и изисква публикуван handler.\n\n**Идемпотентност на имейла (`orders_ledger`):** ключ SHA256 от сесия, получател, тема, текст и срок. `new` - заявява се (`claimed`) и се праща; `claimed` - първо се проверява Gmail Sent, праща се само ако писмото липсва; `sent` - само запис в Sheets; `logged` - \"вече е изпратена\". Sheets е upsert по `po_number` + `line_no`.\n\n**Не е направено:** ограничаване на честотата на алертите (Suppliers Sync върви на 5 минути и при постоянна грешка алармира на всеки цикъл).",
+        "height": 500,
+        "width": 1000
+      }
+    },
+    {
+      "id": "52592fbf-a162-472e-8570-31913506a315",
+      "name": "Sticky Prerequisites",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -540
+      ],
+      "parameters": {
+        "color": 7,
+        "content": "## Prerequisites: ръчно при нова n8n инстанция\nИмпортът на 6-те workflow-а не пренася тайни, таблици и външни ресурси. Остава ръчно:\n\n1. **Credentials:** OpenRouter, Google Gemini (PaLM), Supabase, Postgres (chat memory и Sync), Gmail OAuth2, Google Sheets OAuth2, Telegram. Свържи ги във всеки нод след импорт (на self-hosted OAuth изисква redirect URL).\n2. **Supabase:** разширение `vector`, таблици `supplier_chunks` и `supplier_sync_state`, функция `match_supplier_chunks` - готов скрипт `homeworks/21-orders-processor/setup/supabase-setup.sql`.\n3. **Google Sheet** с табове `suppliers`, `purchase_orders`, `jailbreak_log`, `error_log`, `eval_results` - CSV шаблони със заглавия в `setup/sheets/`; сложи новия document ID в Sheets нодовете (на всички 5 потока).\n4. **Data Tables** `orders_eval_dataset`, `orders_eval_images`, `orders_ledger` - Import CSV от `setup/data-tables/`; после избери таблиците наново в нодовете (Evaluation Trigger, Get Eval Images, Find/Claim/Mark Order, Eval Runner). Снимките за eval са в `test-data/` (колона `base64`).\n5. **Order Settings** (`Edit Fields - Run Settings`): `testMode` и `testRecipientOverride` - реален тестов имейл; в продукция `testMode` = false.\n6. **Error Handler:** сложи Telegram `adminChatId` в `Edit Fields - Parse Context`, публикувай го, после задай Error Workflow в Settings на останалите потоци.\n7. **Публикуване:** Guard Check и Guard MCP Server (пътят е `/mcp/orders-guard`) трябва да са публикувани, иначе Guard клиентите дават 404 / \"Workflow is not active\". Основният поток се публикува за Chat Trigger.\n8. **Suppliers Sync:** пусни ръчно `Manual Trigger - Rebuild Index`, за да се напълни `supplier_chunks`; после графикът на 5 минути поддържа индекса.",
+        "height": 500,
+        "width": 1100
+      }
+    },
+    {
+      "id": "e8383bce-3f75-4acd-989a-2aa8eeb09d40",
+      "name": "Sticky Idempotency",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        3510
+      ],
+      "parameters": {
+        "color": 4,
+        "content": "## 4b. Защита от дубликати\nСлед одобрение се изчислява ключ (SHA256) и се проверява ledger-ът `orders_ledger`: `new` - заявява се и се праща; `claimed` - първо се проверява Gmail Sent; `sent` - само запис в Sheets; `logged` - \"вече е изпратена\". Покрива R5 (един имейл на поръчка).",
+        "height": 600,
+        "width": 1780
       }
     }
   ],

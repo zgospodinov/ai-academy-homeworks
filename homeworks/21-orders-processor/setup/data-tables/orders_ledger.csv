@@ -1,0 +1,1 @@
+idempotency_key,po_number,status,session_id,sent_to,email_subject,claimed_at,sent_at,logged_at

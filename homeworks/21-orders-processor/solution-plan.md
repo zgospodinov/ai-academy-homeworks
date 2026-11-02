@@ -161,3 +161,6 @@ R1 -> When chat message received - Order Chat; R2 -> AI Agent - Order Assistant,
 - sent: само запис в Sheets;
 - logged: Respond to Chat - Already Sent.
 След Gmail: Data table - Mark Sent; след Sheets (upsert по po_number + line_no): Data table - Mark Logged. При грешка в Gmail: Respond to Chat - Send Failed и Stop and Error - Send Failed.
+
+## Сетъп на нова инстанция
+CSV шаблоните, SQL за Supabase и списъкът с ръчните стъпки са в `setup/` (виж `setup/README.md`) и в Sticky Note "Prerequisites" в основния workflow. Стратегията за грешки е в Sticky Note "Стратегия за обработка на грешки".
